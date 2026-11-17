@@ -49,7 +49,7 @@ The included `vercel.json` automatically configures clean URLs and routing.
 ```bash
 npm start
 # or
-node server.js
+node local-server.js
 ```
 The server will run at:
 - **Primary**: [http://127.0.0.1:3000/](http://127.0.0.1:3000/)
@@ -70,7 +70,7 @@ D:\Cost rdnss\
 ├── vercel.json             # Vercel deployment configuration
 ├── package.json            # Node manifest with start, build, and test scripts
 ├── .gitignore              # Git ignore rules
-├── server.js               # Zero-dependency local development server
+├── local-server.js         # Zero-dependency local development server
 ├── css/
 │   ├── style.css           # Design 1 styles (Untouched Baseline)
 │   ├── design-selector.css # Top comparison switcher navigation bar
