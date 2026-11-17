@@ -1,0 +1,790 @@
+/* ==========================================================================
+   Design 2: Gemini Design - Scoped Stylesheet
+   Theme C: Blue-Purple Gradient
+   Palette: Deep Navy (#172554), Royal Blue (#3155C9), Electric Blue (#477BFA),
+            Cyan (#35BDEB), Violet (#7654D6), Lavender (#F1EEFF), Slate (#F7F8FC)
+   UX Structure: Segmented KPI Ribbon + Unified Hierarchical Tree-Table
+   ========================================================================== */
+
+#design2Wrapper {
+  background-color: #F7F8FC;
+  min-height: calc(100vh - 45px);
+  color: #172554;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  padding-bottom: 5rem;
+}
+
+/* 1. Gemini Fixed Top Filter Bar */
+#design2Wrapper .gemini-filter-bar {
+  position: sticky;
+  top: 48px; /* Below design selector bar */
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px -2px rgba(23, 37, 84, 0.06);
+  padding: 0.85rem 2.5rem;
+}
+
+#design2Wrapper .gemini-filter-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  max-width: 1720px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+#design2Wrapper .gemini-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+#design2Wrapper .gemini-brand-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #172554 0%, #3155C9 50%, #7654D6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+#design2Wrapper .gemini-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #F1EEFF 0%, #E0E7FF 100%);
+  color: #7654D6;
+  border: 1px solid #C7D2FE;
+}
+
+#design2Wrapper .gemini-btn-recents {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #172554;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  font-family: inherit;
+  box-shadow: 0 1px 3px rgba(23, 37, 84, 0.04);
+}
+
+#design2Wrapper .gemini-btn-recents svg {
+  color: #477BFA;
+  transition: color 0.18s ease;
+}
+
+#design2Wrapper .gemini-btn-recents:hover,
+#design2Wrapper .gemini-btn-recents.active {
+  background: #F1EEFF;
+  border-color: #7654D6;
+  color: #7654D6;
+  box-shadow: 0 2px 6px rgba(118, 84, 214, 0.15);
+}
+
+#design2Wrapper .gemini-btn-recents:hover svg,
+#design2Wrapper .gemini-btn-recents.active svg {
+  color: #7654D6;
+}
+
+#design2Wrapper .gemini-filters-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.35rem;
+  flex-wrap: nowrap;
+  margin-left: auto;
+}
+
+#design2Wrapper .gemini-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  position: relative;
+}
+
+#design2Wrapper .gemini-label {
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+#design2Wrapper .gemini-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#design2Wrapper .gemini-input {
+  height: 38px;
+  box-sizing: border-box;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 2rem 0 0.85rem;
+  font-size: 0.86rem;
+  font-weight: 500;
+  color: #172554;
+  background: #ffffff;
+  outline: none;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+#design2Wrapper .gemini-input:hover {
+  border-color: #3155C9;
+}
+
+#design2Wrapper .gemini-input:focus {
+  border-color: #477BFA;
+  box-shadow: 0 0 0 3px rgba(71, 123, 250, 0.15);
+}
+
+#design2Wrapper .gemini-arrow {
+  position: absolute;
+  right: 12px;
+  pointer-events: none;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+}
+
+#design2Wrapper .gemini-field-plant .gemini-input { width: 160px; }
+#design2Wrapper .gemini-field-cv .gemini-input { width: 175px; }
+#design2Wrapper .gemini-field-material .gemini-input { width: 200px; padding-right: 0.85rem; }
+
+#design2Wrapper .gemini-dropdown {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  width: 100%;
+  max-height: 220px;
+  overflow-y: auto;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px -5px rgba(23, 37, 84, 0.12);
+  z-index: 1020;
+}
+
+#design2Wrapper .gemini-dropdown-item {
+  padding: 0.6rem 0.85rem;
+  font-size: 0.84rem;
+  color: #172554;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+#design2Wrapper .gemini-dropdown-item:hover {
+  background-color: #F1EEFF;
+  color: #7654D6;
+}
+
+#design2Wrapper .gemini-dropdown-item.selected {
+  background-color: #E0E7FF;
+  color: #3155C9;
+  font-weight: 600;
+}
+
+#design2Wrapper .gemini-btn-apply {
+  height: 38px;
+  padding: 0 1.45rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #3155C9 0%, #477BFA 100%);
+  color: #ffffff;
+  border: none;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 4px 14px rgba(49, 85, 201, 0.35);
+  transition: all 0.18s ease;
+  font-family: inherit;
+}
+
+#design2Wrapper .gemini-btn-apply:hover {
+  background: linear-gradient(135deg, #2443a6 0%, #3155C9 100%);
+  box-shadow: 0 6px 18px rgba(49, 85, 201, 0.45);
+  transform: translateY(-1px);
+}
+
+#design2Wrapper .gemini-btn-rf {
+  height: 38px;
+  padding: 0 0.85rem;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #3155C9;
+  border: 1px solid #cbd5e1;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+#design2Wrapper .gemini-btn-rf:hover {
+  background: #F1EEFF;
+  border-color: #7654D6;
+  color: #7654D6;
+}
+
+/* 2. Main Content Container */
+#design2Wrapper .gemini-main {
+  max-width: 1720px;
+  margin: 0 auto;
+  padding: 1.75rem 2.5rem;
+}
+
+/* Initial State: Empty prompt */
+#design2Wrapper .gemini-empty-state {
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 5rem 2rem;
+  text-align: center;
+  margin-top: 2rem;
+  box-shadow: 0 2px 8px rgba(23, 37, 84, 0.04);
+}
+
+#design2Wrapper .gemini-empty-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #F1EEFF 0%, #E0E7FF 100%);
+  color: #7654D6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+#design2Wrapper .gemini-empty-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #172554;
+  margin-bottom: 0.45rem;
+}
+
+#design2Wrapper .gemini-empty-subtitle {
+  font-size: 0.92rem;
+  color: #64748b;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+/* 3. Five Error Summary Cards (Rich Enterprise Cards) */
+#design2Wrapper .gemini-kpi-ribbon {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.15rem;
+  margin-bottom: 1.75rem;
+}
+
+#design2Wrapper .gemini-kpi-segment {
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  box-shadow: 0 2px 8px rgba(23, 37, 84, 0.04);
+  overflow: hidden;
+}
+
+#design2Wrapper .gemini-kpi-segment:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(23, 37, 84, 0.1);
+}
+
+/* Card 1: Total Errors */
+#design2Wrapper .gemini-kpi-segment.card-total {
+  background: #FAF8FF;
+  border: 1.5px solid #DDD6FE;
+}
+#design2Wrapper .gemini-kpi-segment.card-total:hover {
+  border-color: #A78BFA;
+}
+#design2Wrapper .gemini-kpi-segment.card-total.active {
+  background: #F3F0FF;
+  border: 2px solid #7C3AED;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.22);
+}
+#design2Wrapper .gemini-kpi-segment.card-total .gemini-kpi-label {
+  color: #6D28D9;
+}
+#design2Wrapper .gemini-kpi-segment.card-total .gemini-kpi-val {
+  color: #4C1D95;
+}
+#design2Wrapper .gemini-kpi-segment.card-total .gemini-kpi-icon-badge {
+  background: #EDE9FE;
+  color: #7C3AED;
+}
+
+/* Card 2: Activity Price */
+#design2Wrapper .gemini-kpi-segment.card-ap {
+  background: #FFF5F5;
+  border: 1.5px solid #FECDD3;
+}
+#design2Wrapper .gemini-kpi-segment.card-ap:hover {
+  border-color: #FDA4AF;
+}
+#design2Wrapper .gemini-kpi-segment.card-ap.active {
+  background: #FFE4E6;
+  border: 2px solid #E11D48;
+  box-shadow: 0 6px 20px rgba(225, 29, 72, 0.22);
+}
+#design2Wrapper .gemini-kpi-segment.card-ap .gemini-kpi-label {
+  color: #BE123C;
+}
+#design2Wrapper .gemini-kpi-segment.card-ap .gemini-kpi-val {
+  color: #9F1239;
+}
+#design2Wrapper .gemini-kpi-segment.card-ap .gemini-kpi-icon-badge {
+  background: #FFE4E6;
+  color: #E11D48;
+}
+
+/* Card 3: UOM Mismatch */
+#design2Wrapper .gemini-kpi-segment.card-um {
+  background: #FFFDF0;
+  border: 1.5px solid #FDE68A;
+}
+#design2Wrapper .gemini-kpi-segment.card-um:hover {
+  border-color: #FCD34D;
+}
+#design2Wrapper .gemini-kpi-segment.card-um.active {
+  background: #FEF3C7;
+  border: 2px solid #D97706;
+  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.22);
+}
+#design2Wrapper .gemini-kpi-segment.card-um .gemini-kpi-label {
+  color: #B45309;
+}
+#design2Wrapper .gemini-kpi-segment.card-um .gemini-kpi-val {
+  color: #92400E;
+}
+#design2Wrapper .gemini-kpi-segment.card-um .gemini-kpi-icon-badge {
+  background: #FEF3C7;
+  color: #D97706;
+}
+
+/* Card 4: Vendor Missing */
+#design2Wrapper .gemini-kpi-segment.card-vm {
+  background: #F0F7FF;
+  border: 1.5px solid #BFDBFE;
+}
+#design2Wrapper .gemini-kpi-segment.card-vm:hover {
+  border-color: #93C5FD;
+}
+#design2Wrapper .gemini-kpi-segment.card-vm.active {
+  background: #DBEAFE;
+  border: 2px solid #2563EB;
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.22);
+}
+#design2Wrapper .gemini-kpi-segment.card-vm .gemini-kpi-label {
+  color: #1D4ED8;
+}
+#design2Wrapper .gemini-kpi-segment.card-vm .gemini-kpi-val {
+  color: #1E40AF;
+}
+#design2Wrapper .gemini-kpi-segment.card-vm .gemini-kpi-icon-badge {
+  background: #DBEAFE;
+  color: #2563EB;
+}
+
+/* Card 5: Source List Missing */
+#design2Wrapper .gemini-kpi-segment.card-sl {
+  background: #F0FDF7;
+  border: 1.5px solid #A7F3D0;
+}
+#design2Wrapper .gemini-kpi-segment.card-sl:hover {
+  border-color: #6EE7B7;
+}
+#design2Wrapper .gemini-kpi-segment.card-sl.active {
+  background: #D1FAE5;
+  border: 2px solid #059669;
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.22);
+}
+#design2Wrapper .gemini-kpi-segment.card-sl .gemini-kpi-label {
+  color: #047857;
+}
+#design2Wrapper .gemini-kpi-segment.card-sl .gemini-kpi-val {
+  color: #065F46;
+}
+#design2Wrapper .gemini-kpi-segment.card-sl .gemini-kpi-icon-badge {
+  background: #D1FAE5;
+  color: #059669;
+}
+
+/* Card Elements */
+#design2Wrapper .gemini-kpi-progress-track {
+  height: 4px;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+#design2Wrapper .gemini-kpi-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.4s ease;
+}
+
+#design2Wrapper .gemini-kpi-progress-fill.bar-total { background: linear-gradient(90deg, #7C3AED, #6366F1); }
+#design2Wrapper .gemini-kpi-progress-fill.bar-ap { background: linear-gradient(90deg, #E11D48, #F43F5E); }
+#design2Wrapper .gemini-kpi-progress-fill.bar-um { background: linear-gradient(90deg, #D97706, #F59E0B); }
+#design2Wrapper .gemini-kpi-progress-fill.bar-vm { background: linear-gradient(90deg, #2563EB, #35BDEB); }
+#design2Wrapper .gemini-kpi-progress-fill.bar-sl { background: linear-gradient(90deg, #059669, #10B981); }
+
+#design2Wrapper .gemini-kpi-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+#design2Wrapper .gemini-kpi-label {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+#design2Wrapper .gemini-kpi-icon-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+#design2Wrapper .gemini-kpi-val {
+  font-size: 2.1rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+
+/* 4. Unified Hierarchical Tree-Table */
+#design2Wrapper .gemini-tree-card {
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 16px rgba(23, 37, 84, 0.05);
+  overflow: hidden;
+}
+
+#design2Wrapper .gemini-tree-toolbar {
+  padding: 1.15rem 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background-color: #ffffff;
+}
+
+#design2Wrapper .gemini-tree-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+#design2Wrapper .gemini-tree-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #172554;
+}
+
+#design2Wrapper .gemini-tree-count-badge {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  background: #F1EEFF;
+  color: #7654D6;
+}
+
+#design2Wrapper .gemini-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+#design2Wrapper .gemini-search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#design2Wrapper .gemini-search-input {
+  height: 36px;
+  width: 260px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 0 1rem 0 2.2rem;
+  font-size: 0.84rem;
+  color: #172554;
+  outline: none;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+#design2Wrapper .gemini-search-input:focus {
+  border-color: #477BFA;
+  box-shadow: 0 0 0 3px rgba(71, 123, 250, 0.12);
+}
+
+#design2Wrapper .gemini-search-icon {
+  position: absolute;
+  left: 10px;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+#design2Wrapper .gemini-btn-expand-all {
+  height: 36px;
+  padding: 0 1.1rem;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #3155C9;
+  border: 1px solid #C7D2FE;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  box-shadow: 0 1px 3px rgba(49, 85, 201, 0.08);
+  transition: all 0.18s ease;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+#design2Wrapper .gemini-btn-expand-all .expand-icon {
+  stroke-width: 2.4;
+  color: #3155C9;
+  transition: transform 0.2s ease, color 0.18s ease;
+}
+
+#design2Wrapper .gemini-btn-expand-all:hover {
+  background: #F1EEFF;
+  border-color: #7654D6;
+  color: #7654D6;
+  box-shadow: 0 2px 8px rgba(118, 84, 214, 0.18);
+  transform: translateY(-1px);
+}
+
+#design2Wrapper .gemini-btn-expand-all:hover .expand-icon {
+  color: #7654D6;
+}
+
+/* Tree-Table Layout */
+#design2Wrapper .gemini-tree-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+#design2Wrapper .gemini-tree-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+/* Column Header (Clean static row - prevents border-collapse sticky clipping) */
+#design2Wrapper .gemini-tree-table thead th {
+  background: #f8fafc;
+  color: #475569;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.95rem 1.25rem;
+  text-align: left;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+/* Tier 1: Category Row */
+#design2Wrapper .tree-row-category {
+  background: #f8fafc;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease;
+}
+
+#design2Wrapper .tree-row-category td {
+  padding: 0;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+#design2Wrapper .tree-row-category:hover {
+  background: #f1f5f9;
+}
+
+#design2Wrapper .tree-category-cell {
+  padding: 0.95rem 1.25rem;
+  font-weight: 700;
+  color: #172554;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+  color: #172554;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+#design2Wrapper .tree-chevron {
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  transition: transform 0.2s ease;
+}
+
+#design2Wrapper .tree-chevron.expanded {
+  transform: rotate(90deg);
+}
+
+#design2Wrapper .tree-cat-pill {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+}
+
+#design2Wrapper .pill-ap { background: #ffe4e6; color: #be123c; }
+#design2Wrapper .pill-um { background: #fef3c7; color: #b45309; }
+#design2Wrapper .pill-vm { background: #e0f2fe; color: #0369a1; }
+#design2Wrapper .pill-sl { background: #dcfce7; color: #15803d; }
+
+/* Tier 2: Group Row */
+#design2Wrapper .tree-row-group {
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.15s ease;
+}
+
+#design2Wrapper .tree-row-group:hover {
+  background: #faf5ff;
+}
+
+#design2Wrapper .tree-group-cell {
+  padding: 0.7rem 1rem 0.7rem 2.5rem; /* Indented */
+  font-weight: 600;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#design2Wrapper .tree-group-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 6px;
+  background: #F1EEFF;
+  color: #7654D6;
+}
+
+/* Tier 3: Record Row */
+#design2Wrapper .tree-row-record {
+  background: #ffffff;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background-color 0.12s ease;
+}
+
+#design2Wrapper .tree-row-record:hover {
+  background: #f8fafc;
+}
+
+#design2Wrapper .tree-row-record td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+}
+
+#design2Wrapper .record-indent-cell {
+  padding-left: 4.25rem !important; /* Deep Indentation */
+  font-weight: 600;
+}
+
+#design2Wrapper .gemini-mat-link {
+  font-weight: 700;
+  color: #3155C9;
+  text-decoration: none;
+}
+
+#design2Wrapper .gemini-type-pill {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: #f1f5f9;
+  color: #475569;
+}
+
+#design2Wrapper .gemini-btn-fix {
+  height: 30px;
+  padding: 0 0.85rem;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #3155C9 0%, #477BFA 100%);
+  color: #ffffff;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.15s ease;
+  font-family: inherit;
+  box-shadow: 0 2px 6px rgba(49, 85, 201, 0.25);
+}
+
+#design2Wrapper .gemini-btn-fix:hover {
+  background: linear-gradient(135deg, #2443a6 0%, #3155C9 100%);
+  transform: translateY(-1px);
+}
+
+#design2Wrapper .gemini-fixed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 0.76rem;
+  font-weight: 700;
+  border: 1px solid #bbf7d0;
+}

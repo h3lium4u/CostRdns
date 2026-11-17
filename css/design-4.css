@@ -1,0 +1,982 @@
+/* ==========================================================================
+   Design 4 – SAP Horizon Triage Console
+   Option A: Full-width table with Inline Row Expansion for Fix
+   Theme: SAP Horizon 2024 Design System (Clean, Crisp, Colorful, Enterprise)
+   Scoped strictly under #design4Wrapper
+   ========================================================================== */
+
+/* ── Design 4 Root Tokens — SAP Royal Blue Palette (Reference Image) ── */
+#design4Wrapper {
+  --d4-brand:        #1565C0;        /* SAP Royal Blue */
+  --d4-brand-hover:  #1251A3;
+  --d4-brand-active: #0D3D82;
+  --d4-brand-tint:   #E8F0FE;
+  --d4-brand-dark:   #0D1B4B;        /* Dark navy */
+  
+  --d4-bg:           #F5F7FA;        /* Warm pearl background */
+  --d4-card:         #FFFFFF;
+  --d4-text:         #1A2332;
+  --d4-label:        #4A5568;
+  --d4-border:       #D0DBF0;
+  --d4-border-subtle:#E8EFF8;
+  --d4-shadow-xs:    0 1px 3px rgba(13,27,75,0.06);
+  --d4-shadow-sm:    0 2px 8px rgba(13,27,75,0.08);
+  --d4-shadow-md:    0 6px 20px rgba(13,27,75,0.10);
+
+  /* Semantic Severity Tokens */
+  --d4-critical:     #B71C1C;
+  --d4-critical-bg:  #FFF0F0;
+  --d4-critical-border: #FFCDD2;
+  
+  --d4-warning:      #E65100;
+  --d4-warning-bg:   #FFF3E0;
+  --d4-warning-border: #FFCC80;
+  
+  --d4-info:         #1565C0;
+  --d4-info-bg:      #E8F0FE;
+  --d4-info-border:  #BBDEFB;
+  
+  --d4-positive:     #2E7D32;
+  --d4-positive-bg:  #E8F5E9;
+  --d4-positive-border: #A5D6A7;
+
+  /* Ring Gauge Colors — SAP Horizon Vivid */
+  --d4-ring-total:   #1565C0;        /* Royal blue for Total */
+  --d4-ring-ap:      #E8743B;
+  --d4-ring-um:      #19A979;
+  --d4-ring-vm:      #ED4A7B;
+  --d4-ring-sl:      #945ECF;
+
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--d4-bg);
+  min-height: 100vh;
+  color: var(--d4-text);
+  box-sizing: border-box;
+}
+
+#design4Wrapper * {
+  box-sizing: border-box;
+}
+
+/* ==========================================================================
+   1. FIXED / STICKY FILTER BAR (NO OVERLAP WITH SELECTOR BAR)
+   ========================================================================== */
+#design4Wrapper .d4-filter-bar {
+  position: sticky;
+  top: 48px; /* Sticks directly underneath the 48px designSelectorBar */
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: var(--d4-card);
+  border-bottom: 1px solid var(--d4-border);
+  box-shadow: 0 2px 10px rgba(29, 45, 62, 0.04);
+  padding: 0.85rem 2.5rem;
+}
+
+#design4Wrapper .d4-filter-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  max-width: 1720px;
+  margin: 0 auto;
+  gap: 2rem;
+}
+
+#design4Wrapper .d4-brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  height: 38px;
+  flex-shrink: 0;
+}
+
+#design4Wrapper .d4-brand-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--d4-text);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+#design4Wrapper .d4-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--d4-brand);
+  background: var(--d4-brand-tint);
+  border: 1px solid #c0d8fc;
+  border-radius: 6px;
+  padding: 0.2rem 0.55rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#design4Wrapper .d4-btn-recents {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 32px;
+  padding: 0 0.85rem;
+  background: #ffffff;
+  border: 1px solid var(--d4-border);
+  border-radius: 20px;
+  color: var(--d4-label);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+#design4Wrapper .d4-btn-recents:hover,
+#design4Wrapper .d4-btn-recents.active {
+  border-color: var(--d4-brand);
+  color: var(--d4-brand);
+  background: var(--d4-brand-tint);
+}
+
+#design4Wrapper .d4-filters-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+  flex: 1;
+  justify-content: flex-end;
+}
+
+#design4Wrapper .d4-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  position: relative;
+}
+
+#design4Wrapper .d4-field-plant { width: 170px; }
+#design4Wrapper .d4-field-cv    { width: 190px; }
+#design4Wrapper .d4-field-mat   { width: 190px; }
+
+#design4Wrapper .d4-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--d4-label);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+#design4Wrapper .d4-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#design4Wrapper .d4-input {
+  width: 100%;
+  height: 38px;
+  padding: 0 28px 0 12px;
+  border: 1px solid var(--d4-border);
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 0.85rem;
+  color: var(--d4-text);
+  font-family: inherit;
+  outline: none;
+  transition: all 0.18s ease;
+}
+
+#design4Wrapper .d4-input:hover {
+  border-color: #b0b8c4;
+}
+
+#design4Wrapper .d4-input:focus {
+  border-color: var(--d4-brand);
+  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
+}
+
+#design4Wrapper .d4-arrow {
+  position: absolute;
+  right: 10px;
+  color: var(--d4-label);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+#design4Wrapper .d4-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border: 1px solid var(--d4-border);
+  border-radius: 8px;
+  box-shadow: var(--d4-shadow-md);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 999;
+}
+
+#design4Wrapper .d4-dropdown.hidden {
+  display: none;
+}
+
+#design4Wrapper .d4-dropdown-item {
+  padding: 0.65rem 0.95rem;
+  font-size: 0.82rem;
+  color: var(--d4-text);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+#design4Wrapper .d4-dropdown-item:hover {
+  background: var(--d4-brand-tint);
+  color: var(--d4-brand);
+}
+
+#design4Wrapper .d4-dropdown-item.selected {
+  background: #e2eeff;
+  color: var(--d4-brand);
+  font-weight: 600;
+}
+
+#design4Wrapper .d4-dropdown-no-result {
+  padding: 0.75rem 0.95rem;
+  color: var(--d4-label);
+  font-size: 0.8rem;
+  font-style: italic;
+}
+
+#design4Wrapper .d4-btn-apply {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 38px;
+  padding: 0 1.25rem;
+  background: var(--d4-brand);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.30);
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+#design4Wrapper .d4-btn-apply:hover {
+  background: var(--d4-brand-hover);
+  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.42);
+  transform: translateY(-1px);
+}
+
+#design4Wrapper .d4-btn-apply:active {
+  transform: translateY(0);
+}
+
+#design4Wrapper .d4-btn-rf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  background: #ffffff;
+  border: 1px solid var(--d4-border);
+  border-radius: 8px;
+  color: var(--d4-label);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  flex-shrink: 0;
+}
+
+#design4Wrapper .d4-btn-rf:hover {
+  border-color: var(--d4-brand);
+  color: var(--d4-brand);
+  background: var(--d4-brand-tint);
+}
+
+/* ==========================================================================
+   2. MAIN CONTENT AREA (FLOWS NATURALLY BELOW FILTER BAR)
+   ========================================================================== */
+#design4Wrapper .d4-main {
+  max-width: 1720px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 1.75rem 2.5rem;
+}
+
+/* Initial State: Clean Enterprise Card before Apply */
+#design4Wrapper .d4-empty-state {
+  background: #ffffff;
+  border: 1px dashed #cbd5e1;
+  border-radius: 16px;
+  padding: 4.5rem 2rem;
+  text-align: center;
+  box-shadow: var(--d4-shadow-xs);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+#design4Wrapper .d4-empty-state.hidden {
+  display: none !important;
+}
+
+#design4Wrapper .d4-empty-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--d4-brand-tint);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--d4-brand);
+}
+
+#design4Wrapper .d4-empty-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--d4-text);
+  margin: 0;
+}
+
+#design4Wrapper .d4-empty-sub {
+  font-size: 0.9rem;
+  color: var(--d4-label);
+  max-width: 440px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ==========================================================================
+   3. KPI STATUS RING RIBBON (5 COLORFUL GAUGE CARDS)
+   ========================================================================== */
+#design4Wrapper #d4ContentArea.hidden {
+  display: none !important;
+}
+
+#design4Wrapper #d4ContentArea {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  width: 100%;
+}
+
+#design4Wrapper .d4-kpi-ribbon {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+}
+
+#design4Wrapper .d4-kpi-tile {
+  background: #ffffff;
+  border: 1.5px solid var(--d4-border);
+  border-radius: 12px;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  box-shadow: var(--d4-shadow-xs);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+#design4Wrapper .d4-kpi-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--d4-shadow-md);
+}
+
+#design4Wrapper .d4-kpi-tile.active {
+  border-width: 2px;
+  box-shadow: 0 4px 18px rgba(21, 101, 192, 0.18);
+}
+
+/* Total Errors tile: blue gradient when active (reference image style) */
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active {
+  background: linear-gradient(135deg, #1565C0 0%, #1E88E5 100%);
+  border-color: #1251A3;
+}
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-label,
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-sublabel,
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-number,
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-ring-inner-val {
+  color: #ffffff !important;
+}
+/* Sub-count text: on blue tile use white; on other tiles use semantic colors */
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-subcounts,
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-fixed-count,
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-pending-count {
+  color: rgba(255,255,255,0.90) !important;
+}
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-subcounts .d4-fixed-count {
+  color: #A5D6A7 !important;
+}
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-subcounts .d4-pending-count {
+  color: #FFCC80 !important;
+}
+
+/* Ring SVG track: white semi-transparent on the blue gradient tile */
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-ring-wrap svg circle:first-child {
+  stroke: rgba(255,255,255,0.25);
+}
+#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-ring-wrap svg circle:last-child {
+  stroke: rgba(255,255,255,0.90);
+}
+
+#design4Wrapper .d4-kpi-tile[data-cat="activityPrice"].active     { border-color: var(--d4-ring-ap);  background: #fffcfb; }
+#design4Wrapper .d4-kpi-tile[data-cat="uomMismatch"].active       { border-color: var(--d4-ring-um);  background: #fbfffd; }
+#design4Wrapper .d4-kpi-tile[data-cat="vendorMissing"].active     { border-color: var(--d4-ring-vm);  background: #fffbfd; }
+#design4Wrapper .d4-kpi-tile[data-cat="sourceListMissing"].active { border-color: var(--d4-ring-sl);  background: #fdfbff; }
+
+#design4Wrapper .d4-kpi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+#design4Wrapper .d4-kpi-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--d4-label);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+}
+
+#design4Wrapper .d4-kpi-sublabel {
+  font-size: 0.72rem;
+  color: #8b9bb0;
+}
+
+/* Sub-counts line (e.g. "2 Fixed | 7 Pending") */
+#design4Wrapper .d4-kpi-subcounts {
+  font-size: 0.70rem;
+  color: var(--d4-label);
+  margin-top: 0.1rem;
+  font-weight: 500;
+}
+#design4Wrapper .d4-kpi-subcounts .d4-fixed-count { color: var(--d4-positive); font-weight: 700; }
+#design4Wrapper .d4-kpi-subcounts .d4-pending-count { color: var(--d4-warning); font-weight: 700; }
+
+#design4Wrapper .d4-kpi-number {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--d4-text);
+  line-height: 1;
+}
+
+#design4Wrapper .d4-ring-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#design4Wrapper .d4-ring-wrap svg {
+  transform: rotate(-90deg);
+  display: block;
+}
+
+#design4Wrapper .d4-ring-inner-val {
+  position: absolute;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--d4-text);
+}
+
+/* ==========================================================================
+   4. FULL-WIDTH SEVERITY TRIAGE CARD & TABLE
+   ========================================================================== */
+#design4Wrapper .d4-triage-card {
+  background: #ffffff;
+  border: 1px solid var(--d4-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(29, 45, 62, 0.05);
+  overflow: hidden;
+  width: 100%;
+}
+
+#design4Wrapper .d4-triage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: #ffffff;
+  border-bottom: 1px solid var(--d4-border);
+  gap: 1.5rem;
+}
+
+#design4Wrapper .d4-triage-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+#design4Wrapper .d4-triage-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--d4-text);
+  margin: 0;
+}
+
+#design4Wrapper .d4-triage-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--d4-brand);
+  background: var(--d4-brand-tint);
+  border: 1px solid #c0d8fc;
+  border-radius: 20px;
+  padding: 0.2rem 0.7rem;
+}
+
+#design4Wrapper .d4-triage-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+#design4Wrapper .d4-triage-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--d4-bg);
+  border: 1px solid var(--d4-border);
+  border-radius: 8px;
+  padding: 0 0.85rem;
+  height: 34px;
+  transition: all 0.18s ease;
+}
+
+#design4Wrapper .d4-triage-search:focus-within {
+  border-color: var(--d4-brand);
+  background: #ffffff;
+  box-shadow: 0 0 0 2px rgba(0, 112, 242, 0.12);
+}
+
+#design4Wrapper .d4-triage-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 0.82rem;
+  color: var(--d4-text);
+  width: 220px;
+  font-family: inherit;
+}
+
+#design4Wrapper .d4-triage-search input::placeholder {
+  color: #8b9bb0;
+}
+
+#design4Wrapper .d4-btn-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 34px;
+  padding: 0 0.85rem;
+  background: #ffffff;
+  border: 1px solid var(--d4-border);
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--d4-label);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+}
+
+#design4Wrapper .d4-btn-tool:hover {
+  border-color: var(--d4-brand);
+  color: var(--d4-brand);
+  background: var(--d4-brand-tint);
+}
+
+/* ── Table Styling ── */
+#design4Wrapper .d4-triage-body {
+  width: 100%;
+  overflow-x: auto;
+}
+
+#design4Wrapper .d4-triage-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+  table-layout: fixed;
+}
+
+#design4Wrapper .d4-triage-table thead th {
+  background: #F0F5FF;
+  color: var(--d4-label);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.15rem;
+  text-align: left;
+  border-bottom: 2px solid #C8D8F0;
+  white-space: nowrap;
+}
+
+#design4Wrapper .d4-triage-table tbody tr.d4-data-row {
+  border-bottom: 1px solid #f0f3f6;
+  transition: background 0.12s ease;
+  cursor: pointer;
+}
+
+#design4Wrapper .d4-triage-table tbody tr.d4-data-row:hover {
+  background: #f8fbff;
+}
+
+#design4Wrapper .d4-triage-table tbody tr.d4-data-row.expanded {
+  background: #f1f6ff;
+}
+
+/* ── Severity Left Border Stripe ── */
+#design4Wrapper .d4-triage-table tbody tr.sev-critical td:first-child { border-left: 4px solid var(--d4-critical); }
+#design4Wrapper .d4-triage-table tbody tr.sev-warning td:first-child  { border-left: 4px solid var(--d4-warning); }
+#design4Wrapper .d4-triage-table tbody tr.sev-info td:first-child     { border-left: 4px solid var(--d4-info); }
+#design4Wrapper .d4-triage-table tbody tr.sev-fixed td:first-child    { border-left: 4px solid var(--d4-positive); }
+
+#design4Wrapper .d4-triage-table tbody td {
+  padding: 0.95rem 1.15rem;
+  color: var(--d4-text);
+  vertical-align: middle;
+}
+
+/* ── Severity Badges ── */
+#design4Wrapper .d4-sev-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+#design4Wrapper .d4-sev-badge.critical {
+  color: var(--d4-critical);
+  background: var(--d4-critical-bg);
+  border: 1px solid var(--d4-critical-border);
+}
+
+#design4Wrapper .d4-sev-badge.warning {
+  color: var(--d4-warning);
+  background: var(--d4-warning-bg);
+  border: 1px solid var(--d4-warning-border);
+}
+
+#design4Wrapper .d4-sev-badge.info {
+  color: var(--d4-info);
+  background: var(--d4-info-bg);
+  border: 1px solid var(--d4-info-border);
+}
+
+#design4Wrapper .d4-sev-badge.fixed {
+  color: var(--d4-positive);
+  background: var(--d4-positive-bg);
+  border: 1px solid var(--d4-positive-border);
+}
+
+#design4Wrapper .d4-sev-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* ── Cell Specifics ── */
+#design4Wrapper .d4-material-code {
+  font-weight: 700;
+  color: var(--d4-text);
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.85rem;
+}
+
+#design4Wrapper .d4-desc-text {
+  color: #334155;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#design4Wrapper .d4-plant-chip {
+  display: inline-block;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 5px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+#design4Wrapper .d4-type-chip {
+  display: inline-block;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 5px;
+  padding: 0.15rem 0.45rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--d4-label);
+}
+
+#design4Wrapper .d4-res-preview {
+  color: var(--d4-label);
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Action Buttons in Row */
+#design4Wrapper .d4-btn-action-fix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  height: 28px;
+  padding: 0 0.85rem;
+  background: var(--d4-brand-tint);
+  border: 1px solid #c0d8fc;
+  border-radius: 6px;
+  color: var(--d4-brand);
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.16s ease;
+  white-space: nowrap;
+}
+
+#design4Wrapper .d4-btn-action-fix:hover {
+  background: var(--d4-brand);
+  color: #ffffff;
+  border-color: var(--d4-brand);
+  box-shadow: 0 2px 6px rgba(0, 112, 242, 0.25);
+}
+
+#design4Wrapper .d4-resolved-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--d4-positive);
+  font-size: 0.78rem;
+  font-weight: 700;
+  background: var(--d4-positive-bg);
+  border: 1px solid var(--d4-positive-border);
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+}
+
+/* ==========================================================================
+   5. OPTION A: INLINE ROW EXPANSION ACCORDION PANEL
+   ========================================================================== */
+#design4Wrapper tr.d4-expand-row {
+  background: #f8fbff;
+}
+
+#design4Wrapper tr.d4-expand-row td {
+  padding: 0 !important;
+  border-bottom: 2px solid #cce1fd;
+}
+
+#design4Wrapper .d4-expand-container {
+  padding: 1.25rem 2rem;
+  border-left: 4px solid var(--d4-brand);
+  background: linear-gradient(180deg, #EEF4FF 0%, #ffffff 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+  animation: d4SlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes d4SlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#design4Wrapper .d4-expand-topbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#design4Wrapper .d4-expand-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+#design4Wrapper .d4-expand-mat-code {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--d4-text);
+  font-family: 'SFMono-Regular', Consolas, monospace;
+}
+
+#design4Wrapper .d4-expand-mat-desc {
+  font-size: 0.95rem;
+  color: var(--d4-label);
+  font-weight: 500;
+}
+
+#design4Wrapper .d4-expand-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding-top: 0.1rem;
+}
+
+#design4Wrapper .d4-expand-chip {
+  background: #ffffff;
+  border: 1px solid var(--d4-border);
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+#design4Wrapper .d4-expand-chip-key {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--d4-label);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+#design4Wrapper .d4-expand-chip-val {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--d4-text);
+}
+
+/* Resolution Block */
+#design4Wrapper .d4-expand-resolution-box {
+  background: #F5F8FF;
+  border: 1px solid #BBDEFB;
+  border-left: 3px solid var(--d4-brand);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.06);
+}
+
+#design4Wrapper .d4-expand-res-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--d4-brand);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+#design4Wrapper .d4-expand-res-text {
+  font-size: 0.88rem;
+  color: var(--d4-text);
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Expand Action Bar */
+#design4Wrapper .d4-expand-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.85rem;
+}
+
+#design4Wrapper .d4-btn-initiate-fix {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 36px;
+  padding: 0 1.35rem;
+  background: var(--d4-brand);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.30);
+  transition: all 0.18s ease;
+}
+
+#design4Wrapper .d4-btn-initiate-fix:hover {
+  background: var(--d4-brand-hover);
+  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.42);
+  transform: translateY(-1px);
+}
+
+#design4Wrapper .d4-btn-initiate-fix:disabled {
+  background: #94bcf0;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+#design4Wrapper .d4-btn-cancel-expand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 36px;
+  padding: 0 1.15rem;
+  background: #ffffff;
+  border: 1px solid var(--d4-border);
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--d4-label);
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+#design4Wrapper .d4-btn-cancel-expand:hover {
+  border-color: #94a3b8;
+  color: var(--d4-text);
+  background: #f8fafc;
+}
+
+/* Success state inside expansion */
+#design4Wrapper .d4-expand-success-banner {
+  background: var(--d4-positive-bg);
+  border: 1px solid var(--d4-positive-border);
+  border-radius: 8px;
+  padding: 0.85rem 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--d4-positive);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Spinner */
+#design4Wrapper .d4-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: d4Spin 0.7s infinite linear;
+}
+
+@keyframes d4Spin {
+  to { transform: rotate(360deg); }
+}

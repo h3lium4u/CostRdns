@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Material Error Dashboard - UI/UX Comparison Studio</title>
+  
+  <!-- Modern Clean Enterprise Typography: Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+  
+  <!-- Base Style (Design 1) -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- UI Comparison Switcher Style -->
+  <link rel="stylesheet" href="css/design-selector.css">
+  
+  <!-- Design 2 (Gemini) Style -->
+  <link rel="stylesheet" href="css/design-gemini.css">
+  
+  <!-- Design 3 (Claude) Style -->
+  <link rel="stylesheet" href="css/design-claude.css">
+
+  <!-- Design 4 (SAP Horizon Triage) Style -->
+  <link rel="stylesheet" href="css/design-4.css">
+</head>
+<body>
+
+  <!-- =====================================================================
+       TOP DESIGN SELECTOR BAR
+       Allows seamless switching between all 3 independent UI/UX implementations
+       ===================================================================== -->
+  <nav id="designSelectorBar" class="design-selector-bar" aria-label="Design Comparison Switcher">
+    <div class="design-selector-container">
+      <div class="design-selector-left">
+        <div class="selector-brand">
+          <span class="selector-pulse-dot"></span>
+          <span>Material Error Dashboard</span>
+        </div>
+        <span class="selector-tag">UI/UX Studio</span>
+      </div>
+      <div class="design-tabs-group" role="tablist">
+        <button class="design-tab-btn active" data-design="1" role="tab" aria-selected="true" title="Design 1">
+          <span class="tab-badge">01</span>
+          <span>Design 1</span>
+        </button>
+        <button class="design-tab-btn" data-design="2" role="tab" aria-selected="false" title="Design 2">
+          <span class="tab-badge">02</span>
+          <span>Design 2</span>
+        </button>
+        <button class="design-tab-btn" data-design="3" role="tab" aria-selected="false" title="Design 3">
+          <span class="tab-badge">03</span>
+          <span>Design 3</span>
+        </button>
+        <button class="design-tab-btn" data-design="4" role="tab" aria-selected="false" title="Design 4">
+          <span class="tab-badge">04</span>
+          <span>Design 4</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- =====================================================================
+       DESIGN 1: CURRENT IMPLEMENTATION (UNTOUCHED BASELINE)
+       Wrapped inside #design1Wrapper without altering any internal IDs/classes
+       ===================================================================== -->
+  <div id="design1Wrapper" class="design-view">
+
+    <!-- 1. FIXED TOP FILTER BAR -->
+    <header class="filter-bar-fixed">
+      <div class="filter-bar-content">
+        
+        <!-- Left Branding & Recents Drawer Trigger -->
+        <div class="header-left-wrap">
+          <div id="brandTitleGroup" class="brand-group">
+            <h1 id="brandTitle" class="brand-title">Material Error Dashboard</h1>
+            <span class="fiori-badge">SAP Fiori</span>
+          </div>
+
+          <button id="recentsToggleBtn" class="btn-recents-pill" title="Toggle Recent History">
+            <svg class="recents-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Recents</span>
+          </button>
+        </div>
+
+        <!-- Filters & Action Buttons -->
+        <div class="filters-row">
+          <!-- A. Plant Filter -->
+          <div class="filter-field filter-field-plant">
+            <label for="plantInput" class="field-label">Plant</label>
+            <div class="input-with-arrow">
+              <input type="text" id="plantInput" class="filter-input" placeholder="Select Plant..." autocomplete="off">
+              <span class="arrow-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </div>
+            <div id="plantDropdown" class="searchable-dropdown hidden"></div>
+          </div>
+
+          <!-- B. Cost Variant Filter -->
+          <div class="filter-field filter-field-cv">
+            <label for="cvInput" class="field-label">Cost Variant</label>
+            <div class="input-with-arrow">
+              <input type="text" id="cvInput" class="filter-input" placeholder="Select Cost Variant..." autocomplete="off">
+              <span class="arrow-icon">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </div>
+            <div id="cvDropdown" class="searchable-dropdown hidden"></div>
+          </div>
+
+          <!-- C. Material Filter -->
+          <div class="filter-field filter-field-material">
+            <label for="materialInput" class="field-label">Material</label>
+            <input type="text" id="materialInput" class="filter-input" placeholder="Enter Material Number...">
+          </div>
+
+          <!-- Vertical Divider -->
+          <div class="btn-divider"></div>
+
+          <!-- Filter Bar Actions: Apply & Refresh -->
+          <div class="filter-actions">
+            <button id="applyBtn" class="btn-apply" title="Apply Filters">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              </svg>
+              <span>Apply</span>
+            </button>
+
+            <button id="rfBtn" class="btn-rf" title="Refresh Dashboard Data">
+              <svg class="rf-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </header>
+
+
+    <!-- MAIN SCROLLABLE CONTENT AREA -->
+    <main class="main-content">
+      <!-- State 1: Initial Dashboard State -->
+      <div id="initialEmptyState" class="initial-empty-state">
+        <div class="empty-icon-wrapper">
+          <svg width="72" height="72" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="14" y="8" width="36" height="48" rx="6" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+            <line x1="22" y1="18" x2="38" y2="18" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/>
+            <line x1="22" y1="24" x2="34" y2="24" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/>
+            <line x1="22" y1="30" x2="30" y2="30" stroke="#cbd5e1" stroke-width="2" stroke-linecap="round"/>
+            <path d="M30 28L46 44L46 54L42 50L42 44L30 28Z" fill="#2563eb" opacity="0.95"/>
+            <path d="M34 26L48 26L41 35L34 26Z" fill="#1d4ed8"/>
+            <circle cx="50" cy="18" r="1.5" fill="#3b82f6"/>
+            <circle cx="54" cy="24" r="1" fill="#60a5fa"/>
+          </svg>
+        </div>
+        <h2 class="empty-title">Apply Filters to View Material Errors</h2>
+        <p class="empty-subtitle">Select Plant, Cost Variant and enter Material, then click Apply.</p>
+      </div>
+
+      <!-- State 2 & 3: Post-Apply Dashboard Content -->
+      <div id="postApplyContent" class="post-apply-content hidden">
+        <!-- Five Error Summary Cards -->
+        <div class="summary-cards-row">
+          
+          <div class="summary-card card-purple" data-category="total" title="View all error records">
+            <div class="card-top-track" title="Total Errors (100%)">
+              <div id="barTotal" class="card-top-fill bar-total" style="width: 100%;"></div>
+            </div>
+            <div class="card-header-row">
+              <span class="card-label">Total Errors</span>
+              <div class="card-icon-badge badge-total">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                  <polyline points="2 17 12 22 22 17"></polyline>
+                  <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <span id="countTotal" class="card-value">23</span>
+            </div>
+          </div>
+
+          <div class="summary-card card-red" data-category="activityPrice" title="View Activity Price errors">
+            <div class="card-top-track" title="Activity Price: 39.1% of errors">
+              <div id="barActivityPrice" class="card-top-fill bar-ap" style="width: 39.1%;"></div>
+            </div>
+            <div class="card-header-row">
+              <span class="card-label">Activity Price</span>
+              <div class="card-icon-badge badge-ap">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                  <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <span id="countActivityPrice" class="card-value">9</span>
+            </div>
+          </div>
+
+          <div class="summary-card card-orange" data-category="uomMismatch" title="View Unit of Measure Mismatch errors">
+            <div class="card-top-track" title="UOM Mismatch: 26.1% of errors">
+              <div id="barUomMismatch" class="card-top-fill bar-um" style="width: 26.1%;"></div>
+            </div>
+            <div class="card-header-row">
+              <span class="card-label">UOM Mismatch</span>
+              <div class="card-icon-badge badge-um">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3v18M6 8l6-5 6 5M3 13l3-5 3 5a3 3 0 0 1-6 0zm12 0l3-5 3 5a3 3 0 0 1-6 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <span id="countUomMismatch" class="card-value">6</span>
+            </div>
+          </div>
+
+          <div class="summary-card card-blue" data-category="vendorMissing" title="View Vendor Missing errors">
+            <div class="card-top-track" title="Vendor Missing: 21.7% of errors">
+              <div id="barVendorMissing" class="card-top-fill bar-vm" style="width: 21.7%;"></div>
+            </div>
+            <div class="card-header-row">
+              <span class="card-label">Vendor Missing</span>
+              <div class="card-icon-badge badge-vm">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <span id="countVendorMissing" class="card-value">5</span>
+            </div>
+          </div>
+
+          <div class="summary-card card-green" data-category="sourceListMissing" title="View Source List Missing errors">
+            <div class="card-top-track" title="Source List Missing: 13.0% of errors">
+              <div id="barSourceListMissing" class="card-top-fill bar-sl" style="width: 13.0%;"></div>
+            </div>
+            <div class="card-header-row">
+              <span class="card-label">Source List Missing</span>
+              <div class="card-icon-badge badge-sl">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="card-bottom">
+              <span id="countSourceListMissing" class="card-value">3</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- State 2: Post-Apply Unselected Category Placeholder -->
+        <div id="unselectedCategoryPrompt" class="unselected-category-prompt">
+          <h3 class="empty-title">Select an error category to view details</h3>
+          <p class="empty-subtitle">Click on any of the above error cards to view the list of related material errors.</p>
+        </div>
+
+        <!-- State 3: Error Details Section -->
+        <section id="errorDetailsContainer" class="error-details-container hidden">
+          <div class="details-header">
+            <div class="details-header-left">
+              <div id="detailsCategoryBadge" class="category-icon-badge badge-red"></div>
+              <h3 id="detailsCategoryTitle" class="details-title">Activity Price – Error Details (9)</h3>
+            </div>
+
+            <div class="details-search-wrapper">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="detailsSearchInput" class="details-search-input" placeholder="Search material, description...">
+            </div>
+          </div>
+
+          <div id="groupsListContainer"></div>
+        </section>
+
+      </div>
+    </main>
+
+  </div>
+
+  <!-- =====================================================================
+       DESIGN 2: GEMINI DESIGN (INDEPENDENT IMPLEMENTATION)
+       Theme C: Blue-Purple Gradient
+       UX Structure: Segmented KPI Ribbon + Unified Hierarchical Tree-Table
+       ===================================================================== -->
+  <div id="design2Wrapper" class="design-view hidden">
+
+    <!-- Gemini Fixed Top Filter Bar -->
+    <header class="gemini-filter-bar">
+      <div class="gemini-filter-container">
+        
+        <div class="gemini-brand-wrap">
+          <span class="gemini-brand-title">Material Error Dashboard</span>
+          <span class="gemini-badge">Design 2</span>
+
+          <button id="geminiRecentsToggleBtn" class="gemini-btn-recents" title="Toggle Recent History">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Recents</span>
+          </button>
+        </div>
+
+        <div class="gemini-filters-row">
+          <!-- Plant Filter -->
+          <div class="gemini-field gemini-field-plant">
+            <label for="geminiPlantInput" class="gemini-label">Plant</label>
+            <div class="gemini-input-wrap">
+              <input type="text" id="geminiPlantInput" class="gemini-input" placeholder="Select Plant..." autocomplete="off">
+              <span class="gemini-arrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </div>
+            <div id="geminiPlantDropdown" class="gemini-dropdown hidden"></div>
+          </div>
+
+          <!-- Cost Variant Filter -->
+          <div class="gemini-field gemini-field-cv">
+            <label for="geminiCvInput" class="gemini-label">Cost Variant</label>
+            <div class="gemini-input-wrap">
+              <input type="text" id="geminiCvInput" class="gemini-input" placeholder="Select Cost Variant..." autocomplete="off">
+              <span class="gemini-arrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </div>
+            <div id="geminiCvDropdown" class="gemini-dropdown hidden"></div>
+          </div>
+
+          <!-- Material Filter -->
+          <div class="gemini-field gemini-field-material">
+            <label for="geminiMaterialInput" class="gemini-label">Material</label>
+            <input type="text" id="geminiMaterialInput" class="gemini-input" placeholder="Enter Material Number...">
+          </div>
+
+          <!-- Actions -->
+          <button id="geminiApplyBtn" class="gemini-btn-apply" title="Apply Filters">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span>Apply</span>
+          </button>
+
+          <button id="geminiRfBtn" class="gemini-btn-rf" title="Refresh">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Gemini Main View Container -->
+    <div class="gemini-main">
+      
+      <!-- Initial State (Before Apply) -->
+      <div id="geminiEmptyState" class="gemini-empty-state">
+        <div class="gemini-empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+        </div>
+        <h2 class="gemini-empty-title">Ready for Material Analysis</h2>
+        <p class="gemini-empty-subtitle">Select Plant and Cost Variant above, then click Apply to generate the unified error tree.</p>
+      </div>
+
+      <!-- Post-Apply Content Area -->
+      <div id="geminiContentArea" class="hidden">
+        
+        <!-- Five Error Summary Cards in Design 2 -->
+        <div class="gemini-kpi-ribbon">
+          <!-- Total Errors -->
+          <div class="gemini-kpi-segment card-total active" data-cat="all" title="View all error records">
+            <div class="gemini-kpi-progress-track" title="Total Errors (100%)">
+              <div id="geminiBarTotal" class="gemini-kpi-progress-fill bar-total" style="width: 100%;"></div>
+            </div>
+            <div class="gemini-kpi-header">
+              <span class="gemini-kpi-label">Total Errors</span>
+              <div class="gemini-kpi-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                  <polyline points="2 17 12 22 22 17"></polyline>
+                  <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+              </div>
+            </div>
+            <div class="gemini-kpi-val">
+              <span id="geminiKpiTotal">23</span>
+            </div>
+          </div>
+
+          <!-- Activity Price -->
+          <div class="gemini-kpi-segment card-ap" data-cat="activityPrice" title="View Activity Price errors">
+            <div class="gemini-kpi-progress-track" title="Activity Price: 39.1% of errors">
+              <div id="geminiBarAp" class="gemini-kpi-progress-fill bar-ap" style="width: 39.1%;"></div>
+            </div>
+            <div class="gemini-kpi-header">
+              <span class="gemini-kpi-label">Activity Price</span>
+              <div class="gemini-kpi-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                  <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="gemini-kpi-val">
+              <span id="geminiKpiAp">9</span>
+            </div>
+          </div>
+
+          <!-- UOM Mismatch -->
+          <div class="gemini-kpi-segment card-um" data-cat="uomMismatch" title="View Unit of Measure Mismatch errors">
+            <div class="gemini-kpi-progress-track" title="UOM Mismatch: 26.1% of errors">
+              <div id="geminiBarUm" class="gemini-kpi-progress-fill bar-um" style="width: 26.1%;"></div>
+            </div>
+            <div class="gemini-kpi-header">
+              <span class="gemini-kpi-label">UOM Mismatch</span>
+              <div class="gemini-kpi-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 3v18M6 8l6-5 6 5M3 13l3-5 3 5a3 3 0 0 1-6 0zm12 0l3-5 3 5a3 3 0 0 1-6 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="gemini-kpi-val">
+              <span id="geminiKpiUm">6</span>
+            </div>
+          </div>
+
+          <!-- Vendor Missing -->
+          <div class="gemini-kpi-segment card-vm" data-cat="vendorMissing" title="View Vendor Missing errors">
+            <div class="gemini-kpi-progress-track" title="Vendor Missing: 21.7% of errors">
+              <div id="geminiBarVm" class="gemini-kpi-progress-fill bar-vm" style="width: 21.7%;"></div>
+            </div>
+            <div class="gemini-kpi-header">
+              <span class="gemini-kpi-label">Vendor Missing</span>
+              <div class="gemini-kpi-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="gemini-kpi-val">
+              <span id="geminiKpiVm">5</span>
+            </div>
+          </div>
+
+          <!-- Source List Missing -->
+          <div class="gemini-kpi-segment card-sl" data-cat="sourceListMissing" title="View Source List Missing errors">
+            <div class="gemini-kpi-progress-track" title="Source List Missing: 13.0% of errors">
+              <div id="geminiBarSl" class="gemini-kpi-progress-fill bar-sl" style="width: 13.0%;"></div>
+            </div>
+            <div class="gemini-kpi-header">
+              <span class="gemini-kpi-label">Source List Missing</span>
+              <div class="gemini-kpi-icon-badge">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                  <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                  <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                  <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+              </div>
+            </div>
+            <div class="gemini-kpi-val">
+              <span id="geminiKpiSl">3</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Unified Hierarchical Tree-Table Card -->
+        <div class="gemini-tree-card">
+          <div class="gemini-tree-toolbar">
+            <div class="gemini-tree-heading">
+              <h3 class="gemini-tree-title">Unified Error Hierarchy</h3>
+              <span id="geminiVisibleBadge" class="gemini-tree-count-badge">Showing <span id="geminiVisibleCount">23</span> records</span>
+            </div>
+            <div class="gemini-toolbar-actions">
+              <div class="gemini-search-box">
+                <svg class="gemini-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <input type="text" id="geminiSearchInput" class="gemini-search-input" placeholder="Filter materials...">
+              </div>
+              <button id="geminiExpandAllBtn" class="gemini-btn-expand-all" title="Toggle all groups">
+                <svg class="expand-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="4 14 12 6 20 14"></polyline>
+                </svg>
+                <span class="btn-text">Collapse All</span>
+              </button>
+            </div>
+          </div>
+
+          <table class="gemini-tree-table">
+            <thead>
+              <tr>
+                <th style="width: 18%;">Material</th>
+                <th style="width: 20%;">Description</th>
+                <th style="width: 15%;">Error Type</th>
+                <th style="width: 8%;">Plant</th>
+                <th style="width: 8%;">Type</th>
+                <th style="width: 21%;">Actionable Resolution</th>
+                <th style="width: 10%;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="geminiTreeTableBody">
+              <!-- Dynamically populated hierarchical tree rows: Category -> Group -> Record -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =====================================================================
+       DESIGN 3: CLAUDE DESIGN (INDEPENDENT IMPLEMENTATION)
+       Theme D: Subtle Gradient Enterprise
+       UX Structure: Tabbed Accordion Console
+       ===================================================================== -->
+  <div id="design3Wrapper" class="design-view hidden">
+
+    <!-- Claude Fixed Top Filter Bar -->
+    <header class="claude-filter-bar">
+      <div class="claude-filter-container">
+        
+        <div class="claude-brand-wrap">
+          <span class="claude-brand-title">Material Error Dashboard</span>
+          <span class="claude-badge">Design 3</span>
+
+          <button id="claudeRecentsToggleBtn" class="claude-btn-recents" title="Toggle Recent History">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Recents</span>
+          </button>
+        </div>
+
+        <div class="claude-filters-row">
+          <!-- Plant Filter -->
+          <div class="claude-field claude-field-plant">
+            <label for="claudePlantInput" class="claude-label">Plant</label>
+            <div class="claude-input-wrap">
+              <input type="text" id="claudePlantInput" class="claude-input" placeholder="Select Plant..." autocomplete="off">
+              <span class="claude-arrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </div>
+            <div id="claudePlantDropdown" class="claude-dropdown hidden"></div>
+          </div>
+
+          <!-- Cost Variant Filter -->
+          <div class="claude-field claude-field-cv">
+            <label for="claudeCvInput" class="claude-label">Cost Variant</label>
+            <div class="claude-input-wrap">
+              <input type="text" id="claudeCvInput" class="claude-input" placeholder="Select Cost Variant..." autocomplete="off">
+              <span class="claude-arrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </div>
+            <div id="claudeCvDropdown" class="claude-dropdown hidden"></div>
+          </div>
+
+          <!-- Material Filter -->
+          <div class="claude-field claude-field-material">
+            <label for="claudeMaterialInput" class="claude-label">Material</label>
+            <input type="text" id="claudeMaterialInput" class="claude-input" placeholder="Enter Material Number...">
+          </div>
+
+          <!-- Actions -->
+          <button id="claudeApplyBtn" class="claude-btn-apply" title="Apply Filters">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span>Apply</span>
+          </button>
+
+          <button id="claudeRfBtn" class="claude-btn-rf" title="Refresh">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Claude Main View Container -->
+    <div class="claude-main">
+      
+      <!-- Initial State (Before Apply) -->
+      <div id="claudeEmptyState" class="claude-empty-state">
+        <div class="claude-empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+          </svg>
+        </div>
+        <h2 class="claude-empty-title">Ready for Material Analysis</h2>
+        <p class="claude-empty-subtitle">Select Plant and Cost Variant above, then click Apply to open the tabbed accordion console.</p>
+      </div>
+
+      <!-- Post-Apply Content Area -->
+      <div id="claudeContentArea" class="hidden">
+        
+        <!-- Five Summary Cards -->
+        <div class="claude-summary-cards">
+          <!-- Total Errors -->
+          <div class="claude-card active" data-tab="all">
+            <div class="claude-card-top">
+              <span class="claude-card-label">Total Errors</span>
+              <div class="claude-card-icon icon-total">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                  <polyline points="2 17 12 22 22 17"></polyline>
+                  <polyline points="2 12 12 17 22 12"></polyline>
+                </svg>
+              </div>
+            </div>
+            <span id="claudeCountTotal" class="claude-card-count">23</span>
+          </div>
+
+          <!-- Activity Price -->
+          <div class="claude-card" data-tab="activityPrice">
+            <div class="claude-card-top">
+              <span class="claude-card-label">Activity Price</span>
+              <div class="claude-card-icon icon-ap">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                </svg>
+              </div>
+            </div>
+            <span id="claudeCountAp" class="claude-card-count">9</span>
+          </div>
+
+          <!-- UOM Mismatch -->
+          <div class="claude-card" data-tab="uomMismatch">
+            <div class="claude-card-top">
+              <span class="claude-card-label">UOM Mismatch</span>
+              <div class="claude-card-icon icon-um">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 3v18M6 8l6-5 6 5M3 13l3-5 3 5a3 3 0 0 1-6 0zm12 0l3-5 3 5a3 3 0 0 1-6 0z"></path>
+                </svg>
+              </div>
+            </div>
+            <span id="claudeCountUm" class="claude-card-count">6</span>
+          </div>
+
+          <!-- Vendor Missing -->
+          <div class="claude-card" data-tab="vendorMissing">
+            <div class="claude-card-top">
+              <span class="claude-card-label">Vendor Missing</span>
+              <div class="claude-card-icon icon-vm">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                </svg>
+              </div>
+            </div>
+            <span id="claudeCountVm" class="claude-card-count">5</span>
+          </div>
+
+          <!-- Source List Missing -->
+          <div class="claude-card" data-tab="sourceListMissing">
+            <div class="claude-card-top">
+              <span class="claude-card-label">Source List Missing</span>
+              <div class="claude-card-icon icon-sl">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="8" y1="6" x2="21" y2="6"></line>
+                  <line x1="8" y1="12" x2="21" y2="12"></line>
+                  <line x1="8" y1="18" x2="21" y2="18"></line>
+                </svg>
+              </div>
+            </div>
+            <span id="claudeCountSl" class="claude-card-count">3</span>
+          </div>
+        </div>
+
+        <!-- Tabbed Accordion Console -->
+        <div class="claude-console">
+          
+          <!-- Category Tabs Bar -->
+          <div class="claude-tabs-bar">
+            <div class="claude-tabs-list" role="tablist">
+              <button class="claude-tab-btn active" data-tab="all" role="tab">
+                <span>All Errors</span>
+                <span class="claude-tab-count">23</span>
+              </button>
+              <button class="claude-tab-btn" data-tab="activityPrice" role="tab">
+                <span>Activity Price</span>
+                <span class="claude-tab-count">9</span>
+              </button>
+              <button class="claude-tab-btn" data-tab="uomMismatch" role="tab">
+                <span>UOM Mismatch</span>
+                <span class="claude-tab-count">6</span>
+              </button>
+              <button class="claude-tab-btn" data-tab="vendorMissing" role="tab">
+                <span>Vendor Missing</span>
+                <span class="claude-tab-count">5</span>
+              </button>
+              <button class="claude-tab-btn" data-tab="sourceListMissing" role="tab">
+                <span>Source List Missing</span>
+                <span class="claude-tab-count">3</span>
+              </button>
+            </div>
+
+            <!-- In-Console Quick Search -->
+            <div class="claude-tab-search">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="claudeTabSearchInput" placeholder="Search within category...">
+            </div>
+          </div>
+
+          <!-- Accordions Body -->
+          <div id="claudeAccordionsBody" class="claude-accordions-body">
+            <!-- Dynamically populated group accordions containing individual record tables -->
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =====================================================================
+       DESIGN 4: SAP HORIZON TRIAGE COMMAND CENTER (INDEPENDENT IMPLEMENTATION)
+       SAP Horizon 2024 color tokens + Severity-first split-pane layout
+       SVG Donut Ring KPIs + Fix Command Console + Inline Timeline
+       ===================================================================== -->
+  <div id="design4Wrapper" class="design-view hidden">
+
+    <!-- Design 4 Fixed Filter Bar -->
+    <header class="d4-filter-bar">
+      <div class="d4-filter-container">
+
+        <div class="d4-brand-wrap">
+          <span class="d4-brand-title">Material Error Dashboard</span>
+          <span class="d4-badge">Design 4</span>
+          <button id="d4RecentsBtn" class="d4-btn-recents" title="Toggle Recent History">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>Recents</span>
+          </button>
+        </div>
+
+        <div class="d4-filters-row">
+          <!-- Plant -->
+          <div class="d4-field d4-field-plant">
+            <label for="d4PlantInput" class="d4-label">Plant</label>
+            <div class="d4-input-wrap">
+              <input type="text" id="d4PlantInput" class="d4-input" placeholder="Select Plant..." autocomplete="off">
+              <span class="d4-arrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </div>
+            <div id="d4PlantDropdown" class="d4-dropdown hidden"></div>
+          </div>
+
+          <!-- Cost Variant -->
+          <div class="d4-field d4-field-cv">
+            <label for="d4CvInput" class="d4-label">Cost Variant</label>
+            <div class="d4-input-wrap">
+              <input type="text" id="d4CvInput" class="d4-input" placeholder="Select Cost Variant..." autocomplete="off">
+              <span class="d4-arrow">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </span>
+            </div>
+            <div id="d4CvDropdown" class="d4-dropdown hidden"></div>
+          </div>
+
+          <!-- Material -->
+          <div class="d4-field d4-field-mat">
+            <label for="d4MatInput" class="d4-label">Material</label>
+            <input type="text" id="d4MatInput" class="d4-input" placeholder="Enter Material Number...">
+          </div>
+
+          <!-- Actions -->
+          <button id="d4ApplyBtn" class="d4-btn-apply" title="Apply Filters">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            <span>Apply</span>
+          </button>
+          <button id="d4RfBtn" class="d4-btn-rf" title="Refresh">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- Design 4 Main View -->
+    <div class="d4-main">
+
+      <!-- Initial State (Before Apply) -->
+      <div id="d4EmptyState" class="d4-empty-state">
+        <div class="d4-empty-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+        </div>
+        <h2 class="d4-empty-title">SAP Horizon Triage Console</h2>
+        <p class="d4-empty-sub">Select Plant and Cost Variant, then click Apply to load the severity-based error triage view.</p>
+      </div>
+
+      <!-- Post-Apply Content -->
+      <div id="d4ContentArea" class="hidden">
+
+        <!-- KPI Ring Ribbon -->
+        <div id="d4KpiRibbon" class="d4-kpi-ribbon"></div>
+
+        <!-- Full Width Severity Triage Card -->
+        <div class="d4-triage-card">
+          <div class="d4-triage-header">
+            <div class="d4-triage-title-group">
+              <h3 class="d4-triage-title">Severity Triage Console</h3>
+              <span id="d4TriageCount" class="d4-triage-count">23 records</span>
+            </div>
+            <div class="d4-triage-toolbar">
+              <div class="d4-triage-search">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text" id="d4TriageSearch" placeholder="Search material, error, plant...">
+              </div>
+              <button id="d4CollapseAllBtn" class="d4-btn-tool" title="Collapse expanded rows">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 14 12 6 20 14"/></svg>
+                <span>Collapse Details</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="d4-triage-body">
+            <table class="d4-triage-table">
+              <thead>
+                <tr>
+                  <th style="width: 105px;">Severity</th>
+                  <th style="width: 14%;">Material</th>
+                  <th style="width: 22%;">Description</th>
+                  <th style="width: 15%;">Error Type</th>
+                  <th style="width: 80px;">Plant</th>
+                  <th style="width: 75px;">Type</th>
+                  <th style="width: 26%;">Actionable Resolution</th>
+                  <th style="width: 110px; text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="d4TriageBody">
+                <!-- Dynamic data rows + inline expandable accordion panels -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- =====================================================================
+       SHARED LEFT RECENTS DRAWER (Light Theme, Plain Titles)
+       Accessible and active across all 3 designs
+       ===================================================================== -->
+  <aside id="recentsDrawer" class="recents-drawer hidden">
+    <div class="recents-drawer-header">
+      <div class="recents-drawer-title-group">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+        <span class="recents-drawer-heading">Recents</span>
+      </div>
+      <button id="closeRecentsDrawerBtn" class="btn-icon" title="Close Recents">✕</button>
+    </div>
+    <div id="recentsList" class="recents-list-light"></div>
+  </aside>
+
+  <!-- =====================================================================
+       SHARED FLOATING CHATBOT (Material Assistant)
+       Executive Copilot fixed at bottom-right of viewport, floats over all views
+       ===================================================================== -->
+  
+  <!-- Floating Chatbot Toggle Button -->
+  <button id="chatbotToggleBtn" class="floating-chatbot-btn" title="Open Material Assistant">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+      <rect x="3" y="10" width="18" height="12" rx="4"></rect>
+      <line x1="8" y1="15" x2="8.01" y2="15" stroke-width="3"></line>
+      <line x1="16" y1="15" x2="16.01" y2="15" stroke-width="3"></line>
+    </svg>
+    <span class="chatbot-badge-dot"></span>
+  </button>
+
+  <!-- Floating Chatbot Popup Overlay Window -->
+  <div id="chatbotPopup" class="chatbot-popup hidden">
+    <!-- Chatbot Header -->
+    <div class="chatbot-header">
+      <div class="chatbot-header-left">
+        <div class="chatbot-avatar">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v1a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path><rect x="3" y="10" width="18" height="12" rx="4"></rect><line x1="8" y1="15" x2="8.01" y2="15" stroke-width="3"></line><line x1="16" y1="15" x2="16.01" y2="15" stroke-width="3"></line></svg>
+        </div>
+        <div class="chatbot-title-group">
+          <span class="chatbot-title">Material Assistant</span>
+          <span class="chatbot-status-indicator">
+            <span class="pulse-dot"></span> Online Copilot
+          </span>
+        </div>
+      </div>
+      <div class="chatbot-header-btns">
+        <button id="chatbotMinimizeBtn" class="btn-icon" title="Minimize">—</button>
+        <button id="chatbotCloseBtn" class="btn-icon" title="Close">✕</button>
+      </div>
+    </div>
+
+    <!-- Chat Messages Container -->
+    <div id="chatbotBody" class="chatbot-body">
+      <div id="chatbotMessages">
+        <div class="chatbot-bubble">
+          <strong>Hello! I am your Material Assistant AI Copilot.</strong><br>
+          I can help analyze and resolve material costing errors across SAP ERP.<br><br>
+          You can chat with me freely below, or click <strong>'✦ Fix'</strong> on any error record to initiate an automated resolution.
+        </div>
+        <div class="chat-chips-row">
+          <button class="chat-chip" data-query="Explain Costing Errors">Explain Costing Errors</button>
+          <button class="chat-chip" data-query="How to fix Activity Price?">How to fix Activity Price?</button>
+          <button class="chat-chip" data-query="KP26 Tariff Rates">KP26 Tariff Rates</button>
+          <button class="chat-chip" data-query="Plant IN10 Overview">Plant IN10 Overview</button>
+        </div>
+        <div id="chatbotTimestamp" class="chatbot-time">10:24 AM</div>
+      </div>
+    </div>
+
+    <!-- Chatbot Action Buttons (Visible ONLY during an active pending fix) -->
+    <div id="chatbotActions" class="chatbot-actions hidden">
+      <button id="chatbotFixActionBtn" class="btn-chat-fix">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+        <span>Fix</span>
+      </button>
+      <button id="chatbotCancelActionBtn" class="btn-chat-cancel">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+        <span>Cancel</span>
+      </button>
+    </div>
+
+    <!-- Normal Interactive AI Chat Input Bar -->
+    <div id="chatbotInputBar" class="chatbot-input-bar">
+      <input type="text" id="chatUserInput" class="chat-user-input" placeholder="Ask AI Assistant or type SAP command..." autocomplete="off">
+      <button id="chatSendBtn" class="btn-chat-send" title="Send message">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/data.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/design-gemini.js"></script>
+  <script src="js/design-claude.js"></script>
+  <script src="js/design-4.js"></script>
+  <script src="js/design-switcher.js"></script>
+
+</body>
+</html>
