@@ -4,7 +4,6 @@
   "description": "Modern SAP Fiori Material Error Dashboard with Integrated Chatbot",
   "scripts": {
     "start": "node local-server.js",
-    "build": "echo 'Static build ready'",
     "test": "node --test test/*.test.js"
   },
   "keywords": [
