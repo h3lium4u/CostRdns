@@ -199,6 +199,24 @@
 #design2Wrapper .gemini-field-cv .gemini-input      { width: 175px; }
 #design2Wrapper .gemini-field-material .gemini-input { width: 200px; padding-right: 0.85rem; }
 
+/* Responsive: compress filter bar for narrower viewports */
+@media (max-width: 1440px) {
+  #design2Wrapper .gemini-filter-bar { padding: 0.75rem 1.5rem; }
+  #design2Wrapper .gemini-filters-row { gap: 0.9rem; }
+  #design2Wrapper .gemini-field-plant .gemini-input   { width: 130px; }
+  #design2Wrapper .gemini-field-cv .gemini-input      { width: 145px; }
+  #design2Wrapper .gemini-field-material .gemini-input { width: 160px; }
+}
+
+@media (max-width: 1280px) {
+  #design2Wrapper .gemini-filter-container { gap: 1rem; }
+  #design2Wrapper .gemini-filters-row { gap: 0.65rem; }
+  #design2Wrapper .gemini-field-plant .gemini-input   { width: 115px; }
+  #design2Wrapper .gemini-field-cv .gemini-input      { width: 125px; }
+  #design2Wrapper .gemini-field-material .gemini-input { width: 140px; }
+  #design2Wrapper .gemini-btn-apply { padding: 0 1rem; font-size: 0.82rem; }
+}
+
 #design2Wrapper .gemini-dropdown {
   position: absolute;
   top: calc(100% + 5px);
