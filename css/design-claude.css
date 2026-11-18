@@ -43,7 +43,6 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   padding-bottom: 5rem;
   position: relative;
-  overflow-x: hidden;
 }
 
 /* Optional glowing ambient shapes for aurora depth */
@@ -73,8 +72,8 @@
   z-index: 0;
 }
 
-#design3Wrapper * {
-  box-sizing: border-box;
+#design3Wrapper .claude-filter-bar,
+#design3Wrapper .claude-main {
   position: relative;
   z-index: 1;
 }
@@ -337,7 +336,11 @@
 #design3Wrapper .claude-main {
   max-width: 1720px;
   margin: 0 auto;
-  padding: 2rem 2.5rem;
+  padding: 1.75rem 2.5rem 2.5rem 2.5rem;
+}
+
+#design3Wrapper #claudeContentArea {
+  margin-top: 0.5rem;
 }
 
 /* Initial State: Empty Prompt with Frosted Glass Surface */
@@ -388,6 +391,7 @@
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 1.25rem;
+  margin-top: 0.5rem;
   margin-bottom: 2rem;
 }
 
@@ -811,6 +815,32 @@ body:has(#design3Wrapper:not(.hidden)) .chatbot-header,
   color: #FFFFFF;
   border-radius: 17px 17px 0 0;
   box-shadow: 0 2px 10px rgba(7, 59, 140, 0.15);
+}
+
+body:has(#design3Wrapper:not(.hidden)) .chatbot-title,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .chatbot-title {
+  color: #FFFFFF !important;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-shadow: 0 1px 3px rgba(7, 59, 140, 0.4);
+}
+
+body:has(#design3Wrapper:not(.hidden)) .chatbot-status-indicator,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .chatbot-status-indicator {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+body:has(#design3Wrapper:not(.hidden)) .chatbot-header .btn-icon,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .chatbot-header .btn-icon {
+  color: #FFFFFF !important;
+  opacity: 0.9;
+  transition: opacity 0.15s ease, background 0.15s ease;
+}
+
+body:has(#design3Wrapper:not(.hidden)) .chatbot-header .btn-icon:hover,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .chatbot-header .btn-icon:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 body:has(#design3Wrapper:not(.hidden)) .btn-chat-fix,
