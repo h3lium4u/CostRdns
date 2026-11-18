@@ -1,31 +1,97 @@
 /* ==========================================================================
    Design 3: Claude Design - Scoped Stylesheet
-   Theme D: Subtle Gradient Enterprise
-   Palette: Primary Blue (#2563EB), Secondary Blue (#60A5FA), Light Blue (#EFF6FF),
-            Soft Lavender (#F3F0FF), Background (#F7F9FC), Card (#FFFFFF),
-            Primary Text (#1E293B), Secondary Text (#64748B), Borders (#E5EAF2)
-   UX Structure: Tabbed Accordion Console
+   Theme: Blue Frosted Glass + Aurora Gradient
+   Palette:
+     Deep Navy:    #073B8C (Header and strong accents)
+     Royal Blue:   #1266D6 (Primary actions & links)
+     Cyan:         #21A6E8 (Gradient highlights)
+     Violet:       #6757D9 (Secondary gradient accents)
+     Ice Blue:     #EAF4FF (Selected surfaces)
+     Lavender:     #F2F0FF (Subtle highlights)
+     Background:   #F7FAFF (Aurora Gradient Base)
+     White:        #FFFFFF (Solid content surfaces)
+   UX Structure: Tabbed Accordion Console (Preserved 1:1)
    ========================================================================== */
 
+/* ── 1. Root Tokens & Aurora Gradient Background ── */
 #design3Wrapper {
-  background-color: #F7F9FC;
-  min-height: calc(100vh - 45px);
-  color: #1E293B;
+  --c-deep-navy:       #073B8C;
+  --c-royal-blue:      #1266D6;
+  --c-cyan:            #21A6E8;
+  --c-violet:          #6757D9;
+  --c-ice-blue:        #EAF4FF;
+  --c-lavender:        #F2F0FF;
+  --c-bg:              #F7FAFF;
+  --c-white:           #FFFFFF;
+  --c-text-primary:    #0F172A;
+  --c-text-secondary:  #475569;
+  --c-text-muted:      #64748B;
+  --c-border-glass:    rgba(255, 255, 255, 0.70);
+  --c-border-subtle:   rgba(18, 102, 214, 0.14);
+
+  /* Subtle Aurora Gradient Background */
+  background-color: var(--c-bg);
+  background-image:
+    radial-gradient(circle at 10% 15%, rgba(33, 166, 232, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 88% 18%, rgba(103, 87, 217, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 50% 65%, rgba(18, 102, 214, 0.12) 0%, transparent 55%),
+    radial-gradient(circle at 80% 90%, rgba(33, 166, 232, 0.15) 0%, transparent 42%),
+    linear-gradient(140deg, #EAF4FF 0%, #F5F3FF 45%, #EBF4FE 100%);
+  background-attachment: fixed;
+  min-height: calc(100vh - 48px);
+  color: var(--c-text-primary);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   padding-bottom: 5rem;
+  position: relative;
+  overflow-x: hidden;
 }
 
-/* 1. Claude Fixed Top Filter Bar */
+/* Optional glowing ambient shapes for aurora depth */
+#design3Wrapper::before {
+  content: "";
+  position: fixed;
+  top: 12%;
+  left: 3%;
+  width: 460px;
+  height: 460px;
+  background: radial-gradient(circle, rgba(33, 166, 232, 0.22) 0%, rgba(103, 87, 217, 0.14) 50%, transparent 70%);
+  filter: blur(65px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#design3Wrapper::after {
+  content: "";
+  position: fixed;
+  top: 52%;
+  right: 4%;
+  width: 520px;
+  height: 520px;
+  background: radial-gradient(circle, rgba(18, 102, 214, 0.18) 0%, rgba(103, 87, 217, 0.16) 50%, transparent 70%);
+  filter: blur(75px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#design3Wrapper * {
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── 2. Premium Blue-Cyan-Violet Gradient Header & Frosted Filter Bar ── */
 #design3Wrapper .claude-filter-bar {
   position: sticky;
-  top: 48px;
+  top: 48px; /* Sticks directly below 48px selector bar */
   left: 0;
   right: 0;
   z-index: 900;
-  background: #FFFFFF;
-  border-bottom: 1px solid #E5EAF2;
-  box-shadow: 0 2px 10px rgba(30, 41, 59, 0.03);
-  padding: 0.85rem 2.5rem;
+  background: linear-gradient(120deg, rgba(7, 59, 140, 0.94) 0%, rgba(18, 102, 214, 0.91) 45%, rgba(33, 166, 232, 0.88) 75%, rgba(103, 87, 217, 0.91) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.28);
+  box-shadow: 0 8px 30px rgba(7, 59, 140, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  padding: 0.9rem 2.5rem;
 }
 
 #design3Wrapper .claude-filter-container {
@@ -46,59 +112,64 @@
 }
 
 #design3Wrapper .claude-brand-title {
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   font-weight: 700;
-  color: #1E293B;
+  color: #FFFFFF;
   letter-spacing: -0.02em;
   white-space: nowrap;
+  text-shadow: 0 2px 4px rgba(7, 59, 140, 0.35);
 }
 
 #design3Wrapper .claude-badge {
   font-size: 0.68rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  padding: 0.2rem 0.55rem;
+  padding: 0.22rem 0.65rem;
   border-radius: 9999px;
-  background: #F3F0FF;
-  color: #7C3AED;
-  border: 1px solid #DDD6FE;
+  background: rgba(255, 255, 255, 0.20);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 #design3Wrapper .claude-btn-recents {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  background-color: #ffffff;
-  border: 1px solid #E5EAF2;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   border-radius: 9999px;
   padding: 0.35rem 0.85rem;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #1E293B;
+  color: #FFFFFF;
   cursor: pointer;
   transition: all 0.18s ease;
   font-family: inherit;
-  box-shadow: 0 1px 2px rgba(30, 41, 59, 0.04);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 #design3Wrapper .claude-btn-recents svg {
-  color: #2563EB;
-  transition: color 0.18s ease;
+  color: #FFFFFF;
+  transition: transform 0.18s ease;
 }
 
 #design3Wrapper .claude-btn-recents:hover,
 #design3Wrapper .claude-btn-recents.active {
-  background: #EFF6FF;
-  border-color: #60A5FA;
-  color: #2563EB;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+  background: rgba(255, 255, 255, 0.32);
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
 }
 
 #design3Wrapper .claude-filters-row {
   display: flex;
   align-items: flex-end;
-  gap: 1.35rem;
+  gap: 1.25rem;
   flex-wrap: nowrap;
   margin-left: auto;
 }
@@ -112,8 +183,11 @@
 
 #design3Wrapper .claude-label {
   font-size: 0.74rem;
-  font-weight: 600;
-  color: #64748B;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(7, 59, 140, 0.3);
 }
 
 #design3Wrapper .claude-input-wrap {
@@ -125,32 +199,39 @@
 #design3Wrapper .claude-input {
   height: 38px;
   box-sizing: border-box;
-  border: 1px solid #E5EAF2;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 9px;
   padding: 0 2rem 0 0.85rem;
   font-size: 0.86rem;
-  font-weight: 500;
-  color: #1E293B;
+  font-weight: 600;
+  color: #073B8C;
   background: #FFFFFF;
   outline: none;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
   font-family: inherit;
+  box-shadow: 0 2px 8px rgba(7, 59, 140, 0.10);
+}
+
+#design3Wrapper .claude-input::placeholder {
+  color: #94A3B8;
+  font-weight: 500;
 }
 
 #design3Wrapper .claude-input:hover {
-  border-color: #60A5FA;
+  border-color: #FFFFFF;
+  box-shadow: 0 3px 12px rgba(7, 59, 140, 0.16);
 }
 
 #design3Wrapper .claude-input:focus {
-  border-color: #2563EB;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: #21A6E8;
+  box-shadow: 0 0 0 3px rgba(33, 166, 232, 0.35), 0 3px 10px rgba(7, 59, 140, 0.15);
 }
 
 #design3Wrapper .claude-arrow {
   position: absolute;
   right: 12px;
   pointer-events: none;
-  color: #94A3B8;
+  color: #64748B;
   display: flex;
   align-items: center;
 }
@@ -161,160 +242,199 @@
 
 #design3Wrapper .claude-dropdown {
   position: absolute;
-  top: calc(100% + 5px);
+  top: calc(100% + 6px);
   left: 0;
   width: 100%;
   max-height: 220px;
   overflow-y: auto;
-  background: #FFFFFF;
-  border: 1px solid #E5EAF2;
-  border-radius: 8px;
-  box-shadow: 0 8px 24px rgba(30, 41, 59, 0.08);
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(33, 166, 232, 0.3);
+  border-radius: 10px;
+  box-shadow: 0 14px 38px rgba(7, 59, 140, 0.22);
   z-index: 1020;
 }
 
 #design3Wrapper .claude-dropdown-item {
-  padding: 0.6rem 0.85rem;
+  padding: 0.65rem 0.95rem;
   font-size: 0.84rem;
-  color: #1E293B;
+  color: #0F172A;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: all 0.14s ease;
 }
 
 #design3Wrapper .claude-dropdown-item:hover {
-  background-color: #EFF6FF;
-  color: #2563EB;
+  background-color: var(--c-ice-blue);
+  color: var(--c-royal-blue);
 }
 
 #design3Wrapper .claude-dropdown-item.selected {
-  background-color: #EFF6FF;
-  color: #2563EB;
-  font-weight: 600;
+  background-color: var(--c-ice-blue);
+  color: var(--c-royal-blue);
+  font-weight: 700;
 }
 
+/* Primary Action: Royal Blue Gradient Button with Glow */
 #design3Wrapper .claude-btn-apply {
   height: 38px;
   padding: 0 1.45rem;
-  border-radius: 8px;
-  background-color: #2563EB;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #1266D6 0%, #21A6E8 100%);
   color: #FFFFFF;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.40);
   font-size: 0.88rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
-  transition: all 0.18s ease;
+  box-shadow: 0 4px 14px rgba(18, 102, 214, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.30);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   font-family: inherit;
+  white-space: nowrap;
 }
 
 #design3Wrapper .claude-btn-apply:hover {
-  background-color: #1D4ED8;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  background: linear-gradient(135deg, #073B8C 0%, #1266D6 55%, #21A6E8 100%);
+  box-shadow: 0 6px 20px rgba(18, 102, 214, 0.52);
   transform: translateY(-1px);
 }
 
+#design3Wrapper .claude-btn-apply:active {
+  transform: translateY(0);
+}
+
+/* Secondary Action: Clean Frosted Outlined Refresh Button */
 #design3Wrapper .claude-btn-rf {
   height: 38px;
   padding: 0 0.85rem;
-  border-radius: 8px;
-  background: #FFFFFF;
-  color: #64748B;
-  border: 1px solid #E5EAF2;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.18);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.45);
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
   font-family: inherit;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 #design3Wrapper .claude-btn-rf:hover {
-  background: #EFF6FF;
-  border-color: #60A5FA;
-  color: #2563EB;
+  background: rgba(255, 255, 255, 0.32);
+  border-color: #FFFFFF;
+  color: #FFFFFF;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
 }
 
-/* 2. Main Container */
+/* ── 3. Main Container ── */
 #design3Wrapper .claude-main {
   max-width: 1720px;
   margin: 0 auto;
-  padding: 1.75rem 2.5rem;
+  padding: 2rem 2.5rem;
 }
 
-/* Initial State: Empty prompt */
+/* Initial State: Empty Prompt with Frosted Glass Surface */
 #design3Wrapper .claude-empty-state {
-  background: #FFFFFF;
-  border: 1px solid #E5EAF2;
-  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  border-radius: 18px;
   padding: 5rem 2rem;
   text-align: center;
   margin-top: 2rem;
-  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.02);
+  box-shadow: 0 12px 36px rgba(30, 80, 160, 0.08);
 }
 
 #design3Wrapper .claude-empty-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  background: #EFF6FF;
-  color: #2563EB;
+  width: 68px;
+  height: 68px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(18, 102, 214, 0.12) 0%, rgba(103, 87, 217, 0.15) 100%);
+  color: var(--c-royal-blue);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.25rem;
+  border: 1px solid rgba(18, 102, 214, 0.20);
+  box-shadow: 0 4px 14px rgba(18, 102, 214, 0.12);
 }
 
 #design3Wrapper .claude-empty-title {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--c-deep-navy);
   margin-bottom: 0.45rem;
+  letter-spacing: -0.01em;
 }
 
 #design3Wrapper .claude-empty-subtitle {
-  font-size: 0.92rem;
-  color: #64748B;
+  font-size: 0.94rem;
+  color: var(--c-text-muted);
   max-width: 520px;
   margin: 0 auto;
+  line-height: 1.5;
 }
 
-/* 3. Five Summary Cards (Claude Subtle Style) */
+/* ── 4. Five Summary Cards (Frosted Glass Surfaces + Aurora Accents) ── */
 #design3Wrapper .claude-summary-cards {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 1.15rem;
-  margin-bottom: 1.75rem;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
 }
 
 #design3Wrapper .claude-card {
-  background: #FFFFFF;
-  border: 1px solid #E5EAF2;
-  border-radius: 12px;
-  padding: 1.15rem 1.25rem;
-  box-shadow: 0 2px 8px rgba(30, 41, 59, 0.02);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.80);
+  border-radius: 14px;
+  padding: 1.25rem 1.35rem;
+  box-shadow: 0 8px 26px rgba(30, 80, 160, 0.08);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.6rem;
+  overflow: hidden;
+}
+
+#design3Wrapper .claude-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: transparent;
+  transition: all 0.2s ease;
 }
 
 #design3Wrapper .claude-card:hover {
-  border-color: #60A5FA;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.08);
+  border-color: rgba(33, 166, 232, 0.55);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(18, 102, 214, 0.16);
+  background: rgba(255, 255, 255, 0.88);
 }
 
+/* Stronger blue/aurora treatment for selected card */
 #design3Wrapper .claude-card.active {
-  background: #F8FAFF;
-  border-color: #2563EB;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+  background: linear-gradient(145deg, rgba(234, 244, 255, 0.92) 0%, rgba(242, 240, 255, 0.90) 100%);
+  border: 1.5px solid var(--c-royal-blue);
+  box-shadow: 0 12px 34px rgba(18, 102, 214, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+#design3Wrapper .claude-card.active::before {
+  background: linear-gradient(90deg, #073B8C 0%, #1266D6 45%, #21A6E8 75%, #6757D9 100%);
 }
 
 #design3Wrapper .claude-card-top {
@@ -324,50 +444,65 @@
 }
 
 #design3Wrapper .claude-card-label {
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: #64748B;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--c-text-secondary);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+#design3Wrapper .claude-card.active .claude-card-label {
+  color: var(--c-deep-navy);
 }
 
 #design3Wrapper .claude-card-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-#design3Wrapper .icon-total { background: #F3F0FF; color: #7C3AED; }
-#design3Wrapper .icon-ap { background: #FEF2F2; color: #EF4444; }
-#design3Wrapper .icon-um { background: #FFFBEB; color: #F59E0B; }
-#design3Wrapper .icon-vm { background: #EFF6FF; color: #2563EB; }
-#design3Wrapper .icon-sl { background: #ECFDF5; color: #10B981; }
+#design3Wrapper .icon-total { background: #F2F0FF; color: #6757D9; border: 1px solid #DDD6FE; }
+#design3Wrapper .icon-ap    { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+#design3Wrapper .icon-um    { background: #FFFBEB; color: #D97706; border: 1px solid #FDE68A; }
+#design3Wrapper .icon-vm    { background: #EAF4FF; color: #1266D6; border: 1px solid #BFDBFE; }
+#design3Wrapper .icon-sl    { background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; }
 
 #design3Wrapper .claude-card-count {
-  font-size: 1.85rem;
-  font-weight: 700;
-  color: #1E293B;
+  font-size: 2.15rem;
+  font-weight: 800;
+  color: var(--c-deep-navy);
   line-height: 1;
+  letter-spacing: -0.02em;
 }
 
-/* 4. Tabbed Accordion Console */
+#design3Wrapper .claude-card.active .claude-card-count {
+  color: var(--c-royal-blue);
+}
+
+/* ── 5. Tabbed Accordion Console (Frosted Glass Container) ── */
 #design3Wrapper .claude-console {
-  background: #FFFFFF;
-  border: 1px solid #E5EAF2;
-  border-radius: 14px;
-  box-shadow: 0 2px 10px rgba(30, 41, 59, 0.03);
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.80);
+  border-radius: 16px;
+  box-shadow: 0 12px 38px rgba(30, 80, 160, 0.08);
   overflow: hidden;
 }
 
-/* Category Console Tabs */
+/* Category Console Tabs Bar */
 #design3Wrapper .claude-tabs-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #E5EAF2;
+  border-bottom: 1px solid rgba(18, 102, 214, 0.12);
   padding: 0 1.5rem;
-  background-color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(12px);
 }
 
 #design3Wrapper .claude-tabs-list {
@@ -381,22 +516,22 @@
   padding: 1.15rem 1.15rem;
   font-size: 0.88rem;
   font-weight: 600;
-  color: #64748B;
+  color: var(--c-text-muted);
   cursor: pointer;
   position: relative;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.5rem;
   font-family: inherit;
 }
 
 #design3Wrapper .claude-tab-btn:hover {
-  color: #1E293B;
+  color: var(--c-royal-blue);
 }
 
 #design3Wrapper .claude-tab-btn.active {
-  color: #2563EB;
+  color: var(--c-deep-navy);
   font-weight: 700;
 }
 
@@ -406,25 +541,30 @@
   bottom: -1px;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, #2563EB 0%, #60A5FA 100%);
-  border-radius: 2px 2px 0 0;
+  height: 3px;
+  background: linear-gradient(90deg, #073B8C 0%, #1266D6 50%, #21A6E8 100%);
+  border-radius: 3px 3px 0 0;
+  box-shadow: 0 -1px 8px rgba(33, 166, 232, 0.45);
 }
 
 #design3Wrapper .claude-tab-count {
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 0.15rem 0.5rem;
+  padding: 0.18rem 0.55rem;
   border-radius: 9999px;
   background-color: #F1F5F9;
-  color: #64748B;
+  color: var(--c-text-muted);
+  border: 1px solid #E2E8F0;
+  transition: all 0.18s ease;
 }
 
 #design3Wrapper .claude-tab-btn.active .claude-tab-count {
-  background-color: #EFF6FF;
-  color: #2563EB;
+  background-color: var(--c-ice-blue);
+  color: var(--c-royal-blue);
+  border-color: #BFDBFE;
 }
 
+/* Live Search in Tabs */
 #design3Wrapper .claude-tab-search {
   position: relative;
   display: flex;
@@ -432,79 +572,90 @@
 }
 
 #design3Wrapper .claude-tab-search input {
-  height: 34px;
-  width: 240px;
-  border: 1px solid #E5EAF2;
-  border-radius: 6px;
-  padding: 0 1rem 0 2rem;
-  font-size: 0.82rem;
-  color: #1E293B;
+  height: 36px;
+  width: 250px;
+  border: 1px solid rgba(18, 102, 214, 0.18);
+  border-radius: 8px;
+  padding: 0 1rem 0 2.2rem;
+  font-size: 0.84rem;
+  color: var(--c-deep-navy);
+  background: rgba(255, 255, 255, 0.85);
   outline: none;
   font-family: inherit;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(18, 102, 214, 0.04);
+}
+
+#design3Wrapper .claude-tab-search input::placeholder {
+  color: #94A3B8;
 }
 
 #design3Wrapper .claude-tab-search input:focus {
-  border-color: #60A5FA;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.08);
+  border-color: var(--c-cyan);
+  background: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(33, 166, 232, 0.25);
 }
 
 #design3Wrapper .claude-tab-search svg {
   position: absolute;
-  left: 8px;
+  left: 9px;
   color: #94A3B8;
   pointer-events: none;
 }
 
-/* Accordion Groups Container */
+/* ── 6. Accordion Groups Container ── */
 #design3Wrapper .claude-accordions-body {
-  padding: 1.5rem;
+  padding: 1.65rem;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.15rem;
 }
 
 #design3Wrapper .claude-group-accordion {
-  border: 1px solid #E5EAF2;
-  border-radius: 10px;
+  border: 1px solid rgba(18, 102, 214, 0.12);
+  border-radius: 12px;
   background: #FFFFFF;
   overflow: hidden;
-  transition: border-color 0.15s ease;
+  box-shadow: 0 4px 16px rgba(30, 80, 160, 0.04);
+  transition: all 0.18s ease;
 }
 
 #design3Wrapper .claude-group-accordion:hover {
-  border-color: #CBD5E1;
+  border-color: rgba(33, 166, 232, 0.40);
+  box-shadow: 0 6px 20px rgba(18, 102, 214, 0.08);
 }
 
 #design3Wrapper .claude-accordion-header {
-  padding: 1rem 1.25rem;
+  padding: 1.05rem 1.35rem;
   background: #F8FAFF;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.15s ease;
+  transition: all 0.18s ease;
+  border-left: 4px solid transparent;
 }
 
 #design3Wrapper .claude-accordion-header:hover {
-  background: #EFF6FF;
+  background: var(--c-ice-blue);
+  border-left-color: var(--c-cyan);
 }
 
 #design3Wrapper .claude-accordion-left {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 #design3Wrapper .claude-chevron {
   width: 18px;
   height: 18px;
-  color: #64748B;
+  color: var(--c-royal-blue);
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 #design3Wrapper .claude-chevron.expanded {
@@ -512,112 +663,201 @@
 }
 
 #design3Wrapper .claude-group-title {
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   font-weight: 700;
-  color: #1E293B;
+  color: var(--c-deep-navy);
 }
 
 #design3Wrapper .claude-group-pill {
   font-size: 0.72rem;
   font-weight: 700;
-  padding: 0.15rem 0.55rem;
+  padding: 0.18rem 0.6rem;
   border-radius: 9999px;
-  background: #EFF6FF;
-  color: #2563EB;
-  border: 1px solid #DBEAFE;
+  background: var(--c-ice-blue);
+  color: var(--c-royal-blue);
+  border: 1px solid #BFDBFE;
+  box-shadow: 0 1px 3px rgba(18, 102, 214, 0.08);
 }
 
 #design3Wrapper .claude-accordion-content {
   padding: 0;
-  border-top: 1px solid #E5EAF2;
+  border-top: 1px solid rgba(18, 102, 214, 0.10);
 }
 
 #design3Wrapper .claude-accordion-content.hidden {
   display: none;
 }
 
-/* Individual Record Table Inside Accordion */
+/* ── 7. Solid White Error Table (NO GLASS BLUR for Maximum Readability) ── */
 #design3Wrapper .claude-record-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.84rem;
+  font-size: 0.85rem;
+  background: #FFFFFF; /* Pure Solid White */
 }
 
 #design3Wrapper .claude-record-table thead th {
-  background: #FFFFFF;
-  color: #64748B;
+  background: #F8FAFF;
+  color: var(--c-deep-navy);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.75rem 1.25rem;
+  letter-spacing: 0.06em;
+  padding: 0.85rem 1.25rem;
   text-align: left;
-  border-bottom: 1px solid #E5EAF2;
+  border-bottom: 2px solid #E2ECF8;
+  white-space: nowrap;
 }
 
 #design3Wrapper .claude-record-table tbody tr {
   border-bottom: 1px solid #F1F5F9;
-  transition: background-color 0.12s ease;
+  transition: background-color 0.14s ease;
 }
 
 #design3Wrapper .claude-record-table tbody tr:last-child {
   border-bottom: none;
 }
 
+#design3Wrapper .claude-record-table tbody tr:nth-child(even) {
+  background-color: #FAFCFF; /* Subtle alternating background */
+}
+
 #design3Wrapper .claude-record-table tbody tr:hover {
-  background-color: #F8FAFC;
+  background-color: var(--c-ice-blue); /* Light blue row highlight */
 }
 
 #design3Wrapper .claude-record-table td {
-  padding: 0.75rem 1.25rem;
+  padding: 0.85rem 1.25rem;
   vertical-align: middle;
+  color: var(--c-text-primary);
 }
 
 #design3Wrapper .claude-mat-name {
   font-weight: 700;
-  color: #2563EB;
+  color: var(--c-royal-blue);
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 0.86rem;
 }
 
 #design3Wrapper .claude-pill-tag {
-  font-size: 0.7rem;
-  font-weight: 600;
-  padding: 0.15rem 0.45rem;
-  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.18rem 0.55rem;
+  border-radius: 6px;
   background: #F1F5F9;
-  color: #475569;
+  color: var(--c-text-secondary);
+  border: 1px solid #CBD5E1;
 }
 
+/* Primary Fix Action */
 #design3Wrapper .claude-btn-fix {
   height: 30px;
-  padding: 0 0.85rem;
-  border-radius: 6px;
+  padding: 0 0.95rem;
+  border-radius: 7px;
   background: #FFFFFF;
-  color: #2563EB;
-  border: 1px solid #BFDBFE;
+  color: var(--c-royal-blue);
+  border: 1.5px solid var(--c-royal-blue);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  transition: all 0.15s ease;
+  transition: all 0.18s ease;
   font-family: inherit;
+  box-shadow: 0 1px 3px rgba(18, 102, 214, 0.10);
+  white-space: nowrap;
 }
 
 #design3Wrapper .claude-btn-fix:hover {
-  background: #EFF6FF;
-  border-color: #2563EB;
+  background: linear-gradient(135deg, #1266D6 0%, #21A6E8 100%);
+  color: #FFFFFF;
+  border-color: transparent;
+  box-shadow: 0 4px 12px rgba(18, 102, 214, 0.35);
+  transform: translateY(-1px);
+}
+
+#design3Wrapper .claude-btn-fix:active {
+  transform: translateY(0);
 }
 
 #design3Wrapper .claude-fixed-tag {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  padding: 0.2rem 0.6rem;
+  gap: 0.35rem;
+  padding: 0.22rem 0.65rem;
   border-radius: 6px;
   background: #ECFDF5;
   color: #065F46;
   font-size: 0.76rem;
-  font-weight: 600;
+  font-weight: 700;
   border: 1px solid #A7F3D0;
+}
+
+/* ── 8. Floating AI Chatbot Styling (Active strictly when Design 3 is visible) ── */
+body:has(#design3Wrapper:not(.hidden)) .chatbot-popup,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 20px 50px rgba(7, 59, 140, 0.22), 0 0 0 1px rgba(33, 166, 232, 0.25);
+  border-radius: 18px;
+}
+
+body:has(#design3Wrapper:not(.hidden)) .chatbot-header,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .chatbot-header {
+  background: linear-gradient(120deg, #073B8C 0%, #1266D6 55%, #21A6E8 100%);
+  color: #FFFFFF;
+  border-radius: 17px 17px 0 0;
+  box-shadow: 0 2px 10px rgba(7, 59, 140, 0.15);
+}
+
+body:has(#design3Wrapper:not(.hidden)) .btn-chat-fix,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .btn-chat-fix {
+  background: linear-gradient(135deg, #1266D6 0%, #21A6E8 100%);
+  color: #FFFFFF;
+  border: none;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(18, 102, 214, 0.35);
+  transition: all 0.18s ease;
+}
+
+body:has(#design3Wrapper:not(.hidden)) .btn-chat-fix:hover,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .btn-chat-fix:hover {
+  background: linear-gradient(135deg, #073B8C 0%, #1266D6 100%);
+  box-shadow: 0 6px 18px rgba(18, 102, 214, 0.45);
+  transform: translateY(-1px);
+}
+
+body:has(#design3Wrapper:not(.hidden)) .btn-chat-cancel,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .btn-chat-cancel {
+  background: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  color: var(--c-text-secondary);
+  font-weight: 600;
+  transition: all 0.18s ease;
+}
+
+body:has(#design3Wrapper:not(.hidden)) .btn-chat-cancel:hover,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .btn-chat-cancel:hover {
+  background: #F8FAFC;
+  border-color: #94A3B8;
+  color: var(--c-text-primary);
+}
+
+body:has(#design3Wrapper:not(.hidden)) .floating-chatbot-btn,
+#design3Wrapper:not(.hidden) ~ .floating-chatbot-btn {
+  background: linear-gradient(135deg, #073B8C 0%, #1266D6 50%, #21A6E8 100%);
+  box-shadow: 0 8px 24px rgba(18, 102, 214, 0.45);
+}
+
+/* Recents Drawer when Design 3 is active */
+body:has(#design3Wrapper:not(.hidden)) .recents-drawer,
+#design3Wrapper:not(.hidden) ~ .recents-drawer {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-right: 1px solid rgba(18, 102, 214, 0.15);
+  box-shadow: 8px 0 32px rgba(7, 59, 140, 0.12);
 }
