@@ -145,6 +145,18 @@
   color: #ffffff;
 }
 
+/* Design 4 Active State (Kinetic Editorial - Swiss Futurism) */
+.design-tab-btn[data-design="4"].active {
+  background: #E9FF45;
+  color: #171717;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(233, 255, 69, 0.45);
+}
+.design-tab-btn[data-design="4"].active .tab-badge {
+  background-color: #171717;
+  color: #E9FF45;
+}
+
 /* View Container Visibility */
 .design-view {
   display: block;

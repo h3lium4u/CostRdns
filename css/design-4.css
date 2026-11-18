@@ -1,57 +1,49 @@
 /* ==========================================================================
-   Design 4 – SAP Horizon Triage Console
-   Option A: Full-width table with Inline Row Expansion for Fix
-   Theme: SAP Horizon 2024 Design System (Clean, Crisp, Colorful, Enterprise)
-   Scoped strictly under #design4Wrapper
+   Design 4: Kinetic Editorial / Swiss Futurism
+   Palette:
+     Ink Black:       #171717
+     Acid Lime:       #E9FF45
+     Cobalt Blue:     #3658E8
+     Tangerine Coral: #FF6847
+     Warm Ivory:      #F4F0E8
+     Lavender:        #A78BFA
+     White:           #FFFFFF
+   Visual Directives:
+     - Oversized typography, monospace technical metadata
+     - Prominent numerical indicators (3.5rem - 4.5rem display weights)
+     - Asymmetric grid composition with bold geometric color blocks
+     - Strong section separators (2px solid #171717 borders, 3px/4px hard offset shadows)
+     - Clean, high-contrast Category -> Group -> Record hierarchy
+     - Zero glassmorphism, zero blur, zero gradient cards
+   Strictly Scoped under #design4Wrapper
    ========================================================================== */
 
-/* ── Design 4 Root Tokens — SAP Royal Blue Palette (Reference Image) ── */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700;800;900&family=Space+Mono:wght@400;700&display=swap');
+
 #design4Wrapper {
-  --d4-brand:        #1565C0;        /* SAP Royal Blue */
-  --d4-brand-hover:  #1251A3;
-  --d4-brand-active: #0D3D82;
-  --d4-brand-tint:   #E8F0FE;
-  --d4-brand-dark:   #0D1B4B;        /* Dark navy */
-  
-  --d4-bg:           #F5F7FA;        /* Warm pearl background */
-  --d4-card:         #FFFFFF;
-  --d4-text:         #1A2332;
-  --d4-label:        #4A5568;
-  --d4-border:       #D0DBF0;
-  --d4-border-subtle:#E8EFF8;
-  --d4-shadow-xs:    0 1px 3px rgba(13,27,75,0.06);
-  --d4-shadow-sm:    0 2px 8px rgba(13,27,75,0.08);
-  --d4-shadow-md:    0 6px 20px rgba(13,27,75,0.10);
+  --ke-ink:         #171717;
+  --ke-lime:        #E9FF45;
+  --ke-cobalt:      #3658E8;
+  --ke-coral:       #FF6847;
+  --ke-ivory:       #F4F0E8;
+  --ke-ivory-dark:  #ECE7DC;
+  --ke-lavender:    #A78BFA;
+  --ke-white:       #FFFFFF;
+  --ke-border:      2px solid #171717;
+  --ke-border-thin: 1px solid #171717;
+  --ke-shadow:      4px 4px 0px #171717;
+  --ke-shadow-sm:   2px 2px 0px #171717;
+  --ke-shadow-lg:   6px 6px 0px #171717;
 
-  /* Semantic Severity Tokens */
-  --d4-critical:     #B71C1C;
-  --d4-critical-bg:  #FFF0F0;
-  --d4-critical-border: #FFCDD2;
-  
-  --d4-warning:      #E65100;
-  --d4-warning-bg:   #FFF3E0;
-  --d4-warning-border: #FFCC80;
-  
-  --d4-info:         #1565C0;
-  --d4-info-bg:      #E8F0FE;
-  --d4-info-border:  #BBDEFB;
-  
-  --d4-positive:     #2E7D32;
-  --d4-positive-bg:  #E8F5E9;
-  --d4-positive-border: #A5D6A7;
+  --ke-font-display: 'Space Grotesk', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ke-font-mono:    'Space Mono', 'Courier New', monospace;
 
-  /* Ring Gauge Colors — SAP Horizon Vivid */
-  --d4-ring-total:   #1565C0;        /* Royal blue for Total */
-  --d4-ring-ap:      #E8743B;
-  --d4-ring-um:      #19A979;
-  --d4-ring-vm:      #ED4A7B;
-  --d4-ring-sl:      #945ECF;
-
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--d4-bg);
-  min-height: 100vh;
-  color: var(--d4-text);
+  font-family: var(--ke-font-display);
+  background-color: var(--ke-ivory);
+  min-height: calc(100vh - 48px);
+  color: var(--ke-ink);
   box-sizing: border-box;
+  position: relative;
 }
 
 #design4Wrapper * {
@@ -59,18 +51,18 @@
 }
 
 /* ==========================================================================
-   1. FIXED / STICKY FILTER BAR (NO OVERLAP WITH SELECTOR BAR)
+   1. EDITORIAL HEADER & FIXED COMPACT FILTER BAR
    ========================================================================== */
 #design4Wrapper .d4-filter-bar {
   position: sticky;
-  top: 48px; /* Sticks directly underneath the 48px designSelectorBar */
+  top: 48px; /* Sticks directly below the 48px designSelectorBar */
   left: 0;
   right: 0;
   z-index: 900;
-  background: var(--d4-card);
-  border-bottom: 1px solid var(--d4-border);
-  box-shadow: 0 2px 10px rgba(29, 45, 62, 0.04);
-  padding: 0.85rem 2.5rem;
+  background-color: var(--ke-white);
+  border-bottom: var(--ke-border);
+  box-shadow: 0 4px 16px rgba(23, 23, 23, 0.05);
+  padding: 0.9rem 2.5rem;
 }
 
 #design4Wrapper .d4-filter-container {
@@ -85,80 +77,112 @@
 #design4Wrapper .d4-brand-wrap {
   display: flex;
   align-items: center;
-  gap: 0.85rem;
-  height: 38px;
+  gap: 1rem;
   flex-shrink: 0;
 }
 
-#design4Wrapper .d4-brand-title {
-  font-size: 1.05rem;
+#design4Wrapper .d4-title-stack {
+  display: flex;
+  flex-direction: column;
+}
+
+#design4Wrapper .d4-brand-kicker {
+  font-family: var(--ke-font-mono);
+  font-size: 0.65rem;
   font-weight: 700;
-  color: var(--d4-text);
-  letter-spacing: -0.01em;
-  white-space: nowrap;
+  letter-spacing: 0.1em;
+  color: var(--ke-cobalt);
+  text-transform: uppercase;
+}
+
+#design4Wrapper .d4-brand-title {
+  font-family: var(--ke-font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--ke-ink);
+  margin: 0;
+  line-height: 1.1;
+  text-transform: uppercase;
 }
 
 #design4Wrapper .d4-badge {
+  font-family: var(--ke-font-mono);
   font-size: 0.68rem;
   font-weight: 700;
-  color: var(--d4-brand);
-  background: var(--d4-brand-tint);
-  border: 1px solid #c0d8fc;
-  border-radius: 6px;
-  padding: 0.2rem 0.55rem;
-  letter-spacing: 0.04em;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.25rem 0.65rem;
+  border-radius: 2px;
+  background-color: var(--ke-lime);
+  color: var(--ke-ink);
+  border: var(--ke-border-thin);
+  box-shadow: var(--ke-shadow-sm);
 }
 
 #design4Wrapper .d4-btn-recents {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  height: 32px;
-  padding: 0 0.85rem;
-  background: #ffffff;
-  border: 1px solid var(--d4-border);
-  border-radius: 20px;
-  color: var(--d4-label);
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-family: var(--ke-font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.75rem;
+  background-color: var(--ke-white);
+  color: var(--ke-ink);
+  border: var(--ke-border-thin);
+  box-shadow: var(--ke-shadow-sm);
+  border-radius: 2px;
   cursor: pointer;
-  transition: all 0.18s ease;
-  white-space: nowrap;
+  transition: all 0.12s ease;
 }
 
-#design4Wrapper .d4-btn-recents:hover,
-#design4Wrapper .d4-btn-recents.active {
-  border-color: var(--d4-brand);
-  color: var(--d4-brand);
-  background: var(--d4-brand-tint);
+#design4Wrapper .d4-btn-recents:hover {
+  background-color: var(--ke-ivory);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--ke-shadow);
 }
 
+#design4Wrapper .d4-recents-glyph {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+/* ── Filter Form Controls (Swiss Editorial Grid) ── */
 #design4Wrapper .d4-filters-row {
   display: flex;
   align-items: flex-end;
-  gap: 1.25rem;
-  flex: 1;
-  justify-content: flex-end;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 #design4Wrapper .d4-field {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
   position: relative;
 }
 
-#design4Wrapper .d4-field-plant { width: 170px; }
-#design4Wrapper .d4-field-cv    { width: 190px; }
+#design4Wrapper .d4-label {
+  font-family: var(--ke-font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ke-ink);
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+}
+
+#design4Wrapper .d4-field-plant { width: 145px; }
+#design4Wrapper .d4-field-cv    { width: 160px; }
 #design4Wrapper .d4-field-mat   { width: 190px; }
 
-#design4Wrapper .d4-label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: var(--d4-label);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+#design4Wrapper .d4-actions-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 #design4Wrapper .d4-input-wrap {
@@ -170,813 +194,754 @@
 #design4Wrapper .d4-input {
   width: 100%;
   height: 38px;
-  padding: 0 28px 0 12px;
-  border: 1px solid var(--d4-border);
-  border-radius: 8px;
-  background: #ffffff;
-  font-size: 0.85rem;
-  color: var(--d4-text);
-  font-family: inherit;
+  background-color: var(--ke-white);
+  border: var(--ke-border);
+  border-radius: 2px;
+  padding: 0 0.85rem;
+  font-family: var(--ke-font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ke-ink);
   outline: none;
-  transition: all 0.18s ease;
-}
-
-#design4Wrapper .d4-input:hover {
-  border-color: #b0b8c4;
+  transition: all 0.15s ease;
 }
 
 #design4Wrapper .d4-input:focus {
-  border-color: var(--d4-brand);
-  box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.15);
+  border-color: var(--ke-cobalt);
+  box-shadow: 0 0 0 2px var(--ke-lime);
 }
 
 #design4Wrapper .d4-arrow {
   position: absolute;
   right: 10px;
-  color: var(--d4-label);
   pointer-events: none;
-  display: flex;
-  align-items: center;
+  font-size: 0.65rem;
+  color: var(--ke-ink);
 }
 
+/* ── Dropdown Menus ── */
 #design4Wrapper .d4-dropdown {
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
-  right: 0;
-  background: #ffffff;
-  border: 1px solid var(--d4-border);
-  border-radius: 8px;
-  box-shadow: var(--d4-shadow-md);
-  max-height: 220px;
+  width: 100%;
+  min-width: 240px;
+  max-height: 280px;
   overflow-y: auto;
-  z-index: 999;
-}
-
-#design4Wrapper .d4-dropdown.hidden {
-  display: none;
+  background-color: var(--ke-white);
+  border: var(--ke-border);
+  box-shadow: var(--ke-shadow);
+  border-radius: 2px;
+  z-index: 1000;
 }
 
 #design4Wrapper .d4-dropdown-item {
-  padding: 0.65rem 0.95rem;
-  font-size: 0.82rem;
-  color: var(--d4-text);
-  cursor: pointer;
-  transition: background 0.12s ease;
-}
-
-#design4Wrapper .d4-dropdown-item:hover {
-  background: var(--d4-brand-tint);
-  color: var(--d4-brand);
-}
-
-#design4Wrapper .d4-dropdown-item.selected {
-  background: #e2eeff;
-  color: var(--d4-brand);
+  padding: 0.6rem 0.85rem;
+  font-family: var(--ke-font-mono);
+  font-size: 0.78rem;
   font-weight: 600;
+  color: var(--ke-ink);
+  cursor: pointer;
+  border-bottom: 1px solid var(--ke-ivory-dark);
+  transition: background-color 0.1s ease;
 }
 
-#design4Wrapper .d4-dropdown-no-result {
-  padding: 0.75rem 0.95rem;
-  color: var(--d4-label);
-  font-size: 0.8rem;
-  font-style: italic;
+#design4Wrapper .d4-dropdown-item:last-child {
+  border-bottom: none;
 }
 
+#design4Wrapper .d4-dropdown-item:hover,
+#design4Wrapper .d4-dropdown-item.selected {
+  background-color: var(--ke-lime);
+  color: var(--ke-ink);
+  font-weight: 700;
+}
+
+/* ── Filter Buttons ── */
 #design4Wrapper .d4-btn-apply {
+  height: 38px;
+  padding: 0 1.35rem;
+  background-color: var(--ke-lime);
+  color: var(--ke-ink);
+  border: var(--ke-border);
+  border-radius: 2px;
+  font-family: var(--ke-font-display);
+  font-size: 0.92rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  box-shadow: var(--ke-shadow-sm);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  height: 38px;
-  padding: 0 1.25rem;
-  background: var(--d4-brand);
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.30);
-  transition: all 0.18s ease;
-  white-space: nowrap;
+  transition: all 0.12s ease;
 }
 
 #design4Wrapper .d4-btn-apply:hover {
-  background: var(--d4-brand-hover);
-  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.42);
-  transform: translateY(-1px);
+  background-color: #d8f030;
+  transform: translate(-1px, -1px);
+  box-shadow: var(--ke-shadow);
 }
 
-#design4Wrapper .d4-btn-apply:active {
-  transform: translateY(0);
+#design4Wrapper .d4-apply-arrow {
+  font-weight: 900;
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 #design4Wrapper .d4-btn-rf {
+  height: 38px;
+  width: 44px;
+  background-color: var(--ke-white);
+  color: var(--ke-ink);
+  border: var(--ke-border);
+  border-radius: 2px;
+  font-family: var(--ke-font-mono);
+  font-size: 0.88rem;
+  font-weight: 800;
+  box-shadow: var(--ke-shadow-sm);
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  background: #ffffff;
-  border: 1px solid var(--d4-border);
-  border-radius: 8px;
-  color: var(--d4-label);
-  cursor: pointer;
-  transition: all 0.18s ease;
-  flex-shrink: 0;
+  transition: all 0.12s ease;
 }
 
 #design4Wrapper .d4-btn-rf:hover {
-  border-color: var(--d4-brand);
-  color: var(--d4-brand);
-  background: var(--d4-brand-tint);
+  background-color: var(--ke-coral);
+  color: var(--ke-white);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--ke-shadow);
 }
 
 /* ==========================================================================
-   2. MAIN CONTENT AREA (FLOWS NATURALLY BELOW FILTER BAR)
+   2. MAIN DASHBOARD CONTAINER
    ========================================================================== */
 #design4Wrapper .d4-main {
   max-width: 1720px;
   margin: 0 auto;
-  width: 100%;
-  padding: 1.75rem 2.5rem;
+  padding: 2.25rem 2.5rem 5rem 2.5rem;
 }
 
-/* Initial State: Clean Enterprise Card before Apply */
+/* ── Initial Standby State (Before Apply) ── */
 #design4Wrapper .d4-empty-state {
-  background: #ffffff;
-  border: 1px dashed #cbd5e1;
-  border-radius: 16px;
-  padding: 4.5rem 2rem;
-  text-align: center;
-  box-shadow: var(--d4-shadow-xs);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-#design4Wrapper .d4-empty-state.hidden {
-  display: none !important;
-}
-
-#design4Wrapper .d4-empty-icon {
-  width: 64px;
-  height: 64px;
-  background: var(--d4-brand-tint);
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--d4-brand);
+  min-height: 480px;
+  padding: 3rem 1rem;
+}
+
+#design4Wrapper .d4-empty-box {
+  background-color: var(--ke-white);
+  border: var(--ke-border);
+  box-shadow: var(--ke-shadow-lg);
+  border-radius: 2px;
+  padding: 3rem 3.5rem;
+  max-width: 680px;
+  width: 100%;
+}
+
+#design4Wrapper .d4-empty-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: var(--ke-border);
+}
+
+#design4Wrapper .d4-empty-tag {
+  font-family: var(--ke-font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ke-cobalt);
+}
+
+#design4Wrapper .d4-empty-num {
+  font-family: var(--ke-font-mono);
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--ke-ink);
+  background-color: var(--ke-lime);
+  padding: 0.1rem 0.5rem;
+  border: var(--ke-border-thin);
 }
 
 #design4Wrapper .d4-empty-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--d4-text);
-  margin: 0;
+  font-family: var(--ke-font-display);
+  font-size: 2.25rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--ke-ink);
+  margin: 0 0 0.85rem 0;
+  text-transform: uppercase;
+  line-height: 1.05;
 }
 
 #design4Wrapper .d4-empty-sub {
-  font-size: 0.9rem;
-  color: var(--d4-label);
-  max-width: 440px;
-  line-height: 1.5;
-  margin: 0;
+  font-family: var(--ke-font-mono);
+  font-size: 0.82rem;
+  line-height: 1.6;
+  color: #444444;
+  margin: 0 0 2rem 0;
 }
 
-/* ==========================================================================
-   3. KPI STATUS RING RIBBON (5 COLORFUL GAUGE CARDS)
-   ========================================================================== */
-#design4Wrapper #d4ContentArea.hidden {
-  display: none !important;
-}
-
-#design4Wrapper #d4ContentArea {
+#design4Wrapper .d4-empty-palette {
   display: flex;
-  flex-direction: column;
-  gap: 1.75rem;
-  width: 100%;
+  gap: 0.5rem;
+  border-top: 1px solid var(--ke-ivory-dark);
+  padding-top: 1.5rem;
 }
 
-#design4Wrapper .d4-kpi-ribbon {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 1.25rem;
-  width: 100%;
-}
-
-#design4Wrapper .d4-kpi-tile {
-  background: #ffffff;
-  border: 1.5px solid var(--d4-border);
-  border-radius: 12px;
-  padding: 1.15rem 1.25rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  cursor: pointer;
-  box-shadow: var(--d4-shadow-xs);
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-#design4Wrapper .d4-kpi-tile:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--d4-shadow-md);
-}
-
-#design4Wrapper .d4-kpi-tile.active {
-  border-width: 2px;
-  box-shadow: 0 4px 18px rgba(21, 101, 192, 0.18);
-}
-
-/* Total Errors tile: blue gradient when active (reference image style) */
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active {
-  background: linear-gradient(135deg, #1565C0 0%, #1E88E5 100%);
-  border-color: #1251A3;
-}
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-label,
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-sublabel,
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-number,
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-ring-inner-val {
-  color: #ffffff !important;
-}
-/* Sub-count text: on blue tile use white; on other tiles use semantic colors */
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-subcounts,
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-fixed-count,
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-pending-count {
-  color: rgba(255,255,255,0.90) !important;
-}
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-subcounts .d4-fixed-count {
-  color: #A5D6A7 !important;
-}
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-kpi-subcounts .d4-pending-count {
-  color: #FFCC80 !important;
-}
-
-/* Ring SVG track: white semi-transparent on the blue gradient tile */
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-ring-wrap svg circle:first-child {
-  stroke: rgba(255,255,255,0.25);
-}
-#design4Wrapper .d4-kpi-tile[data-cat="all"].active .d4-ring-wrap svg circle:last-child {
-  stroke: rgba(255,255,255,0.90);
-}
-
-#design4Wrapper .d4-kpi-tile[data-cat="activityPrice"].active     { border-color: var(--d4-ring-ap);  background: #fffcfb; }
-#design4Wrapper .d4-kpi-tile[data-cat="uomMismatch"].active       { border-color: var(--d4-ring-um);  background: #fbfffd; }
-#design4Wrapper .d4-kpi-tile[data-cat="vendorMissing"].active     { border-color: var(--d4-ring-vm);  background: #fffbfd; }
-#design4Wrapper .d4-kpi-tile[data-cat="sourceListMissing"].active { border-color: var(--d4-ring-sl);  background: #fdfbff; }
-
-#design4Wrapper .d4-kpi-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-
-#design4Wrapper .d4-kpi-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--d4-label);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  line-height: 1.2;
-}
-
-#design4Wrapper .d4-kpi-sublabel {
-  font-size: 0.72rem;
-  color: #8b9bb0;
-}
-
-/* Sub-counts line (e.g. "2 Fixed | 7 Pending") */
-#design4Wrapper .d4-kpi-subcounts {
-  font-size: 0.70rem;
-  color: var(--d4-label);
-  margin-top: 0.1rem;
-  font-weight: 500;
-}
-#design4Wrapper .d4-kpi-subcounts .d4-fixed-count { color: var(--d4-positive); font-weight: 700; }
-#design4Wrapper .d4-kpi-subcounts .d4-pending-count { color: var(--d4-warning); font-weight: 700; }
-
-#design4Wrapper .d4-kpi-number {
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--d4-text);
-  line-height: 1;
-}
-
-#design4Wrapper .d4-ring-wrap {
-  position: relative;
-  width: 64px;
-  height: 64px;
-  flex-shrink: 0;
+#design4Wrapper .d4-palette-chip {
+  flex: 1;
+  height: 28px;
+  border: var(--ke-border-thin);
+  border-radius: 1px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--ke-font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
 }
 
-#design4Wrapper .d4-ring-wrap svg {
-  transform: rotate(-90deg);
-  display: block;
-}
-
-#design4Wrapper .d4-ring-inner-val {
-  position: absolute;
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--d4-text);
-}
+#design4Wrapper .chip-lime     { background-color: var(--ke-lime); color: var(--ke-ink); }
+#design4Wrapper .chip-coral    { background-color: var(--ke-coral); color: var(--ke-white); }
+#design4Wrapper .chip-cobalt   { background-color: var(--ke-cobalt); color: var(--ke-white); }
+#design4Wrapper .chip-lavender { background-color: var(--ke-lavender); color: var(--ke-ink); }
+#design4Wrapper .chip-ink      { background-color: var(--ke-ink); color: var(--ke-white); }
 
 /* ==========================================================================
-   4. FULL-WIDTH SEVERITY TRIAGE CARD & TABLE
+   3. ASYMMETRIC KINETIC EDITORIAL KPI SECTION (5 DISTINCTIVE ELEMENTS)
    ========================================================================== */
-#design4Wrapper .d4-triage-card {
-  background: #ffffff;
-  border: 1px solid var(--d4-border);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(29, 45, 62, 0.05);
-  overflow: hidden;
-  width: 100%;
+#design4Wrapper .d4-kpi-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr 1fr 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
 }
 
-#design4Wrapper .d4-triage-header {
+#design4Wrapper .d4-kpi-card {
+  position: relative;
+  border: var(--ke-border);
+  box-shadow: var(--ke-shadow);
+  border-radius: 2px;
+  padding: 1.35rem 1.25rem 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 160px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+#design4Wrapper .d4-kpi-card:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--ke-shadow-lg);
+}
+
+#design4Wrapper .d4-kpi-card.active {
+  outline: 3px solid var(--ke-ink);
+  outline-offset: 2px;
+}
+
+#design4Wrapper .d4-kpi-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+#design4Wrapper .d4-kpi-label {
+  font-family: var(--ke-font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#design4Wrapper .d4-kpi-sub {
+  font-family: var(--ke-font-mono);
+  font-size: 0.65rem;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+#design4Wrapper .d4-kpi-glyph {
+  font-family: var(--ke-font-mono);
+  font-size: 0.85rem;
+  font-weight: 900;
+}
+
+#design4Wrapper .d4-kpi-num {
+  font-family: var(--ke-font-display);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin: 0.4rem 0 0.85rem 0;
+}
+
+#design4Wrapper .d4-kpi-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1.5rem;
-  background: #ffffff;
-  border-bottom: 1px solid var(--d4-border);
-  gap: 1.5rem;
-}
-
-#design4Wrapper .d4-triage-title-group {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-}
-
-#design4Wrapper .d4-triage-title {
-  font-size: 1.05rem;
+  font-family: var(--ke-font-mono);
+  font-size: 0.7rem;
   font-weight: 700;
-  color: var(--d4-text);
-  margin: 0;
+  letter-spacing: 0.04em;
+  padding-top: 0.6rem;
+  border-top: 1px solid currentColor;
+  opacity: 0.9;
 }
 
-#design4Wrapper .d4-triage-count {
+/* ── Distinctive Color Blocking per KPI Card ── */
+
+/* Card 1: Total Errors (Hero Card) */
+#design4Wrapper .kpi-total {
+  background-color: var(--ke-ink);
+  color: var(--ke-white);
+}
+#design4Wrapper .kpi-total .d4-kpi-label { color: #a3a3a3; }
+#design4Wrapper .kpi-total .d4-kpi-num   { color: var(--ke-lime); font-size: 4.25rem; }
+#design4Wrapper .kpi-total .d4-kpi-footer{ border-color: #333333; color: #cbd5e1; }
+
+/* Card 2: Activity Price */
+#design4Wrapper .kpi-ap {
+  background-color: var(--ke-coral);
+  color: var(--ke-white);
+}
+#design4Wrapper .kpi-ap .d4-kpi-label { color: #ffe6e0; }
+#design4Wrapper .kpi-ap .d4-kpi-num   { color: var(--ke-white); font-size: 3.5rem; }
+#design4Wrapper .kpi-ap .d4-kpi-footer{ border-color: rgba(255, 255, 255, 0.4); color: #ffe6e0; }
+
+/* Card 3: UOM Mismatch */
+#design4Wrapper .kpi-um {
+  background-color: var(--ke-lime);
+  color: var(--ke-ink);
+}
+#design4Wrapper .kpi-um .d4-kpi-label { color: #333333; }
+#design4Wrapper .kpi-um .d4-kpi-num   { color: var(--ke-ink); font-size: 3.5rem; }
+#design4Wrapper .kpi-um .d4-kpi-footer{ border-color: rgba(23, 23, 23, 0.3); color: #333333; }
+
+/* Card 4: Vendor Missing */
+#design4Wrapper .kpi-vm {
+  background-color: var(--ke-lavender);
+  color: var(--ke-ink);
+}
+#design4Wrapper .kpi-vm .d4-kpi-label { color: #332060; }
+#design4Wrapper .kpi-vm .d4-kpi-num   { color: var(--ke-ink); font-size: 3.5rem; }
+#design4Wrapper .kpi-vm .d4-kpi-footer{ border-color: rgba(23, 23, 23, 0.3); color: #332060; }
+
+/* Card 5: Source List Missing */
+#design4Wrapper .kpi-sl {
+  background-color: var(--ke-cobalt);
+  color: var(--ke-white);
+}
+#design4Wrapper .kpi-sl .d4-kpi-label { color: #cbd7ff; }
+#design4Wrapper .kpi-sl .d4-kpi-num   { color: var(--ke-white); font-size: 3.5rem; }
+#design4Wrapper .kpi-sl .d4-kpi-footer{ border-color: rgba(255, 255, 255, 0.35); color: #cbd7ff; }
+
+/* ==========================================================================
+   4. ERROR RECONCILIATION REGISTRY (HIERARCHY TABLE)
+   ========================================================================== */
+#design4Wrapper .d4-registry-section {
+  background-color: var(--ke-white);
+  border: var(--ke-border);
+  box-shadow: var(--ke-shadow-lg);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+#design4Wrapper .d4-registry-header {
+  padding: 1.5rem 2rem;
+  border-bottom: var(--ke-border);
+  background-color: var(--ke-white);
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+#design4Wrapper .d4-registry-title-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+#design4Wrapper .d4-section-kicker {
+  font-family: var(--ke-font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ke-cobalt);
+  text-transform: uppercase;
+}
+
+#design4Wrapper .d4-registry-title {
+  font-family: var(--ke-font-display);
+  font-size: 1.65rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--ke-ink);
+  margin: 0.15rem 0 0.25rem 0;
+  text-transform: uppercase;
+}
+
+#design4Wrapper .d4-registry-count {
+  font-family: var(--ke-font-mono);
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--d4-brand);
-  background: var(--d4-brand-tint);
-  border: 1px solid #c0d8fc;
-  border-radius: 20px;
-  padding: 0.2rem 0.7rem;
+  color: #555555;
+  letter-spacing: 0.04em;
 }
 
-#design4Wrapper .d4-triage-toolbar {
+#design4Wrapper .d4-registry-controls {
   display: flex;
   align-items: center;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
-#design4Wrapper .d4-triage-search {
+/* ── Category Quick-Filter Tabs ── */
+#design4Wrapper .d4-category-tabs {
+  display: inline-flex;
+  gap: 0.35rem;
+  background-color: var(--ke-ivory);
+  padding: 3px;
+  border: var(--ke-border-thin);
+  border-radius: 2px;
+}
+
+#design4Wrapper .d4-cat-tab {
+  background: transparent;
+  border: none;
+  font-family: var(--ke-font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--ke-ink);
+  padding: 0.4rem 0.75rem;
+  border-radius: 2px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.1s ease;
+}
+
+#design4Wrapper .d4-cat-tab:hover {
+  background-color: rgba(23, 23, 23, 0.06);
+}
+
+#design4Wrapper .d4-cat-tab.active {
+  background-color: var(--ke-ink);
+  color: var(--ke-lime);
+  box-shadow: var(--ke-shadow-sm);
+}
+
+/* ── Search Input Box ── */
+#design4Wrapper .d4-search-box {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  background: var(--d4-bg);
-  border: 1px solid var(--d4-border);
-  border-radius: 8px;
-  padding: 0 0.85rem;
-  height: 34px;
-  transition: all 0.18s ease;
+  position: relative;
+  width: 280px;
 }
 
-#design4Wrapper .d4-triage-search:focus-within {
-  border-color: var(--d4-brand);
-  background: #ffffff;
-  box-shadow: 0 0 0 2px rgba(0, 112, 242, 0.12);
+#design4Wrapper .d4-search-icon {
+  position: absolute;
+  left: 10px;
+  font-size: 0.85rem;
+  color: var(--ke-ink);
+  pointer-events: none;
 }
 
-#design4Wrapper .d4-triage-search input {
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 0.82rem;
-  color: var(--d4-text);
-  width: 220px;
-  font-family: inherit;
-}
-
-#design4Wrapper .d4-triage-search input::placeholder {
-  color: #8b9bb0;
-}
-
-#design4Wrapper .d4-btn-tool {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  height: 34px;
-  padding: 0 0.85rem;
-  background: #ffffff;
-  border: 1px solid var(--d4-border);
-  border-radius: 8px;
-  font-size: 0.78rem;
+#design4Wrapper .d4-search-box input {
+  width: 100%;
+  height: 36px;
+  background-color: var(--ke-white);
+  border: var(--ke-border);
+  border-radius: 2px;
+  padding: 0 0.85rem 0 2.2rem;
+  font-family: var(--ke-font-mono);
+  font-size: 0.75rem;
   font-weight: 600;
-  color: var(--d4-label);
-  cursor: pointer;
-  transition: all 0.18s ease;
-  white-space: nowrap;
+  color: var(--ke-ink);
+  outline: none;
 }
 
-#design4Wrapper .d4-btn-tool:hover {
-  border-color: var(--d4-brand);
-  color: var(--d4-brand);
-  background: var(--d4-brand-tint);
+#design4Wrapper .d4-search-box input:focus {
+  border-color: var(--ke-cobalt);
+  box-shadow: 0 0 0 2px var(--ke-lime);
 }
 
-/* ── Table Styling ── */
-#design4Wrapper .d4-triage-body {
+/* ==========================================================================
+   5. EDITORIAL TABLE & HIERARCHY PRESENTATION
+   ========================================================================== */
+#design4Wrapper .d4-table-container {
   width: 100%;
   overflow-x: auto;
 }
 
-#design4Wrapper .d4-triage-table {
+#design4Wrapper .d4-editorial-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.84rem;
-  table-layout: fixed;
+  text-align: left;
 }
 
-#design4Wrapper .d4-triage-table thead th {
-  background: #F0F5FF;
-  color: var(--d4-label);
+#design4Wrapper .d4-editorial-table thead th {
+  background-color: var(--ke-ink);
+  color: var(--ke-white);
+  font-family: var(--ke-font-mono);
   font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 0.85rem 1.15rem;
-  text-align: left;
-  border-bottom: 2px solid #C8D8F0;
-  white-space: nowrap;
-}
-
-#design4Wrapper .d4-triage-table tbody tr.d4-data-row {
-  border-bottom: 1px solid #f0f3f6;
-  transition: background 0.12s ease;
-  cursor: pointer;
-}
-
-#design4Wrapper .d4-triage-table tbody tr.d4-data-row:hover {
-  background: #f8fbff;
-}
-
-#design4Wrapper .d4-triage-table tbody tr.d4-data-row.expanded {
-  background: #f1f6ff;
-}
-
-/* ── Severity Left Border Stripe ── */
-#design4Wrapper .d4-triage-table tbody tr.sev-critical td:first-child { border-left: 4px solid var(--d4-critical); }
-#design4Wrapper .d4-triage-table tbody tr.sev-warning td:first-child  { border-left: 4px solid var(--d4-warning); }
-#design4Wrapper .d4-triage-table tbody tr.sev-info td:first-child     { border-left: 4px solid var(--d4-info); }
-#design4Wrapper .d4-triage-table tbody tr.sev-fixed td:first-child    { border-left: 4px solid var(--d4-positive); }
-
-#design4Wrapper .d4-triage-table tbody td {
-  padding: 0.95rem 1.15rem;
-  color: var(--d4-text);
+  padding: 0.9rem 1.25rem;
+  border-bottom: var(--ke-border);
   vertical-align: middle;
 }
 
-/* ── Severity Badges ── */
-#design4Wrapper .d4-sev-badge {
-  display: inline-flex;
+/* ── Hierarchy Tier 1: Category Header Row ── */
+#design4Wrapper .d4-category-row td {
+  background-color: #EAE6DC;
+  border-top: var(--ke-border);
+  border-bottom: var(--ke-border-thin);
+  padding: 0.85rem 1.25rem;
+}
+
+#design4Wrapper .d4-cat-header-content {
+  display: flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.68rem;
+  justify-content: space-between;
+}
+
+#design4Wrapper .d4-cat-title {
+  font-family: var(--ke-font-display);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--ke-ink);
+  text-transform: uppercase;
+}
+
+#design4Wrapper .d4-cat-badge {
+  font-family: var(--ke-font-mono);
+  font-size: 0.72rem;
   font-weight: 700;
+  background-color: var(--ke-ink);
+  color: var(--ke-lime);
+  padding: 0.2rem 0.55rem;
+  border-radius: 1px;
+}
+
+/* ── Hierarchy Tier 2: Group Header Row ── */
+#design4Wrapper .d4-group-row td {
+  background-color: #F8F6F1;
+  border-bottom: 1px solid #D5CFBF;
+  padding: 0.65rem 1.25rem 0.65rem 2.25rem;
+}
+
+#design4Wrapper .d4-group-title {
+  font-family: var(--ke-font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--ke-cobalt);
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 0.25rem 0.65rem;
-  border-radius: 6px;
-  white-space: nowrap;
 }
 
-#design4Wrapper .d4-sev-badge.critical {
-  color: var(--d4-critical);
-  background: var(--d4-critical-bg);
-  border: 1px solid var(--d4-critical-border);
+#design4Wrapper .d4-group-count {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #666666;
+  margin-left: 0.5rem;
 }
 
-#design4Wrapper .d4-sev-badge.warning {
-  color: var(--d4-warning);
-  background: var(--d4-warning-bg);
-  border: 1px solid var(--d4-warning-border);
+/* ── Hierarchy Tier 3: Record Row ── */
+#design4Wrapper .d4-record-row {
+  background-color: var(--ke-white);
+  transition: background-color 0.12s ease;
 }
 
-#design4Wrapper .d4-sev-badge.info {
-  color: var(--d4-info);
-  background: var(--d4-info-bg);
-  border: 1px solid var(--d4-info-border);
+#design4Wrapper .d4-record-row:nth-child(even) {
+  background-color: #FAFAF7;
 }
 
-#design4Wrapper .d4-sev-badge.fixed {
-  color: var(--d4-positive);
-  background: var(--d4-positive-bg);
-  border: 1px solid var(--d4-positive-border);
+#design4Wrapper .d4-record-row:hover {
+  background-color: #F2EFE8;
 }
 
-#design4Wrapper .d4-sev-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
+#design4Wrapper .d4-record-row td {
+  padding: 0.85rem 1.25rem;
+  border-bottom: 1px solid #E4DFD3;
+  font-size: 0.82rem;
+  vertical-align: middle;
 }
 
-/* ── Cell Specifics ── */
-#design4Wrapper .d4-material-code {
-  font-weight: 700;
-  color: var(--d4-text);
-  font-family: 'SFMono-Regular', Consolas, monospace;
+#design4Wrapper .d4-record-row.is-fixed td {
+  opacity: 0.75;
+}
+
+/* ── Record Cells ── */
+#design4Wrapper .d4-mat-cell {
+  font-family: var(--ke-font-mono);
   font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--ke-ink);
+  letter-spacing: 0.02em;
 }
 
-#design4Wrapper .d4-desc-text {
-  color: #334155;
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+#design4Wrapper .d4-desc-cell {
+  font-family: var(--ke-font-display);
+  font-weight: 700;
+  color: var(--ke-ink);
+  line-height: 1.35;
+}
+
+#design4Wrapper .d4-error-cell {
+  font-family: var(--ke-font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #444444;
 }
 
 #design4Wrapper .d4-plant-chip {
   display: inline-block;
-  background: #f1f5f9;
-  border: 1px solid #cbd5e1;
-  border-radius: 5px;
-  padding: 0.15rem 0.5rem;
-  font-size: 0.74rem;
+  font-family: var(--ke-font-mono);
+  font-size: 0.72rem;
   font-weight: 700;
-  color: #475569;
+  padding: 0.15rem 0.45rem;
+  background-color: var(--ke-white);
+  border: var(--ke-border-thin);
+  border-radius: 1px;
+  color: var(--ke-ink);
 }
 
 #design4Wrapper .d4-type-chip {
   display: inline-block;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 5px;
-  padding: 0.15rem 0.45rem;
+  font-family: var(--ke-font-mono);
   font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--d4-label);
+  font-weight: 800;
+  padding: 0.15rem 0.45rem;
+  border-radius: 1px;
+  border: var(--ke-border-thin);
 }
 
-#design4Wrapper .d4-res-preview {
-  color: var(--d4-label);
+#design4Wrapper .type-ROH  { background-color: #FFE6E0; color: #B32E14; border-color: var(--ke-coral); }
+#design4Wrapper .type-HALB { background-color: #EFEAFF; color: #4C1D95; border-color: var(--ke-lavender); }
+#design4Wrapper .type-FERT { background-color: #E8F0FE; color: #1E3A8A; border-color: var(--ke-cobalt); }
+
+#design4Wrapper .d4-rec-cell {
+  font-family: var(--ke-font-display);
   font-size: 0.8rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: 500;
+  color: #333333;
+  line-height: 1.4;
 }
 
-/* Action Buttons in Row */
+/* ── Action Buttons ── */
 #design4Wrapper .d4-btn-action-fix {
+  height: 30px;
+  padding: 0 0.85rem;
+  background-color: var(--ke-lime);
+  color: var(--ke-ink);
+  border: var(--ke-border-thin);
+  box-shadow: var(--ke-shadow-sm);
+  border-radius: 1px;
+  font-family: var(--ke-font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
   gap: 0.35rem;
-  height: 28px;
-  padding: 0 0.85rem;
-  background: var(--d4-brand-tint);
-  border: 1px solid #c0d8fc;
-  border-radius: 6px;
-  color: var(--d4-brand);
-  font-size: 0.78rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.16s ease;
+  transition: all 0.12s ease;
   white-space: nowrap;
 }
 
 #design4Wrapper .d4-btn-action-fix:hover {
-  background: var(--d4-brand);
-  color: #ffffff;
-  border-color: var(--d4-brand);
-  box-shadow: 0 2px 6px rgba(0, 112, 242, 0.25);
+  background-color: #d6ee2c;
+  transform: translate(-1px, -1px);
+  box-shadow: var(--ke-shadow);
 }
 
 #design4Wrapper .d4-resolved-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.3rem;
-  color: var(--d4-positive);
-  font-size: 0.78rem;
-  font-weight: 700;
-  background: var(--d4-positive-bg);
-  border: 1px solid var(--d4-positive-border);
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
+  gap: 0.35rem;
+  font-family: var(--ke-font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.3rem 0.65rem;
+  background-color: var(--ke-ink);
+  color: var(--ke-lime);
+  border: var(--ke-border-thin);
+  border-radius: 1px;
+  white-space: nowrap;
+}
+
+#design4Wrapper .d4-resolved-glyph {
+  font-weight: 900;
+}
+
+#design4Wrapper .d4-table-empty {
+  padding: 3rem 1rem;
+  text-align: center;
+  font-family: var(--ke-font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #666666;
 }
 
 /* ==========================================================================
-   5. OPTION A: INLINE ROW EXPANSION ACCORDION PANEL
+   6. RESPONSIVE DESIGN (SWISS EDITORIAL STACKING)
    ========================================================================== */
-#design4Wrapper tr.d4-expand-row {
-  background: #f8fbff;
+@media (max-width: 1400px) {
+  #design4Wrapper .d4-kpi-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  #design4Wrapper .kpi-total {
+    grid-column: span 3;
+  }
 }
 
-#design4Wrapper tr.d4-expand-row td {
-  padding: 0 !important;
-  border-bottom: 2px solid #cce1fd;
+@media (max-width: 1250px) {
+  #design4Wrapper .d4-filter-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  #design4Wrapper .d4-filters-row {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  #design4Wrapper .d4-kpi-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  #design4Wrapper .kpi-total {
+    grid-column: span 2;
+  }
 }
 
-#design4Wrapper .d4-expand-container {
-  padding: 1.25rem 2rem;
-  border-left: 4px solid var(--d4-brand);
-  background: linear-gradient(180deg, #EEF4FF 0%, #ffffff 100%);
-  display: flex;
-  flex-direction: column;
-  gap: 1.15rem;
-  animation: d4SlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes d4SlideDown {
-  from { opacity: 0; transform: translateY(-6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-#design4Wrapper .d4-expand-topbar {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-#design4Wrapper .d4-expand-heading {
-  display: flex;
-  align-items: center;
-  gap: 0.85rem;
-  flex-wrap: wrap;
-}
-
-#design4Wrapper .d4-expand-mat-code {
-  font-size: 1.15rem;
-  font-weight: 800;
-  color: var(--d4-text);
-  font-family: 'SFMono-Regular', Consolas, monospace;
-}
-
-#design4Wrapper .d4-expand-mat-desc {
-  font-size: 0.95rem;
-  color: var(--d4-label);
-  font-weight: 500;
-}
-
-#design4Wrapper .d4-expand-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  flex-wrap: wrap;
-  padding-top: 0.1rem;
-}
-
-#design4Wrapper .d4-expand-chip {
-  background: #ffffff;
-  border: 1px solid var(--d4-border);
-  border-radius: 6px;
-  padding: 0.35rem 0.75rem;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-#design4Wrapper .d4-expand-chip-key {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: var(--d4-label);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-#design4Wrapper .d4-expand-chip-val {
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--d4-text);
-}
-
-/* Resolution Block */
-#design4Wrapper .d4-expand-resolution-box {
-  background: #F5F8FF;
-  border: 1px solid #BBDEFB;
-  border-left: 3px solid var(--d4-brand);
-  border-radius: 8px;
-  padding: 1rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  box-shadow: 0 2px 6px rgba(21, 101, 192, 0.06);
-}
-
-#design4Wrapper .d4-expand-res-title {
-  font-size: 0.72rem;
-  font-weight: 800;
-  color: var(--d4-brand);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-#design4Wrapper .d4-expand-res-text {
-  font-size: 0.88rem;
-  color: var(--d4-text);
-  line-height: 1.5;
-  font-weight: 500;
-}
-
-/* Expand Action Bar */
-#design4Wrapper .d4-expand-action-bar {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.85rem;
-}
-
-#design4Wrapper .d4-btn-initiate-fix {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  height: 36px;
-  padding: 0 1.35rem;
-  background: var(--d4-brand);
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  font-size: 0.84rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.30);
-  transition: all 0.18s ease;
-}
-
-#design4Wrapper .d4-btn-initiate-fix:hover {
-  background: var(--d4-brand-hover);
-  box-shadow: 0 4px 14px rgba(21, 101, 192, 0.42);
-  transform: translateY(-1px);
-}
-
-#design4Wrapper .d4-btn-initiate-fix:disabled {
-  background: #94bcf0;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-#design4Wrapper .d4-btn-cancel-expand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  height: 36px;
-  padding: 0 1.15rem;
-  background: #ffffff;
-  border: 1px solid var(--d4-border);
-  border-radius: 8px;
-  font-size: 0.84rem;
-  font-weight: 600;
-  color: var(--d4-label);
-  cursor: pointer;
-  transition: all 0.18s ease;
-}
-
-#design4Wrapper .d4-btn-cancel-expand:hover {
-  border-color: #94a3b8;
-  color: var(--d4-text);
-  background: #f8fafc;
-}
-
-/* Success state inside expansion */
-#design4Wrapper .d4-expand-success-banner {
-  background: var(--d4-positive-bg);
-  border: 1px solid var(--d4-positive-border);
-  border-radius: 8px;
-  padding: 0.85rem 1.15rem;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  color: var(--d4-positive);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-/* Spinner */
-#design4Wrapper .d4-spinner {
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #ffffff;
-  border-radius: 50%;
-  animation: d4Spin 0.7s infinite linear;
-}
-
-@keyframes d4Spin {
-  to { transform: rotate(360deg); }
+@media (max-width: 768px) {
+  #design4Wrapper .d4-filter-bar {
+    padding: 0.85rem 1.25rem;
+  }
+  #design4Wrapper .d4-main {
+    padding: 1.5rem 1.25rem 4rem 1.25rem;
+  }
+  #design4Wrapper .d4-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+  #design4Wrapper .kpi-total {
+    grid-column: span 1;
+  }
+  #design4Wrapper .d4-registry-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

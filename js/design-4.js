@@ -1,13 +1,17 @@
 /**
- * Design 4 – SAP Horizon Triage Console
- * Option A: Full-Width Table with Inline Row Expansion for Fix
- * Theme: SAP Horizon 2024 Design System (Clean, Crisp, Colorful, Enterprise)
+ * Design 4: Kinetic Editorial / Swiss Futurism Controller
+ * Implements:
+ * - High-contrast Swiss Editorial typography and asymmetric grid
+ * - Dynamic 5-KPI section with oversized typography and color-blocked surfaces
+ * - Category -> Group -> Individual Records hierarchy
+ * - Floating chatbot integration for Fix workflow
+ * - Independent state and scoped DOM events
  */
 
 const Design4 = (function () {
   'use strict';
 
-  // ── State ──
+  // ── Scoped State ──
   let _state = {
     selectedPlant: '',
     selectedCostVariant: '',
@@ -15,131 +19,391 @@ const Design4 = (function () {
     applied: false,
     activeCategory: 'all',
     records: [],
-    selectedRecord: null, // holds currently expanded record
+    selectedRecord: null,
     plantOpen: false,
     cvOpen: false
   };
 
-  // Severity metadata mapping per errorCategory
-  const SEVERITY_MAP = {
-    activityPrice:      { level: 'critical', label: 'Critical', order: 1, ringColor: '#E8743B' },
-    uomMismatch:        { level: 'warning',  label: 'Warning',  order: 2, ringColor: '#19A979' },
-    vendorMissing:      { level: 'info',     label: 'Info',     order: 3, ringColor: '#ED4A7B' },
-    sourceListMissing:  { level: 'info',     label: 'Info',     order: 4, ringColor: '#945ECF' }
-  };
+  // Category definitions and metadata
+  const CATEGORIES = [
+    { key: 'activityPrice',     code: '01', title: 'Activity Price',      short: 'Tariff Mismatch',   totalCount: 9 },
+    { key: 'uomMismatch',       code: '02', title: 'UOM Mismatch',        short: 'Unit Conflicts',    totalCount: 6 },
+    { key: 'vendorMissing',     code: '03', title: 'Vendor Missing',      short: 'Procurement',       totalCount: 5 },
+    { key: 'sourceListMissing', code: '04', title: 'Source List Missing', short: 'MRP Logistics',     totalCount: 3 }
+  ];
 
-  // ── Colorful Material Type Chip ──
-  function matTypeChip(type) {
-    const styles = {
-      'FERT': 'background:#E8EAF6;color:#3949AB;border:1px solid #9FA8DA',
-      'HALB': 'background:#FFF3E0;color:#E65100;border:1px solid #FFCC80',
-      'ROH':  'background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7'
-    };
-    const s = styles[type] || 'background:#F1F5F9;color:#475569;border:1px solid #CBD5E1';
-    return `<span class="d4-type-chip" style="${s}">${type}</span>`;
+  // Helper for 2-digit number format
+  function pad2(num) {
+    return num < 10 ? '0' + num : String(num);
   }
 
-  // ── SVG Donut Ring Helper ──
-  function buildRingSVG(count, total, strokeColor) {
-    const r = 24;
-    const cx = 32;
-    const cy = 32;
-    const circumference = 2 * Math.PI * r;
-    const ratio = total > 0 ? Math.min(count / total, 1) : 0;
-    const dash = Math.round(ratio * circumference * 10) / 10;
-    
-    return `
-      <svg width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
-        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#EDF1F5" stroke-width="5.5"/>
-        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${strokeColor}" stroke-width="5.5"
-          stroke-dasharray="${dash} ${circumference}"
-          stroke-linecap="round"
-          style="transition: stroke-dasharray 0.5s ease-out;"/>
-      </svg>`;
-  }
-
-  // ── KPI Ring Tile Component ──
-  function buildKpiTile(cat, label, sublabel, count, maxCount, strokeColor, fixedCount, pendingCount) {
-    const isActive = _state.activeCategory === cat;
-    const svg = buildRingSVG(count, maxCount, strokeColor);
-    const subcounts = (fixedCount !== undefined && pendingCount !== undefined)
-      ? `<span class="d4-kpi-subcounts"><span class="d4-fixed-count">${fixedCount} Fixed</span> | <span class="d4-pending-count">${pendingCount} Pending</span></span>`
-      : '';
-    return `
-      <div class="d4-kpi-tile${isActive ? ' active' : ''}" data-cat="${cat}" title="Filter by ${label}">
-        <div class="d4-kpi-info">
-          <span class="d4-kpi-label">${label}</span>
-          <span class="d4-kpi-sublabel">${sublabel}</span>
-          <span class="d4-kpi-number">${count}</span>
-          ${subcounts}
-        </div>
-        <div class="d4-ring-wrap">
-          ${svg}
-          <span class="d4-ring-inner-val">${count}</span>
-        </div>
-      </div>`;
-  }
-
-  // ── Severity Badge Generator ──
-  function sevBadge(cat, isFixed) {
-    if (isFixed) {
-      return `<span class="d4-sev-badge fixed"><span class="d4-sev-dot"></span>Resolved</span>`;
+  // ── Initialize Design 4 Controller ──
+  function init() {
+    if (typeof MaterialData !== 'undefined') {
+      _state.records = JSON.parse(JSON.stringify(MaterialData.getInitialRecords()));
+    } else {
+      _state.records = [];
     }
-    const s = SEVERITY_MAP[cat] || { level: 'info', label: 'Info' };
-    return `<span class="d4-sev-badge ${s.level}"><span class="d4-sev-dot"></span>${s.label}</span>`;
+
+    setupDropdowns();
+    setupFilters();
+    setupCategoryTabs();
+    setupSearch();
+    setupChatbotListeners();
+
+    renderView();
   }
 
-  // ── Sort Records: Severity Order, then Unfixed First ──
-  function sortedRecords(records) {
-    return [...records].sort((a, b) => {
-      if (a.isFixed !== b.isFixed) return a.isFixed ? 1 : -1;
-      const ao = (SEVERITY_MAP[a.errorCategory] || { order: 9 }).order;
-      const bo = (SEVERITY_MAP[b.errorCategory] || { order: 9 }).order;
-      return ao - bo;
+  // ── Dropdown Handlers (Plant & Cost Variant) ──
+  function setupDropdowns() {
+    const plantInp = document.getElementById('d4PlantInput');
+    const plantDrop = document.getElementById('d4PlantDropdown');
+    const cvInp = document.getElementById('d4CvInput');
+    const cvDrop = document.getElementById('d4CvDropdown');
+
+    if (!plantInp || !plantDrop || !cvInp || !cvDrop) return;
+
+    // Plant Dropdown
+    function renderPlantOpts(txt = '') {
+      plantDrop.innerHTML = '';
+      const plants = typeof MaterialData !== 'undefined' ? MaterialData.getPlants() : [];
+      const filter = txt.toLowerCase().trim();
+      const filtered = plants.filter(p => p.key.toLowerCase().includes(filter) || p.text.toLowerCase().includes(filter));
+
+      if (filtered.length === 0) {
+        plantDrop.innerHTML = '<div class="d4-dropdown-item" style="color:#888;">No plants found</div>';
+        return;
+      }
+
+      filtered.forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'd4-dropdown-item' + (p.key === _state.selectedPlant ? ' selected' : '');
+        item.textContent = p.text;
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          _state.selectedPlant = p.key;
+          plantInp.value = p.key;
+          plantDrop.classList.add('hidden');
+          _state.plantOpen = false;
+        });
+        plantDrop.appendChild(item);
+      });
+    }
+
+    plantInp.addEventListener('focus', () => {
+      _state.plantOpen = true;
+      _state.cvOpen = false;
+      cvDrop.classList.add('hidden');
+      renderPlantOpts(plantInp.value);
+      plantDrop.classList.remove('hidden');
+    });
+
+    plantInp.addEventListener('input', () => {
+      renderPlantOpts(plantInp.value);
+      plantDrop.classList.remove('hidden');
+    });
+
+    // Cost Variant Dropdown
+    function renderCvOpts(txt = '') {
+      cvDrop.innerHTML = '';
+      const variants = typeof MaterialData !== 'undefined' ? MaterialData.getCostVariants() : [];
+      const filter = txt.toLowerCase().trim();
+      const filtered = variants.filter(v => v.key.toLowerCase().includes(filter) || v.text.toLowerCase().includes(filter));
+
+      if (filtered.length === 0) {
+        cvDrop.innerHTML = '<div class="d4-dropdown-item" style="color:#888;">No cost variants found</div>';
+        return;
+      }
+
+      filtered.forEach(v => {
+        const item = document.createElement('div');
+        item.className = 'd4-dropdown-item' + (v.key === _state.selectedCostVariant ? ' selected' : '');
+        item.textContent = v.text;
+        item.addEventListener('click', (e) => {
+          e.stopPropagation();
+          _state.selectedCostVariant = v.key;
+          cvInp.value = v.key;
+          cvDrop.classList.add('hidden');
+          _state.cvOpen = false;
+        });
+        cvDrop.appendChild(item);
+      });
+    }
+
+    cvInp.addEventListener('focus', () => {
+      _state.cvOpen = true;
+      _state.plantOpen = false;
+      plantDrop.classList.add('hidden');
+      renderCvOpts(cvInp.value);
+      cvDrop.classList.remove('hidden');
+    });
+
+    cvInp.addEventListener('input', () => {
+      renderCvOpts(cvInp.value);
+      cvDrop.classList.remove('hidden');
+    });
+
+    // Click outside closes dropdowns
+    document.addEventListener('click', (e) => {
+      if (!plantInp.contains(e.target) && !plantDrop.contains(e.target)) {
+        plantDrop.classList.add('hidden');
+        _state.plantOpen = false;
+      }
+      if (!cvInp.contains(e.target) && !cvDrop.contains(e.target)) {
+        cvDrop.classList.add('hidden');
+        _state.cvOpen = false;
+      }
     });
   }
 
-  // ── Render KPI Ribbon ──
-  function renderKpiRibbon() {
-    const counts = MaterialData.calculateCounts(_state.records);
-    const ribbon = document.getElementById('d4KpiRibbon');
-    if (!ribbon) return;
+  // ── Filter Controls (Apply, Refresh, Recents) ──
+  function setupFilters() {
+    const applyBtn = document.getElementById('d4ApplyBtn');
+    const rfBtn = document.getElementById('d4RfBtn');
+    const recentsBtn = document.getElementById('d4RecentsBtn');
 
-    // Compute fixed/pending per category for sub-counts
-    function subCounts(filterCat) {
-      const recs = filterCat === 'all' ? _state.records : _state.records.filter(r => r.errorCategory === filterCat);
-      const fixed = recs.filter(r => r.isFixed).length;
-      return { fixed, pending: recs.length - fixed };
+    if (applyBtn) {
+      applyBtn.addEventListener('click', () => {
+        const plantInp = document.getElementById('d4PlantInput');
+        const cvInp = document.getElementById('d4CvInput');
+        const matInp = document.getElementById('d4MatInput');
+
+        if (plantInp && plantInp.value.trim()) _state.selectedPlant = plantInp.value.trim();
+        if (cvInp && cvInp.value.trim()) _state.selectedCostVariant = cvInp.value.trim();
+        if (matInp) _state.selectedMaterial = matInp.value.trim();
+
+        _state.applied = true;
+        renderView();
+      });
     }
-    const sc = {
-      all:               subCounts('all'),
-      activityPrice:     subCounts('activityPrice'),
-      uomMismatch:       subCounts('uomMismatch'),
-      vendorMissing:     subCounts('vendorMissing'),
-      sourceListMissing: subCounts('sourceListMissing')
-    };
 
-    ribbon.innerHTML = [
-      buildKpiTile('all',               'Total Errors',        'All Categories',  counts.total,             23, '#1565C0', sc.all.fixed,               sc.all.pending),
-      buildKpiTile('activityPrice',     'Activity Price',      'Tariff Mismatch', counts.activityPrice,     9,  '#E8743B', sc.activityPrice.fixed,     sc.activityPrice.pending),
-      buildKpiTile('uomMismatch',       'UOM Mismatch',        'Unit Conflicts',  counts.uomMismatch,       6,  '#19A979', sc.uomMismatch.fixed,       sc.uomMismatch.pending),
-      buildKpiTile('vendorMissing',     'Vendor Missing',      'Procurement',     counts.vendorMissing,     5,  '#ED4A7B', sc.vendorMissing.fixed,     sc.vendorMissing.pending),
-      buildKpiTile('sourceListMissing', 'Source List Missing', 'MRP Logistics',   counts.sourceListMissing, 3,  '#945ECF', sc.sourceListMissing.fixed, sc.sourceListMissing.pending)
-    ].join('');
+    if (rfBtn) {
+      rfBtn.addEventListener('click', () => {
+        if (typeof MaterialData !== 'undefined') {
+          _state.records = JSON.parse(JSON.stringify(MaterialData.getInitialRecords()));
+        }
+        const plantInp = document.getElementById('d4PlantInput');
+        const cvInp = document.getElementById('d4CvInput');
+        const matInp = document.getElementById('d4MatInput');
+        if (plantInp) plantInp.value = '';
+        if (cvInp) cvInp.value = '';
+        if (matInp) matInp.value = '';
+        _state.selectedPlant = '';
+        _state.selectedCostVariant = '';
+        _state.selectedMaterial = '';
+        _state.activeCategory = 'all';
+        _state.applied = false;
+        renderView();
+      });
+    }
 
-    // Attach click events to tiles
-    ribbon.querySelectorAll('.d4-kpi-tile').forEach(tile => {
-      tile.addEventListener('click', () => {
-        _state.activeCategory = tile.getAttribute('data-cat');
-        _state.selectedRecord = null; // collapse any open row
-        renderKpiRibbon();
-        renderTriageTable();
+    if (recentsBtn) {
+      recentsBtn.addEventListener('click', () => {
+        const drawer = document.getElementById('recentsDrawer');
+        if (drawer) {
+          drawer.classList.toggle('hidden');
+        }
+      });
+    }
+  }
+
+  // ── Category Tabs Setup ──
+  function setupCategoryTabs() {
+    const tabsContainer = document.getElementById('d4CategoryTabs');
+    if (!tabsContainer) return;
+
+    tabsContainer.querySelectorAll('.d4-cat-tab').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const cat = btn.getAttribute('data-cat');
+        _state.activeCategory = cat || 'all';
+        updateCategoryTabsUI();
+        renderKpis();
+        renderRegistryTable();
       });
     });
   }
 
-  // ── Render Triage Table with Inline Row Expansion (Option A) ──
-  function renderTriageTable() {
+  function updateCategoryTabsUI() {
+    const tabsContainer = document.getElementById('d4CategoryTabs');
+    if (!tabsContainer) return;
+    tabsContainer.querySelectorAll('.d4-cat-tab').forEach(btn => {
+      const isAct = btn.getAttribute('data-cat') === _state.activeCategory;
+      btn.classList.toggle('active', isAct);
+    });
+  }
+
+  // ── Live Search Setup ──
+  function setupSearch() {
+    const searchInput = document.getElementById('d4TriageSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        renderRegistryTable();
+      });
+    }
+  }
+
+  // ── Listen to Shared Record Fixed Event ──
+  function setupChatbotListeners() {
+    window.addEventListener('material-record-fixed', (e) => {
+      const fixedId = e.detail && e.detail.recordId;
+      if (fixedId) {
+        const target = _state.records.find(r => r.id === fixedId);
+        if (target) {
+          target.isFixed = true;
+          renderKpis();
+          renderRegistryTable();
+        }
+      }
+    });
+
+    document.addEventListener('material-record-fixed', (e) => {
+      const fixedId = e.detail && e.detail.recordId;
+      if (fixedId) {
+        const target = _state.records.find(r => r.id === fixedId);
+        if (target) {
+          target.isFixed = true;
+          renderKpis();
+          renderRegistryTable();
+        }
+      }
+    });
+  }
+
+  // ── View Renderer ──
+  function renderView() {
+    const emptyState = document.getElementById('d4EmptyState');
+    const contentArea = document.getElementById('d4ContentArea');
+
+    if (!emptyState || !contentArea) return;
+
+    if (!_state.applied) {
+      emptyState.classList.remove('hidden');
+      contentArea.classList.add('hidden');
+    } else {
+      emptyState.classList.add('hidden');
+      contentArea.classList.remove('hidden');
+      renderKpis();
+      renderRegistryTable();
+    }
+  }
+
+  // ── 5 Asymmetric Kinetic Editorial KPI Blocks ──
+  function renderKpis() {
+    const grid = document.getElementById('d4KpiRibbon');
+    if (!grid) return;
+
+    const counts = typeof MaterialData !== 'undefined'
+      ? MaterialData.calculateCounts(_state.records)
+      : { total: 23, activityPrice: 9, uomMismatch: 6, vendorMissing: 5, sourceListMissing: 3 };
+
+    function subcounts(cat) {
+      const recs = cat === 'all' ? _state.records : _state.records.filter(r => r.errorCategory === cat);
+      const fixed = recs.filter(r => r.isFixed).length;
+      return { fixed, pending: recs.length - fixed };
+    }
+
+    const scAll = subcounts('all');
+    const scAp  = subcounts('activityPrice');
+    const scUm  = subcounts('uomMismatch');
+    const scVm  = subcounts('vendorMissing');
+    const scSl  = subcounts('sourceListMissing');
+
+    grid.innerHTML = `
+      <!-- 1. Total Errors (Hero Card) -->
+      <div class="d4-kpi-card kpi-total${_state.activeCategory === 'all' ? ' active' : ''}" data-cat="all" title="Filter by All Errors">
+        <div class="d4-kpi-top">
+          <div>
+            <span class="d4-kpi-label">[ 01 ] TOTAL CO-PC ERRORS</span>
+            <div class="d4-kpi-sub">ALL ERROR DOMAINS</div>
+          </div>
+          <span class="d4-kpi-glyph">⬡</span>
+        </div>
+        <div class="d4-kpi-num">${counts.total}</div>
+        <div class="d4-kpi-footer">
+          <span>${scAll.fixed} FIXED</span>
+          <span>${scAll.pending} PENDING</span>
+        </div>
+      </div>
+
+      <!-- 2. Activity Price -->
+      <div class="d4-kpi-card kpi-ap${_state.activeCategory === 'activityPrice' ? ' active' : ''}" data-cat="activityPrice" title="Filter by Activity Price">
+        <div class="d4-kpi-top">
+          <div>
+            <span class="d4-kpi-label">[ 02 ] ACTIVITY PRICE</span>
+            <div class="d4-kpi-sub">TARIFF MISMATCH</div>
+          </div>
+          <span class="d4-kpi-glyph">▲</span>
+        </div>
+        <div class="d4-kpi-num">${pad2(counts.activityPrice)}</div>
+        <div class="d4-kpi-footer">
+          <span>${scAp.fixed} FIXED</span>
+          <span>${scAp.pending} PENDING</span>
+        </div>
+      </div>
+
+      <!-- 3. UOM Mismatch -->
+      <div class="d4-kpi-card kpi-um${_state.activeCategory === 'uomMismatch' ? ' active' : ''}" data-cat="uomMismatch" title="Filter by UOM Mismatch">
+        <div class="d4-kpi-top">
+          <div>
+            <span class="d4-kpi-label">[ 03 ] UOM MISMATCH</span>
+            <div class="d4-kpi-sub">UNIT CONFLICTS</div>
+          </div>
+          <span class="d4-kpi-glyph">■</span>
+        </div>
+        <div class="d4-kpi-num">${pad2(counts.uomMismatch)}</div>
+        <div class="d4-kpi-footer">
+          <span>${scUm.fixed} FIXED</span>
+          <span>${scUm.pending} PENDING</span>
+        </div>
+      </div>
+
+      <!-- 4. Vendor Missing -->
+      <div class="d4-kpi-card kpi-vm${_state.activeCategory === 'vendorMissing' ? ' active' : ''}" data-cat="vendorMissing" title="Filter by Vendor Missing">
+        <div class="d4-kpi-top">
+          <div>
+            <span class="d4-kpi-label">[ 04 ] VENDOR MISSING</span>
+            <div class="d4-kpi-sub">PROCUREMENT</div>
+          </div>
+          <span class="d4-kpi-glyph">◆</span>
+        </div>
+        <div class="d4-kpi-num">${pad2(counts.vendorMissing)}</div>
+        <div class="d4-kpi-footer">
+          <span>${scVm.fixed} FIXED</span>
+          <span>${scVm.pending} PENDING</span>
+        </div>
+      </div>
+
+      <!-- 5. Source List Missing -->
+      <div class="d4-kpi-card kpi-sl${_state.activeCategory === 'sourceListMissing' ? ' active' : ''}" data-cat="sourceListMissing" title="Filter by Source List Missing">
+        <div class="d4-kpi-top">
+          <div>
+            <span class="d4-kpi-label">[ 05 ] SOURCE LIST</span>
+            <div class="d4-kpi-sub">MRP LOGISTICS</div>
+          </div>
+          <span class="d4-kpi-glyph">●</span>
+        </div>
+        <div class="d4-kpi-num">${pad2(counts.sourceListMissing)}</div>
+        <div class="d4-kpi-footer">
+          <span>${scSl.fixed} FIXED</span>
+          <span>${scSl.pending} PENDING</span>
+        </div>
+      </div>
+    `;
+
+    // Click handler for KPI cards
+    grid.querySelectorAll('.d4-kpi-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const cat = card.getAttribute('data-cat');
+        _state.activeCategory = cat || 'all';
+        updateCategoryTabsUI();
+        renderKpis();
+        renderRegistryTable();
+      });
+    });
+  }
+
+  // ── Render Structured Hierarchy Table (Category -> Group -> Individual Records) ──
+  function renderRegistryTable() {
     const tbody = document.getElementById('d4TriageBody');
     const countEl = document.getElementById('d4TriageCount');
     if (!tbody) return;
@@ -160,369 +424,141 @@ const Design4 = (function () {
       );
     }
 
-    const sorted = sortedRecords(filtered);
-    if (countEl) countEl.textContent = `${sorted.length} record${sorted.length !== 1 ? 's' : ''}`;
+    if (countEl) {
+      countEl.textContent = `[ ${filtered.length} RECORD${filtered.length !== 1 ? 'S' : ''} LOGGED ]`;
+    }
 
-    if (sorted.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="8" class="d4-triage-empty">No error records match the current filter criteria.</td></tr>`;
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="d4-table-empty">NO ERROR RECORDS MATCH CRITERIA.</td></tr>`;
       return;
     }
 
-    let rowsHtml = '';
-    sorted.forEach(r => {
-      const sev = SEVERITY_MAP[r.errorCategory] || { level: 'info' };
-      const sevClass = r.isFixed ? 'sev-fixed' : `sev-${sev.level}`;
-      const isExpanded = _state.selectedRecord && _state.selectedRecord.id === r.id;
+    // Group records by Category -> Group
+    const relevantCats = _state.activeCategory === 'all'
+      ? CATEGORIES
+      : CATEGORIES.filter(c => c.key === _state.activeCategory);
 
-      // 1. Main Data Row
-      rowsHtml += `
-        <tr class="d4-data-row ${sevClass}${isExpanded ? ' expanded' : ''}" data-id="${r.id}">
-          <td>${sevBadge(r.errorCategory, r.isFixed)}</td>
-          <td><span class="d4-material-code">${r.material}</span></td>
-          <td><div class="d4-desc-text" title="${r.description}">${r.description}</div></td>
-          <td style="color:var(--d4-label); font-weight:600;">${r.errorType}</td>
-          <td><span class="d4-plant-chip">${r.plant}</span></td>
-          <td>${matTypeChip(r.matType)}</td>
-          <td><div class="d4-res-preview" title="${r.recommendation}">${r.recommendation}</div></td>
-          <td style="text-align: center;">
-            ${r.isFixed
-              ? `<span class="d4-resolved-badge">
-                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-                   <span>Fixed</span>
-                 </span>`
-              : `<button class="d4-btn-action-fix" data-fix-id="${r.id}" title="Expand and Fix">
-                   <span>✦ Fix</span>
-                 </button>`
-            }
+    let html = '';
+
+    relevantCats.forEach(cat => {
+      const catRecs = filtered.filter(r => r.errorCategory === cat.key);
+      if (catRecs.length === 0) return;
+
+      // Tier 1: Category Header Row
+      html += `
+        <tr class="d4-category-row">
+          <td colspan="7">
+            <div class="d4-cat-header-content">
+              <span class="d4-cat-title">[ CATEGORY ${cat.code} ] ${cat.title.toUpperCase()}</span>
+              <span class="d4-cat-badge">${catRecs.length} ERRORS</span>
+            </div>
           </td>
         </tr>
       `;
 
-      // 2. Option A: Inline Expansion Row (Accordion)
-      if (isExpanded) {
-        rowsHtml += `
-          <tr class="d4-expand-row" data-expand-for="${r.id}">
-            <td colspan="8">
-              <div class="d4-expand-container">
-                
-                <!-- Heading & Metadata -->
-                <div class="d4-expand-topbar">
-                  <div class="d4-expand-heading">
-                    <span class="d4-expand-mat-code">${r.material}</span>
-                    <span class="d4-expand-mat-desc">${r.description}</span>
-                    ${sevBadge(r.errorCategory, r.isFixed)}
-                  </div>
-                  
-                  <div class="d4-expand-meta-row">
-                    <div class="d4-expand-chip">
-                      <span class="d4-expand-chip-key">Plant</span>
-                      <span class="d4-expand-chip-val">${r.plant}</span>
-                    </div>
-                    <div class="d4-expand-chip">
-                      <span class="d4-expand-chip-key">Cost Variant</span>
-                      <span class="d4-expand-chip-val">${r.costVariant}</span>
-                    </div>
-                    <div class="d4-expand-chip">
-                      <span class="d4-expand-chip-key">Material Type</span>
-                      <span class="d4-expand-chip-val">${r.matType}</span>
-                    </div>
-                    <div class="d4-expand-chip">
-                      <span class="d4-expand-chip-key">Error Type</span>
-                      <span class="d4-expand-chip-val">${r.errorType}</span>
-                    </div>
-                  </div>
-                </div>
+      // Extract unique groups in this category
+      const groupMap = new Map();
+      catRecs.forEach(r => {
+        const gk = r.groupKey || r.groupNumber || '1.1';
+        if (!groupMap.has(gk)) {
+          groupMap.set(gk, {
+            key: gk,
+            title: r.groupTitle || `${cat.title} Subgroup ${gk}`,
+            records: []
+          });
+        }
+        groupMap.get(gk).records.push(r);
+      });
 
-                <!-- Actionable Resolution Box -->
-                <div class="d4-expand-resolution-box">
-                  <span class="d4-expand-res-title">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-                    Actionable Resolution Plan
-                  </span>
-                  <div class="d4-expand-res-text">${r.recommendation}</div>
-                </div>
-
-                <!-- Action Controls -->
-                <div class="d4-expand-action-bar" id="d4ExpandActionBar-${r.id}">
-                  <button class="d4-btn-cancel-expand" data-cancel-id="${r.id}">
-                    <span>Cancel</span>
-                  </button>
-                  <button class="d4-btn-initiate-fix" data-initiate-id="${r.id}">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Initiate Fix</span>
-                  </button>
-                </div>
-
-              </div>
+      // Render each Group
+      groupMap.forEach(group => {
+        // Tier 2: Group Header Row
+        html += `
+          <tr class="d4-group-row">
+            <td colspan="7">
+              <span class="d4-group-title">// GROUP ${group.key}: ${group.title.toUpperCase()}</span>
+              <span class="d4-group-count">[ ${group.records.length} RECORD${group.records.length !== 1 ? 'S' : ''} ]</span>
             </td>
           </tr>
         `;
-      }
-    });
 
-    tbody.innerHTML = rowsHtml;
-    attachTableEvents(tbody);
-  }
-
-  // ── Attach Events for Row Expansion & Fix Actions ──
-  function attachTableEvents(tbody) {
-    // 1. Click Row to Toggle Expansion
-    tbody.querySelectorAll('tr.d4-data-row').forEach(row => {
-      row.addEventListener('click', (e) => {
-        // If clicking on an action button, let that handler process
-        if (e.target.closest('.d4-btn-action-fix')) return;
-
-        const id = row.getAttribute('data-id');
-        const rec = _state.records.find(r => r.id === id);
-        if (rec) {
-          if (_state.selectedRecord && _state.selectedRecord.id === id) {
-            _state.selectedRecord = null; // Toggle collapse
-          } else {
-            _state.selectedRecord = rec; // Expand
-          }
-          renderTriageTable();
-        }
+        // Tier 3: Individual Records
+        group.records.forEach(r => {
+          const typeClass = `type-${r.matType || 'ROH'}`;
+          html += `
+            <tr class="d4-record-row${r.isFixed ? ' is-fixed' : ''}" data-id="${r.id}">
+              <td class="d4-mat-cell">${r.material}</td>
+              <td class="d4-desc-cell">${r.description}</td>
+              <td class="d4-error-cell">${r.errorType}</td>
+              <td><span class="d4-plant-chip">${r.plant}</span></td>
+              <td><span class="d4-type-chip ${typeClass}">${r.matType || 'ROH'}</span></td>
+              <td class="d4-rec-cell">${r.recommendation}</td>
+              <td style="text-align: center;">
+                ${r.isFixed
+                  ? `<span class="d4-resolved-badge">
+                       <span class="d4-resolved-glyph">✓</span>
+                       <span>FIXED</span>
+                     </span>`
+                  : `<button class="d4-btn-action-fix" data-fix-id="${r.id}" title="Fix with Material Assistant">
+                       <span>✦ FIX</span>
+                     </button>`
+                }
+              </td>
+            </tr>
+          `;
+        });
       });
     });
 
-    // 2. Click "✦ Fix" Button directly
+    tbody.innerHTML = html;
+
+    // Attach row-level Fix click handlers
     tbody.querySelectorAll('.d4-btn-action-fix').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const id = btn.getAttribute('data-fix-id');
-        const rec = _state.records.find(r => r.id === id);
-        if (rec) {
-          _state.selectedRecord = rec;
-          renderTriageTable();
-        }
-      });
-    });
-
-    // 3. Click "Cancel" inside expansion
-    tbody.querySelectorAll('.d4-btn-cancel-expand').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        _state.selectedRecord = null;
-        renderTriageTable();
-      });
-    });
-
-    // 4. Click "Initiate Fix" inside expansion
-    tbody.querySelectorAll('.d4-btn-initiate-fix').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const id = btn.getAttribute('data-initiate-id');
-        const rec = _state.records.find(r => r.id === id);
+        const recId = btn.getAttribute('data-fix-id');
+        const rec = _state.records.find(r => r.id === recId);
         if (!rec) return;
 
-        // Button Loading State
-        btn.disabled = true;
-        btn.innerHTML = `<div class="d4-spinner"></div><span>Synchronizing with SAP ERP...</span>`;
-
-        // Notify shared chatbot module if available
+        // Open floating chatbot overlay with Fix prompt
         if (typeof MaterialChatbot !== 'undefined' && MaterialChatbot.initiateFix) {
           MaterialChatbot.initiateFix(rec);
         }
-
-        // Simulate asynchronous SAP transaction commit
-        setTimeout(() => {
-          // Mark fixed in local records
-          _state.records = _state.records.map(r => r.id === id ? { ...r, isFixed: true } : r);
-
-          // Dispatch event to sync with other designs & Recents
-          document.dispatchEvent(new CustomEvent('material-record-fixed', {
-            detail: {
-              material: rec.material,
-              description: rec.description,
-              errorType: rec.errorType,
-              plant: rec.plant,
-              matType: rec.matType,
-              recommendation: rec.recommendation
-            }
-          }));
-
-          // Show confirmation banner inside expanded container
-          const actionBar = document.getElementById(`d4ExpandActionBar-${id}`);
-          if (actionBar) {
-            actionBar.innerHTML = `
-              <div class="d4-expand-success-banner">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                <span>Master data record successfully synchronized in plant ${rec.plant}.</span>
-              </div>
-            `;
-          }
-
-          // Smoothly close expansion after 900ms and refresh table & KPIs
-          setTimeout(() => {
-            _state.selectedRecord = null;
-            renderKpiRibbon();
-            renderTriageTable();
-          }, 900);
-
-        }, 700);
       });
     });
   }
 
-  // ── Setup Dropdown Components ──
-  function setupDropdown(inputId, dropdownId, items, stateKey) {
-    const input = document.getElementById(inputId);
-    const dropdown = document.getElementById(dropdownId);
-    if (!input || !dropdown) return;
+  // ── Cross-Design Filter Synchronization ──
+  function syncFilterState(plant, cv, mat, applied) {
+    if (plant) _state.selectedPlant = plant;
+    if (cv) _state.selectedCostVariant = cv;
+    if (mat) _state.selectedMaterial = mat;
+    if (typeof applied === 'boolean') _state.applied = applied;
 
-    function populate(filterText) {
-      const q = filterText.toLowerCase();
-      const matches = items.filter(it =>
-        it.text.toLowerCase().includes(q) ||
-        it.key.toLowerCase().includes(q)
-      );
+    const plantInp = document.getElementById('d4PlantInput');
+    const cvInp = document.getElementById('d4CvInput');
+    const matInp = document.getElementById('d4MatInput');
 
-      if (matches.length === 0) {
-        dropdown.innerHTML = `<div class="d4-dropdown-no-result">No matching options found</div>`;
-      } else {
-        dropdown.innerHTML = matches.map(it => `
-          <div class="d4-dropdown-item${_state[stateKey] === it.key ? ' selected' : ''}" data-key="${it.key}">
-            ${it.text}
-          </div>
-        `).join('');
-      }
+    if (plantInp && _state.selectedPlant) plantInp.value = _state.selectedPlant;
+    if (cvInp && _state.selectedCostVariant) cvInp.value = _state.selectedCostVariant;
+    if (matInp && _state.selectedMaterial) matInp.value = _state.selectedMaterial;
 
-      dropdown.querySelectorAll('.d4-dropdown-item').forEach(item => {
-        item.addEventListener('click', () => {
-          const val = item.getAttribute('data-key');
-          _state[stateKey] = val;
-          input.value = val;
-          dropdown.classList.add('hidden');
-        });
-      });
-    }
-
-    input.addEventListener('focus', () => {
-      dropdown.classList.remove('hidden');
-      populate(input.value);
-    });
-
-    input.addEventListener('input', () => {
-      dropdown.classList.remove('hidden');
-      populate(input.value);
-    });
-
-    document.addEventListener('click', (e) => {
-      if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.add('hidden');
-      }
-    });
+    renderView();
   }
 
-  // ── Show Content after Apply ──
-  function showContent() {
-    const emptyState = document.getElementById('d4EmptyState');
-    const contentArea = document.getElementById('d4ContentArea');
-    if (emptyState) emptyState.classList.add('hidden');
-    if (contentArea) contentArea.classList.remove('hidden');
-
-    renderKpiRibbon();
-    renderTriageTable();
-  }
-
-  // ── Initialize Design 4 Controller ──
-  function init() {
-    // 1. Apply Button
-    const applyBtn = document.getElementById('d4ApplyBtn');
-    if (applyBtn) {
-      applyBtn.addEventListener('click', () => {
-        _state.selectedPlant = document.getElementById('d4PlantInput')?.value?.trim() || '';
-        _state.selectedCostVariant = document.getElementById('d4CvInput')?.value?.trim() || '';
-        _state.selectedMaterial = document.getElementById('d4MatInput')?.value?.trim() || '';
-        _state.records = MaterialData.getInitialRecords();
-        _state.applied = true;
-        _state.selectedRecord = null;
-        _state.activeCategory = 'all';
-        showContent();
-      });
-    }
-
-    // 2. Refresh Button
-    const rfBtn = document.getElementById('d4RfBtn');
-    if (rfBtn) {
-      rfBtn.addEventListener('click', () => {
-        if (_state.applied) {
-          _state.records = MaterialData.getInitialRecords();
-          _state.selectedRecord = null;
-          _state.activeCategory = 'all';
-          renderKpiRibbon();
-          renderTriageTable();
-        }
-      });
-    }
-
-    // 3. Search Input in Table
-    const searchInput = document.getElementById('d4TriageSearch');
-    if (searchInput) {
-      searchInput.addEventListener('input', () => {
-        renderTriageTable();
-      });
-    }
-
-    // 4. Collapse All Details Button
-    const collapseBtn = document.getElementById('d4CollapseAllBtn');
-    if (collapseBtn) {
-      collapseBtn.addEventListener('click', () => {
-        _state.selectedRecord = null;
-        renderTriageTable();
-      });
-    }
-
-    // 5. Recents — handled globally by MaterialChatbot.setupRecentsDrawer()
-    // No separate handler needed here (avoids duplicate binding conflict)
-
-    // 6. Setup searchable dropdowns
-    setupDropdown('d4PlantInput', 'd4PlantDropdown', MaterialData.getPlants(), 'selectedPlant');
-    setupDropdown('d4CvInput', 'd4CvDropdown', MaterialData.getCostVariants(), 'selectedCostVariant');
-
-    // 7. Listen for cross-design fix events
-    document.addEventListener('material-record-fixed', (e) => {
-      if (!e.detail || !e.detail.material) return;
-      _state.records = _state.records.map(r =>
-        r.material === e.detail.material ? { ...r, isFixed: true } : r
-      );
-      if (_state.applied) {
-        renderKpiRibbon();
-        renderTriageTable();
-      }
-    });
-  }
-
-  // ── Public API ──
   return {
     init: init,
-    getState: function () {
-      return { ..._state };
-    },
-    syncFilterState: function (plant, cv, mat, applied) {
-      if (plant) {
-        _state.selectedPlant = plant;
-        const inp = document.getElementById('d4PlantInput');
-        if (inp) inp.value = plant;
-      }
-      if (cv) {
-        _state.selectedCostVariant = cv;
-        const inp = document.getElementById('d4CvInput');
-        if (inp) inp.value = cv;
-      }
-      if (mat) {
-        _state.selectedMaterial = mat;
-        const inp = document.getElementById('d4MatInput');
-        if (inp) inp.value = mat;
-      }
-      if (applied && !_state.applied) {
-        _state.records = MaterialData.getInitialRecords();
-        _state.applied = true;
-        showContent();
-      }
-    }
+    getState: function () { return _state; },
+    syncFilterState: syncFilterState
   };
 })();
+
+// Auto-register on DOMContentLoaded if not loaded as module
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    // Only init if not already initialized
+  });
+}
 
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = Design4;

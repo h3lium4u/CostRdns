@@ -55,9 +55,9 @@
           <span class="tab-badge">03</span>
           <span>Design 3</span>
         </button>
-        <button class="design-tab-btn" data-design="4" role="tab" aria-selected="false" title="Design 4">
+        <button class="design-tab-btn" data-design="4" role="tab" aria-selected="false" title="Design 4 – Kinetic Editorial">
           <span class="tab-badge">04</span>
-          <span>Design 4</span>
+          <span>Design 4 · Kinetic Editorial</span>
         </button>
       </div>
     </div>
@@ -756,24 +756,25 @@
   </div>
 
   <!-- =====================================================================
-       DESIGN 4: SAP HORIZON TRIAGE COMMAND CENTER (INDEPENDENT IMPLEMENTATION)
-       SAP Horizon 2024 color tokens + Severity-first split-pane layout
-       SVG Donut Ring KPIs + Fix Command Console + Inline Timeline
+       DESIGN 4: KINETIC EDITORIAL / SWISS FUTURISM (INDEPENDENT IMPLEMENTATION)
+       Ink Black (#171717), Acid Lime (#E9FF45), Cobalt Blue (#3658E8),
+       Tangerine Coral (#FF6847), Warm Ivory (#F4F0E8), Lavender (#A78BFA)
+       Oversized Typography + Asymmetric Grid + Bold Color Blocks
        ===================================================================== -->
   <div id="design4Wrapper" class="design-view hidden">
 
-    <!-- Design 4 Fixed Filter Bar -->
+    <!-- Design 4 Fixed Editorial Header & Filter Bar -->
     <header class="d4-filter-bar">
       <div class="d4-filter-container">
 
         <div class="d4-brand-wrap">
-          <span class="d4-brand-title">Material Error Dashboard</span>
-          <span class="d4-badge">Design 4</span>
+          <div class="d4-title-stack">
+            <span class="d4-brand-kicker">[ 04 // SWISS FUTURISM ]</span>
+            <span class="d4-brand-title">MATERIAL ERROR DASHBOARD</span>
+          </div>
+          <span class="d4-badge">Kinetic Editorial</span>
           <button id="d4RecentsBtn" class="d4-btn-recents" title="Toggle Recent History">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
+            <span class="d4-recents-glyph">◷</span>
             <span>Recents</span>
           </button>
         </div>
@@ -781,46 +782,40 @@
         <div class="d4-filters-row">
           <!-- Plant -->
           <div class="d4-field d4-field-plant">
-            <label for="d4PlantInput" class="d4-label">Plant</label>
+            <label for="d4PlantInput" class="d4-label">PLANT / PL</label>
             <div class="d4-input-wrap">
               <input type="text" id="d4PlantInput" class="d4-input" placeholder="Select Plant..." autocomplete="off">
-              <span class="d4-arrow">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </span>
+              <span class="d4-arrow">▼</span>
             </div>
             <div id="d4PlantDropdown" class="d4-dropdown hidden"></div>
           </div>
 
           <!-- Cost Variant -->
           <div class="d4-field d4-field-cv">
-            <label for="d4CvInput" class="d4-label">Cost Variant</label>
+            <label for="d4CvInput" class="d4-label">VARIANT / CV</label>
             <div class="d4-input-wrap">
               <input type="text" id="d4CvInput" class="d4-input" placeholder="Select Cost Variant..." autocomplete="off">
-              <span class="d4-arrow">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </span>
+              <span class="d4-arrow">▼</span>
             </div>
             <div id="d4CvDropdown" class="d4-dropdown hidden"></div>
           </div>
 
           <!-- Material -->
           <div class="d4-field d4-field-mat">
-            <label for="d4MatInput" class="d4-label">Material</label>
+            <label for="d4MatInput" class="d4-label">MATERIAL / MT</label>
             <input type="text" id="d4MatInput" class="d4-input" placeholder="Enter Material Number...">
           </div>
 
           <!-- Actions -->
-          <button id="d4ApplyBtn" class="d4-btn-apply" title="Apply Filters">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-            </svg>
-            <span>Apply</span>
-          </button>
-          <button id="d4RfBtn" class="d4-btn-rf" title="Refresh">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-            </svg>
-          </button>
+          <div class="d4-actions-group">
+            <button id="d4ApplyBtn" class="d4-btn-apply" title="Apply Filters">
+              <span>Apply</span>
+              <span class="d4-apply-arrow">→</span>
+            </button>
+            <button id="d4RfBtn" class="d4-btn-rf" title="Refresh">
+              <span>RF</span>
+            </button>
+          </div>
         </div>
 
       </div>
@@ -831,61 +826,77 @@
 
       <!-- Initial State (Before Apply) -->
       <div id="d4EmptyState" class="d4-empty-state">
-        <div class="d4-empty-icon">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
+        <div class="d4-empty-box">
+          <div class="d4-empty-meta">
+            <span class="d4-empty-tag">// STATUS: STANDBY</span>
+            <span class="d4-empty-num">04</span>
+          </div>
+          <h2 class="d4-empty-title">AWAITING PARAMETERS</h2>
+          <p class="d4-empty-sub">SELECT PLANT &amp; COST VARIANT ABOVE, THEN CLICK APPLY TO GENERATE RECONCILIATION REGISTRY.</p>
+          <div class="d4-empty-palette">
+            <div class="d4-palette-chip chip-lime"><span>#E9FF45</span></div>
+            <div class="d4-palette-chip chip-coral"><span>#FF6847</span></div>
+            <div class="d4-palette-chip chip-cobalt"><span>#3658E8</span></div>
+            <div class="d4-palette-chip chip-lavender"><span>#A78BFA</span></div>
+            <div class="d4-palette-chip chip-ink"><span>#171717</span></div>
+          </div>
         </div>
-        <h2 class="d4-empty-title">SAP Horizon Triage Console</h2>
-        <p class="d4-empty-sub">Select Plant and Cost Variant, then click Apply to load the severity-based error triage view.</p>
       </div>
 
       <!-- Post-Apply Content -->
       <div id="d4ContentArea" class="hidden">
 
-        <!-- KPI Ring Ribbon -->
-        <div id="d4KpiRibbon" class="d4-kpi-ribbon"></div>
+        <!-- 5 Asymmetric Kinetic Editorial KPI Blocks -->
+        <div id="d4KpiRibbon" class="d4-kpi-grid"></div>
 
-        <!-- Full Width Severity Triage Card -->
-        <div class="d4-triage-card">
-          <div class="d4-triage-header">
-            <div class="d4-triage-title-group">
-              <h3 class="d4-triage-title">Severity Triage Console</h3>
-              <span id="d4TriageCount" class="d4-triage-count">23 records</span>
+        <!-- Error Reconciliation Registry (Hierarchy Table) -->
+        <div class="d4-registry-section">
+          
+          <div class="d4-registry-header">
+            <div class="d4-registry-title-wrap">
+              <span class="d4-section-kicker">// SECTION 02</span>
+              <h2 class="d4-registry-title">ERROR RECONCILIATION REGISTRY</h2>
+              <span id="d4TriageCount" class="d4-registry-count">[ 23 RECORDS LOGGED ]</span>
             </div>
-            <div class="d4-triage-toolbar">
-              <div class="d4-triage-search">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                  <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                </svg>
-                <input type="text" id="d4TriageSearch" placeholder="Search material, error, plant...">
+
+            <div class="d4-registry-controls">
+              <!-- Category Tabs -->
+              <div class="d4-category-tabs" id="d4CategoryTabs">
+                <button class="d4-cat-tab active" data-cat="all">ALL (23)</button>
+                <button class="d4-cat-tab" data-cat="activityPrice">ACTIVITY PRICE (9)</button>
+                <button class="d4-cat-tab" data-cat="uomMismatch">UOM MISMATCH (6)</button>
+                <button class="d4-cat-tab" data-cat="vendorMissing">VENDOR MISSING (5)</button>
+                <button class="d4-cat-tab" data-cat="sourceListMissing">SOURCE LIST (3)</button>
               </div>
-              <button id="d4CollapseAllBtn" class="d4-btn-tool" title="Collapse expanded rows">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="4 14 12 6 20 14"/></svg>
-                <span>Collapse Details</span>
-              </button>
+
+              <!-- Search -->
+              <div class="d4-search-box">
+                <span class="d4-search-icon">⚲</span>
+                <input type="text" id="d4TriageSearch" placeholder="SEARCH REGISTRY (MATERIAL, PLANT, ERROR)...">
+              </div>
             </div>
           </div>
 
-          <div class="d4-triage-body">
-            <table class="d4-triage-table">
+          <!-- Structured Hierarchy Table -->
+          <div class="d4-table-container">
+            <table class="d4-editorial-table">
               <thead>
                 <tr>
-                  <th style="width: 105px;">Severity</th>
-                  <th style="width: 14%;">Material</th>
-                  <th style="width: 22%;">Description</th>
-                  <th style="width: 15%;">Error Type</th>
-                  <th style="width: 80px;">Plant</th>
-                  <th style="width: 75px;">Type</th>
-                  <th style="width: 26%;">Actionable Resolution</th>
-                  <th style="width: 110px; text-align: center;">Action</th>
+                  <th style="width: 14%;">MATERIAL</th>
+                  <th style="width: 22%;">DESCRIPTION</th>
+                  <th style="width: 15%;">ERROR TYPE</th>
+                  <th style="width: 85px;">PLANT</th>
+                  <th style="width: 80px;">TYPE</th>
+                  <th style="width: 28%;">RECOMMENDATION</th>
+                  <th style="width: 110px; text-align: center;">ACTION</th>
                 </tr>
               </thead>
               <tbody id="d4TriageBody">
-                <!-- Dynamic data rows + inline expandable accordion panels -->
+                <!-- Grouped & Individual records rendered by js/design-4.js -->
               </tbody>
             </table>
           </div>
+
         </div>
 
       </div>

@@ -183,7 +183,7 @@ test('Design Switcher: Switching and state tracking', () => {
   assert.equal(localStorage.getItem('material_dashboard_selected_design'), '4');
 });
 
-test('Design 4 (SAP Horizon Triage): Controller exports and state management', () => {
+test('Design 4 (Kinetic Editorial): Controller exports and state management', () => {
   global.CustomEvent = function(name, opts) { return { type: name, detail: opts && opts.detail }; };
   global.document.dispatchEvent = () => {};
 
