@@ -1,90 +1,64 @@
 /* ==========================================================================
-   Design 2: Gemini Design - Scoped Stylesheet
-   Theme: Chromatic Bento + Swiss Editorial Background
-   Palette (Background only):
-     Soft Lavender:   #F0EDFF
-     Pale Periwinkle: #E7ECFF
-     Light Aqua:      #E4F7F5
-     Soft Peach:      #FFF0E8
-     Pale Pink:       #FCEAF2
-     Light Yellow:    #FFF8DF
-     Neutral White:   #FFFFFF
-   UX Structure: Segmented KPI Ribbon + Unified Hierarchical Tree-Table (100% Preserved)
+   Design 2: Gemini Design – Multicolour Glassmorphism
+   Theme: Aurora Blue-Cyan-Violet-Pink + Frosted Glass Surfaces
+   Palette:
+     Electric Blue  #3478F6
+     Cyan           #36D9E8
+     Violet         #8254F6
+     Soft Pink      #F3A7DB
+     Lavender       #DCD0FF
+     Mint           #B9F1DE
+     Ice Blue       #D9EDFF
+     Pearl White    #F8FAFF
+   Scope: ALL styles under #design2Wrapper — zero bleed to other designs
    ========================================================================== */
 
+/* ── Root + Aurora Background ─────────────────────────────────────────── */
 #design2Wrapper {
-  --bento-lavender:   #F0EDFF;
-  --bento-periwinkle: #E7ECFF;
-  --bento-aqua:       #E4F7F5;
-  --bento-peach:      #FFF0E8;
-  --bento-pink:       #FCEAF2;
-  --bento-yellow:     #FFF8DF;
-  --bento-white:      #FFFFFF;
-  --bento-grid-line:  rgba(49, 85, 201, 0.045);
+  --g-blue:    #3478F6;
+  --g-cyan:    #36D9E8;
+  --g-violet:  #8254F6;
+  --g-pink:    #F3A7DB;
+  --g-lav:     #DCD0FF;
+  --g-mint:    #B9F1DE;
+  --g-ice:     #D9EDFF;
+  --g-pearl:   #F8FAFF;
+  --g-navy:    #1E2A5E;
+  --g-glass-w: rgba(255,255,255,0.60);
+  --g-glass-b: rgba(217,237,255,0.55);
+  --g-blur:    blur(18px) saturate(180%);
+  --g-border:  rgba(255,255,255,0.65);
 
-  /* Chromatic Bento + Swiss Editorial Multi-Zone Background */
-  background-color: #FBFBFE;
-  background-image:
-    /* Swiss Editorial Modular Architectural Grid Lines */
-    linear-gradient(to right, var(--bento-grid-line) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--bento-grid-line) 1px, transparent 1px),
-
-    /* Chromatic Bento Zone 1: Top-Left Pale Periwinkle & Soft Lavender */
-    radial-gradient(ellipse 55% 42% at 5% 10%, rgba(231, 236, 255, 0.95) 0%, rgba(240, 237, 255, 0.82) 45%, transparent 100%),
-
-    /* Chromatic Bento Zone 2: Top-Right Soft Peach & Pale Pink */
-    radial-gradient(ellipse 52% 40% at 95% 8%, rgba(255, 240, 232, 0.95) 0%, rgba(252, 234, 242, 0.85) 50%, transparent 100%),
-
-    /* Chromatic Bento Zone 3: Mid-Left Light Aqua */
-    radial-gradient(ellipse 48% 46% at 2% 56%, rgba(228, 247, 245, 0.95) 0%, rgba(231, 236, 255, 0.65) 60%, transparent 100%),
-
-    /* Chromatic Bento Zone 4: Mid-Right Light Yellow */
-    radial-gradient(ellipse 46% 44% at 98% 60%, rgba(255, 248, 223, 0.95) 0%, rgba(255, 240, 232, 0.70) 55%, transparent 100%),
-
-    /* Chromatic Bento Zone 5: Lower-Center Soft Lavender & Light Aqua transition */
-    radial-gradient(ellipse 65% 36% at 50% 92%, rgba(240, 237, 255, 0.85) 0%, rgba(228, 247, 245, 0.75) 45%, transparent 100%),
-
-    /* Swiss Diagonal Spatial Field */
-    linear-gradient(135deg, #F0EDFF 0%, #FFFFFF 30%, #FFFFFF 70%, #FFF8DF 100%);
-
-  background-size:
-    140px 140px,
-    140px 140px,
-    100% 100%,
-    100% 100%,
-    100% 100%,
-    100% 100%,
-    100% 100%,
-    100% 100%;
-
-  background-position:
-    0 0,
-    0 0,
-    0 0,
-    0 0,
-    0 0,
-    0 0,
-    0 0,
-    0 0;
+  /* Aurora gradient environment */
+  background:
+    radial-gradient(ellipse 65% 55% at 15% 5%,  rgba(52,120,246,0.38)  0%, transparent 68%),
+    radial-gradient(ellipse 55% 48% at 85% 10%,  rgba(130,84,246,0.32)  0%, transparent 65%),
+    radial-gradient(ellipse 50% 55% at 5%  65%,  rgba(54,217,232,0.28)  0%, transparent 70%),
+    radial-gradient(ellipse 55% 50% at 92% 70%,  rgba(243,167,219,0.30) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 55% at 50% 95%,  rgba(130,84,246,0.22)  0%, transparent 72%),
+    radial-gradient(ellipse 60% 45% at 50% 45%,  rgba(52,120,246,0.12)  0%, transparent 70%),
+    linear-gradient(135deg, #E8F0FF 0%, #E4E0FF 28%, #EBE6FF 55%, #F5EDFF 80%, #FEF0FB 100%);
 
   background-attachment: fixed;
   min-height: calc(100vh - 48px);
-  color: #172554;
+  color: var(--g-navy);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   padding-bottom: 5rem;
   position: relative;
 }
 
-/* 1. Gemini Fixed Top Filter Bar */
+/* ── 1. Filter Bar – Frosted Glass ───────────────────────────────────── */
 #design2Wrapper .gemini-filter-bar {
   position: sticky;
-  top: 48px; /* Below design selector bar */
+  top: 48px;
   left: 0;
   right: 0;
   z-index: 900;
-  background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
-  box-shadow: 0 4px 20px -2px rgba(23, 37, 84, 0.06);
+  background: rgba(255,255,255,0.68);
+  backdrop-filter: var(--g-blur);
+  -webkit-backdrop-filter: var(--g-blur);
+  border-bottom: 1px solid rgba(52,120,246,0.18);
+  box-shadow: 0 4px 28px rgba(52,120,246,0.10);
   padding: 0.85rem 2.5rem;
 }
 
@@ -108,9 +82,10 @@
 #design2Wrapper .gemini-brand-title {
   font-size: 1.15rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #172554 0%, #3155C9 50%, #7654D6 100%);
+  background: linear-gradient(135deg, var(--g-navy) 0%, var(--g-blue) 50%, var(--g-violet) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   letter-spacing: -0.02em;
   white-space: nowrap;
 }
@@ -122,45 +97,42 @@
   letter-spacing: 0.06em;
   padding: 0.2rem 0.55rem;
   border-radius: 9999px;
-  background: linear-gradient(135deg, #F1EEFF 0%, #E0E7FF 100%);
-  color: #7654D6;
-  border: 1px solid #C7D2FE;
+  background: rgba(220,208,255,0.55);
+  color: var(--g-violet);
+  border: 1px solid rgba(130,84,246,0.25);
+  backdrop-filter: blur(8px);
 }
 
 #design2Wrapper .gemini-btn-recents {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  background-color: #ffffff;
-  border: 1px solid #cbd5e1;
+  background: rgba(255,255,255,0.72);
+  border: 1px solid rgba(52,120,246,0.25);
   border-radius: 9999px;
   padding: 0.35rem 0.85rem;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #172554;
+  color: var(--g-navy);
   cursor: pointer;
   transition: all 0.18s ease;
   font-family: inherit;
-  box-shadow: 0 1px 3px rgba(23, 37, 84, 0.04);
+  box-shadow: 0 1px 6px rgba(52,120,246,0.08);
+  backdrop-filter: blur(10px);
 }
 
-#design2Wrapper .gemini-btn-recents svg {
-  color: #477BFA;
-  transition: color 0.18s ease;
-}
+#design2Wrapper .gemini-btn-recents svg { color: var(--g-blue); }
 
 #design2Wrapper .gemini-btn-recents:hover,
 #design2Wrapper .gemini-btn-recents.active {
-  background: #F1EEFF;
-  border-color: #7654D6;
-  color: #7654D6;
-  box-shadow: 0 2px 6px rgba(118, 84, 214, 0.15);
+  background: rgba(220,208,255,0.55);
+  border-color: var(--g-violet);
+  color: var(--g-violet);
+  box-shadow: 0 2px 10px rgba(130,84,246,0.20);
 }
 
 #design2Wrapper .gemini-btn-recents:hover svg,
-#design2Wrapper .gemini-btn-recents.active svg {
-  color: #7654D6;
-}
+#design2Wrapper .gemini-btn-recents.active svg { color: var(--g-violet); }
 
 #design2Wrapper .gemini-filters-row {
   display: flex;
@@ -180,7 +152,7 @@
 #design2Wrapper .gemini-label {
   font-size: 0.74rem;
   font-weight: 700;
-  color: #475569;
+  color: rgba(30,42,94,0.70);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
@@ -194,38 +166,37 @@
 #design2Wrapper .gemini-input {
   height: 38px;
   box-sizing: border-box;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border: 1px solid rgba(52,120,246,0.28);
+  border-radius: 10px;
   padding: 0 2rem 0 0.85rem;
   font-size: 0.86rem;
   font-weight: 500;
-  color: #172554;
-  background: #ffffff;
+  color: var(--g-navy);
+  background: rgba(255,255,255,0.78);
   outline: none;
   transition: all 0.15s ease;
   font-family: inherit;
+  backdrop-filter: blur(10px);
 }
 
-#design2Wrapper .gemini-input:hover {
-  border-color: #3155C9;
-}
+#design2Wrapper .gemini-input:hover { border-color: var(--g-blue); }
 
 #design2Wrapper .gemini-input:focus {
-  border-color: #477BFA;
-  box-shadow: 0 0 0 3px rgba(71, 123, 250, 0.15);
+  border-color: var(--g-violet);
+  box-shadow: 0 0 0 3px rgba(130,84,246,0.18);
 }
 
 #design2Wrapper .gemini-arrow {
   position: absolute;
   right: 12px;
   pointer-events: none;
-  color: #94a3b8;
+  color: rgba(30,42,94,0.45);
   display: flex;
   align-items: center;
 }
 
-#design2Wrapper .gemini-field-plant .gemini-input { width: 160px; }
-#design2Wrapper .gemini-field-cv .gemini-input { width: 175px; }
+#design2Wrapper .gemini-field-plant .gemini-input   { width: 160px; }
+#design2Wrapper .gemini-field-cv .gemini-input      { width: 175px; }
 #design2Wrapper .gemini-field-material .gemini-input { width: 200px; padding-right: 0.85rem; }
 
 #design2Wrapper .gemini-dropdown {
@@ -235,37 +206,38 @@
   width: 100%;
   max-height: 220px;
   overflow-y: auto;
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px -5px rgba(23, 37, 84, 0.12);
+  background: rgba(255,255,255,0.90);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(52,120,246,0.22);
+  border-radius: 10px;
+  box-shadow: 0 12px 32px rgba(52,120,246,0.16);
   z-index: 1020;
 }
 
 #design2Wrapper .gemini-dropdown-item {
   padding: 0.6rem 0.85rem;
   font-size: 0.84rem;
-  color: #172554;
+  color: var(--g-navy);
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition: background 0.12s ease;
 }
 
 #design2Wrapper .gemini-dropdown-item:hover {
-  background-color: #F1EEFF;
-  color: #7654D6;
+  background: rgba(220,208,255,0.40);
+  color: var(--g-violet);
 }
 
 #design2Wrapper .gemini-dropdown-item.selected {
-  background-color: #E0E7FF;
-  color: #3155C9;
+  background: rgba(217,237,255,0.65);
+  color: var(--g-blue);
   font-weight: 600;
 }
 
 #design2Wrapper .gemini-btn-apply {
   height: 38px;
   padding: 0 1.45rem;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #3155C9 0%, #477BFA 100%);
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--g-blue) 0%, var(--g-violet) 100%);
   color: #ffffff;
   border: none;
   font-size: 0.88rem;
@@ -274,24 +246,24 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  box-shadow: 0 4px 14px rgba(49, 85, 201, 0.35);
+  box-shadow: 0 4px 18px rgba(52,120,246,0.38);
   transition: all 0.18s ease;
   font-family: inherit;
 }
 
 #design2Wrapper .gemini-btn-apply:hover {
-  background: linear-gradient(135deg, #2443a6 0%, #3155C9 100%);
-  box-shadow: 0 6px 18px rgba(49, 85, 201, 0.45);
+  background: linear-gradient(135deg, #2060D8 0%, #6B3FDE 100%);
+  box-shadow: 0 6px 22px rgba(52,120,246,0.50);
   transform: translateY(-1px);
 }
 
 #design2Wrapper .gemini-btn-rf {
   height: 38px;
   padding: 0 0.85rem;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #3155C9;
-  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.72);
+  color: var(--g-blue);
+  border: 1px solid rgba(52,120,246,0.28);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -300,38 +272,41 @@
   gap: 0.35rem;
   transition: all 0.15s ease;
   font-family: inherit;
+  backdrop-filter: blur(10px);
 }
 
 #design2Wrapper .gemini-btn-rf:hover {
-  background: #F1EEFF;
-  border-color: #7654D6;
-  color: #7654D6;
+  background: rgba(220,208,255,0.50);
+  border-color: var(--g-violet);
+  color: var(--g-violet);
 }
 
-/* 2. Main Content Container */
+/* ── 2. Main Content ──────────────────────────────────────────────────── */
 #design2Wrapper .gemini-main {
   max-width: 1720px;
   margin: 0 auto;
   padding: 1.75rem 2.5rem;
 }
 
-/* Initial State: Empty prompt */
+/* Empty / standby state */
 #design2Wrapper .gemini-empty-state {
-  background: #ffffff;
-  border: 1px dashed #cbd5e1;
-  border-radius: 16px;
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: var(--g-blur);
+  -webkit-backdrop-filter: var(--g-blur);
+  border: 1px solid var(--g-border);
+  border-radius: 20px;
   padding: 5rem 2rem;
   text-align: center;
   margin-top: 2rem;
-  box-shadow: 0 2px 8px rgba(23, 37, 84, 0.04);
+  box-shadow: 0 8px 36px rgba(52,120,246,0.10);
 }
 
 #design2Wrapper .gemini-empty-icon {
   width: 68px;
   height: 68px;
   border-radius: 20px;
-  background: linear-gradient(135deg, #F1EEFF 0%, #E0E7FF 100%);
-  color: #7654D6;
+  background: rgba(220,208,255,0.55);
+  color: var(--g-violet);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -341,18 +316,18 @@
 #design2Wrapper .gemini-empty-title {
   font-size: 1.35rem;
   font-weight: 800;
-  color: #172554;
+  color: var(--g-navy);
   margin-bottom: 0.45rem;
 }
 
 #design2Wrapper .gemini-empty-subtitle {
   font-size: 0.92rem;
-  color: #64748b;
+  color: rgba(30,42,94,0.60);
   max-width: 520px;
   margin: 0 auto;
 }
 
-/* 3. Five Error Summary Cards (Rich Enterprise Cards) */
+/* ── 3. KPI Cards – Coloured Glass Surfaces ───────────────────────────── */
 #design2Wrapper .gemini-kpi-ribbon {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -361,148 +336,119 @@
 }
 
 #design2Wrapper .gemini-kpi-segment {
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1.1rem 1.25rem;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.65rem;
-  box-shadow: 0 2px 8px rgba(23, 37, 84, 0.04);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
   overflow: hidden;
 }
 
 #design2Wrapper .gemini-kpi-segment:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(23, 37, 84, 0.1);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(52,120,246,0.18);
 }
 
-/* Card 1: Total Errors */
+/* Card 1: Total Errors — Lavender glass */
 #design2Wrapper .gemini-kpi-segment.card-total {
-  background: #FAF8FF;
-  border: 1.5px solid #DDD6FE;
+  background: rgba(220,208,255,0.55);
+  border: 1.5px solid rgba(130,84,246,0.28);
+  box-shadow: 0 4px 16px rgba(130,84,246,0.14);
 }
-#design2Wrapper .gemini-kpi-segment.card-total:hover {
-  border-color: #A78BFA;
-}
+#design2Wrapper .gemini-kpi-segment.card-total:hover  { border-color: rgba(130,84,246,0.55); }
 #design2Wrapper .gemini-kpi-segment.card-total.active {
-  background: #F3F0FF;
-  border: 2px solid #7C3AED;
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.22);
+  background: rgba(220,208,255,0.75);
+  border: 2px solid var(--g-violet);
+  box-shadow: 0 8px 28px rgba(130,84,246,0.30);
 }
-#design2Wrapper .gemini-kpi-segment.card-total .gemini-kpi-label {
-  color: #6D28D9;
-}
-#design2Wrapper .gemini-kpi-segment.card-total .gemini-kpi-val {
-  color: #4C1D95;
-}
+#design2Wrapper .gemini-kpi-segment.card-total .gemini-kpi-label { color: #5B34C8; }
+#design2Wrapper .gemini-kpi-segment.card-total .gemini-kpi-val   { color: #3B1E8C; }
 #design2Wrapper .gemini-kpi-segment.card-total .gemini-kpi-icon-badge {
-  background: #EDE9FE;
-  color: #7C3AED;
+  background: rgba(130,84,246,0.20); color: var(--g-violet);
 }
 
-/* Card 2: Activity Price */
+/* Card 2: Activity Price — Pink glass */
 #design2Wrapper .gemini-kpi-segment.card-ap {
-  background: #FFF5F5;
-  border: 1.5px solid #FECDD3;
+  background: rgba(243,167,219,0.42);
+  border: 1.5px solid rgba(243,167,219,0.60);
+  box-shadow: 0 4px 16px rgba(243,107,186,0.14);
 }
-#design2Wrapper .gemini-kpi-segment.card-ap:hover {
-  border-color: #FDA4AF;
-}
+#design2Wrapper .gemini-kpi-segment.card-ap:hover  { border-color: rgba(226,54,138,0.55); }
 #design2Wrapper .gemini-kpi-segment.card-ap.active {
-  background: #FFE4E6;
-  border: 2px solid #E11D48;
-  box-shadow: 0 6px 20px rgba(225, 29, 72, 0.22);
+  background: rgba(243,167,219,0.68);
+  border: 2px solid #E2368A;
+  box-shadow: 0 8px 28px rgba(226,54,138,0.28);
 }
-#design2Wrapper .gemini-kpi-segment.card-ap .gemini-kpi-label {
-  color: #BE123C;
-}
-#design2Wrapper .gemini-kpi-segment.card-ap .gemini-kpi-val {
-  color: #9F1239;
-}
+#design2Wrapper .gemini-kpi-segment.card-ap .gemini-kpi-label { color: #A8155A; }
+#design2Wrapper .gemini-kpi-segment.card-ap .gemini-kpi-val   { color: #7A0F41; }
 #design2Wrapper .gemini-kpi-segment.card-ap .gemini-kpi-icon-badge {
-  background: #FFE4E6;
-  color: #E11D48;
+  background: rgba(243,167,219,0.45); color: #C4197B;
 }
 
-/* Card 3: UOM Mismatch */
+/* Card 3: UOM Mismatch — Cyan/Ice glass */
 #design2Wrapper .gemini-kpi-segment.card-um {
-  background: #FFFDF0;
-  border: 1.5px solid #FDE68A;
+  background: rgba(185,241,222,0.50);
+  border: 1.5px solid rgba(54,217,232,0.40);
+  box-shadow: 0 4px 16px rgba(54,217,232,0.14);
 }
-#design2Wrapper .gemini-kpi-segment.card-um:hover {
-  border-color: #FCD34D;
-}
+#design2Wrapper .gemini-kpi-segment.card-um:hover  { border-color: rgba(54,217,232,0.65); }
 #design2Wrapper .gemini-kpi-segment.card-um.active {
-  background: #FEF3C7;
-  border: 2px solid #D97706;
-  box-shadow: 0 6px 20px rgba(217, 119, 6, 0.22);
+  background: rgba(185,241,222,0.75);
+  border: 2px solid var(--g-cyan);
+  box-shadow: 0 8px 28px rgba(54,217,232,0.28);
 }
-#design2Wrapper .gemini-kpi-segment.card-um .gemini-kpi-label {
-  color: #B45309;
-}
-#design2Wrapper .gemini-kpi-segment.card-um .gemini-kpi-val {
-  color: #92400E;
-}
+#design2Wrapper .gemini-kpi-segment.card-um .gemini-kpi-label { color: #0E8A8A; }
+#design2Wrapper .gemini-kpi-segment.card-um .gemini-kpi-val   { color: #0A5E5E; }
 #design2Wrapper .gemini-kpi-segment.card-um .gemini-kpi-icon-badge {
-  background: #FEF3C7;
-  color: #D97706;
+  background: rgba(54,217,232,0.22); color: #0E9BA0;
 }
 
-/* Card 4: Vendor Missing */
+/* Card 4: Vendor Missing — Ice Blue glass */
 #design2Wrapper .gemini-kpi-segment.card-vm {
-  background: #F0F7FF;
-  border: 1.5px solid #BFDBFE;
+  background: rgba(217,237,255,0.58);
+  border: 1.5px solid rgba(52,120,246,0.30);
+  box-shadow: 0 4px 16px rgba(52,120,246,0.14);
 }
-#design2Wrapper .gemini-kpi-segment.card-vm:hover {
-  border-color: #93C5FD;
-}
+#design2Wrapper .gemini-kpi-segment.card-vm:hover  { border-color: rgba(52,120,246,0.60); }
 #design2Wrapper .gemini-kpi-segment.card-vm.active {
-  background: #DBEAFE;
-  border: 2px solid #2563EB;
-  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.22);
+  background: rgba(217,237,255,0.80);
+  border: 2px solid var(--g-blue);
+  box-shadow: 0 8px 28px rgba(52,120,246,0.28);
 }
-#design2Wrapper .gemini-kpi-segment.card-vm .gemini-kpi-label {
-  color: #1D4ED8;
-}
-#design2Wrapper .gemini-kpi-segment.card-vm .gemini-kpi-val {
-  color: #1E40AF;
-}
+#design2Wrapper .gemini-kpi-segment.card-vm .gemini-kpi-label { color: #1A4FC4; }
+#design2Wrapper .gemini-kpi-segment.card-vm .gemini-kpi-val   { color: #0D2F7E; }
 #design2Wrapper .gemini-kpi-segment.card-vm .gemini-kpi-icon-badge {
-  background: #DBEAFE;
-  color: #2563EB;
+  background: rgba(52,120,246,0.20); color: var(--g-blue);
 }
 
-/* Card 5: Source List Missing */
+/* Card 5: Source List Missing — Mint glass */
 #design2Wrapper .gemini-kpi-segment.card-sl {
-  background: #F0FDF7;
-  border: 1.5px solid #A7F3D0;
+  background: rgba(185,241,222,0.48);
+  border: 1.5px solid rgba(16,185,129,0.32);
+  box-shadow: 0 4px 16px rgba(16,185,129,0.12);
 }
-#design2Wrapper .gemini-kpi-segment.card-sl:hover {
-  border-color: #6EE7B7;
-}
+#design2Wrapper .gemini-kpi-segment.card-sl:hover  { border-color: rgba(5,150,105,0.60); }
 #design2Wrapper .gemini-kpi-segment.card-sl.active {
-  background: #D1FAE5;
+  background: rgba(185,241,222,0.75);
   border: 2px solid #059669;
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.22);
+  box-shadow: 0 8px 28px rgba(5,150,105,0.28);
 }
-#design2Wrapper .gemini-kpi-segment.card-sl .gemini-kpi-label {
-  color: #047857;
-}
-#design2Wrapper .gemini-kpi-segment.card-sl .gemini-kpi-val {
-  color: #065F46;
-}
+#design2Wrapper .gemini-kpi-segment.card-sl .gemini-kpi-label { color: #047857; }
+#design2Wrapper .gemini-kpi-segment.card-sl .gemini-kpi-val   { color: #064E3B; }
 #design2Wrapper .gemini-kpi-segment.card-sl .gemini-kpi-icon-badge {
-  background: #D1FAE5;
-  color: #059669;
+  background: rgba(185,241,222,0.55); color: #059669;
 }
 
-/* Card Elements */
+/* KPI shared elements */
 #design2Wrapper .gemini-kpi-progress-track {
   height: 4px;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.06);
+  background: rgba(0,0,0,0.08);
   border-radius: 9999px;
   overflow: hidden;
 }
@@ -513,11 +459,11 @@
   transition: width 0.4s ease;
 }
 
-#design2Wrapper .gemini-kpi-progress-fill.bar-total { background: linear-gradient(90deg, #7C3AED, #6366F1); }
-#design2Wrapper .gemini-kpi-progress-fill.bar-ap { background: linear-gradient(90deg, #E11D48, #F43F5E); }
-#design2Wrapper .gemini-kpi-progress-fill.bar-um { background: linear-gradient(90deg, #D97706, #F59E0B); }
-#design2Wrapper .gemini-kpi-progress-fill.bar-vm { background: linear-gradient(90deg, #2563EB, #35BDEB); }
-#design2Wrapper .gemini-kpi-progress-fill.bar-sl { background: linear-gradient(90deg, #059669, #10B981); }
+#design2Wrapper .gemini-kpi-progress-fill.bar-total { background: linear-gradient(90deg, var(--g-violet), #A78BFA); }
+#design2Wrapper .gemini-kpi-progress-fill.bar-ap    { background: linear-gradient(90deg, #C4197B, #F472B6); }
+#design2Wrapper .gemini-kpi-progress-fill.bar-um    { background: linear-gradient(90deg, var(--g-cyan), #6EE7B7); }
+#design2Wrapper .gemini-kpi-progress-fill.bar-vm    { background: linear-gradient(90deg, var(--g-blue), #60A5FA); }
+#design2Wrapper .gemini-kpi-progress-fill.bar-sl    { background: linear-gradient(90deg, #059669, #34D399); }
 
 #design2Wrapper .gemini-kpi-header {
   display: flex;
@@ -549,23 +495,25 @@
   letter-spacing: -0.03em;
 }
 
-/* 4. Unified Hierarchical Tree-Table */
+/* ── 4. Tree Card – Frosted Container ────────────────────────────────── */
 #design2Wrapper .gemini-tree-card {
-  background: #ffffff;
-  border-radius: 14px;
-  border: 1px solid #e2e8f0;
-  box-shadow: 0 4px 16px rgba(23, 37, 84, 0.05);
+  background: rgba(255,255,255,0.58);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.72);
+  box-shadow: 0 8px 44px rgba(52,120,246,0.13);
   overflow: hidden;
 }
 
 #design2Wrapper .gemini-tree-toolbar {
   padding: 1.15rem 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(52,120,246,0.12);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1.25rem;
-  background-color: #ffffff;
+  background: rgba(255,255,255,0.45);
 }
 
 #design2Wrapper .gemini-tree-heading {
@@ -577,7 +525,7 @@
 #design2Wrapper .gemini-tree-title {
   font-size: 1.05rem;
   font-weight: 800;
-  color: #172554;
+  color: var(--g-navy);
 }
 
 #design2Wrapper .gemini-tree-count-badge {
@@ -585,8 +533,9 @@
   font-weight: 700;
   padding: 0.2rem 0.6rem;
   border-radius: 9999px;
-  background: #F1EEFF;
-  color: #7654D6;
+  background: rgba(220,208,255,0.55);
+  color: var(--g-violet);
+  border: 1px solid rgba(130,84,246,0.20);
 }
 
 #design2Wrapper .gemini-toolbar-actions {
@@ -604,66 +553,66 @@
 #design2Wrapper .gemini-search-input {
   height: 36px;
   width: 260px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
+  border: 1px solid rgba(52,120,246,0.25);
+  border-radius: 10px;
   padding: 0 1rem 0 2.2rem;
   font-size: 0.84rem;
-  color: #172554;
+  color: var(--g-navy);
+  background: rgba(255,255,255,0.72);
   outline: none;
   font-family: inherit;
   transition: all 0.15s ease;
+  backdrop-filter: blur(8px);
 }
 
 #design2Wrapper .gemini-search-input:focus {
-  border-color: #477BFA;
-  box-shadow: 0 0 0 3px rgba(71, 123, 250, 0.12);
+  border-color: var(--g-violet);
+  box-shadow: 0 0 0 3px rgba(130,84,246,0.14);
 }
 
 #design2Wrapper .gemini-search-icon {
   position: absolute;
   left: 10px;
-  color: #94a3b8;
+  color: rgba(30,42,94,0.40);
   pointer-events: none;
 }
 
 #design2Wrapper .gemini-btn-expand-all {
   height: 36px;
   padding: 0 1.1rem;
-  border-radius: 8px;
-  background: #ffffff;
-  color: #3155C9;
-  border: 1px solid #C7D2FE;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.72);
+  color: var(--g-blue);
+  border: 1px solid rgba(52,120,246,0.28);
   font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  box-shadow: 0 1px 3px rgba(49, 85, 201, 0.08);
   transition: all 0.18s ease;
   font-family: inherit;
   white-space: nowrap;
+  backdrop-filter: blur(8px);
 }
 
 #design2Wrapper .gemini-btn-expand-all .expand-icon {
   stroke-width: 2.4;
-  color: #3155C9;
+  color: var(--g-blue);
   transition: transform 0.2s ease, color 0.18s ease;
 }
 
 #design2Wrapper .gemini-btn-expand-all:hover {
-  background: #F1EEFF;
-  border-color: #7654D6;
-  color: #7654D6;
-  box-shadow: 0 2px 8px rgba(118, 84, 214, 0.18);
+  background: rgba(220,208,255,0.50);
+  border-color: var(--g-violet);
+  color: var(--g-violet);
+  box-shadow: 0 2px 10px rgba(130,84,246,0.18);
   transform: translateY(-1px);
 }
 
-#design2Wrapper .gemini-btn-expand-all:hover .expand-icon {
-  color: #7654D6;
-}
+#design2Wrapper .gemini-btn-expand-all:hover .expand-icon { color: var(--g-violet); }
 
-/* Tree-Table Layout */
+/* ── 5. Table ─────────────────────────────────────────────────────────── */
 #design2Wrapper .gemini-tree-table-wrap {
   width: 100%;
   overflow-x: auto;
@@ -675,50 +624,57 @@
   font-size: 0.85rem;
 }
 
-/* Column Header (Clean static row - prevents border-collapse sticky clipping) */
+/* Table Header */
 #design2Wrapper .gemini-tree-table thead th {
-  background: #f8fafc;
-  color: #475569;
+  background: rgba(217,237,255,0.72);
+  color: rgba(30,42,94,0.75);
   font-size: 0.74rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
   padding: 0.95rem 1.25rem;
   text-align: left;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid rgba(52,120,246,0.18);
   white-space: nowrap;
+  backdrop-filter: blur(8px);
 }
 
-/* Tier 1: Category Row */
+/* ── Tier 1: Category rows ─ */
 #design2Wrapper .tree-row-category {
-  background: #f8fafc;
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.15s ease;
+  transition: background 0.15s ease;
 }
 
 #design2Wrapper .tree-row-category td {
   padding: 0;
-  border-top: 1px solid #e2e8f0;
-  border-bottom: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(52,120,246,0.10);
+  border-bottom: 1px solid rgba(52,120,246,0.10);
 }
 
-#design2Wrapper .tree-row-category:hover {
-  background: #f1f5f9;
-}
+/* Activity Price — pink tint */
+#design2Wrapper .tree-row-category.cat-ap  { background: rgba(243,167,219,0.20); }
+#design2Wrapper .tree-row-category.cat-ap:hover { background: rgba(243,167,219,0.35); }
+/* UOM Mismatch — cyan tint */
+#design2Wrapper .tree-row-category.cat-um  { background: rgba(54,217,232,0.14); }
+#design2Wrapper .tree-row-category.cat-um:hover { background: rgba(54,217,232,0.25); }
+/* Vendor Missing — blue tint */
+#design2Wrapper .tree-row-category.cat-vm  { background: rgba(52,120,246,0.12); }
+#design2Wrapper .tree-row-category.cat-vm:hover { background: rgba(52,120,246,0.22); }
+/* Source List Missing — mint tint */
+#design2Wrapper .tree-row-category.cat-sl  { background: rgba(185,241,222,0.28); }
+#design2Wrapper .tree-row-category.cat-sl:hover { background: rgba(185,241,222,0.42); }
+/* Default (fallback) */
+#design2Wrapper .tree-row-category { background: rgba(217,237,255,0.22); }
+#design2Wrapper .tree-row-category:hover { background: rgba(217,237,255,0.38); }
 
 #design2Wrapper .tree-category-cell {
   padding: 0.95rem 1.25rem;
   font-weight: 700;
-  color: #172554;
+  color: var(--g-navy);
   display: flex;
   align-items: center;
   gap: 0.75rem;
-}
-  color: #172554;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
 }
 
 #design2Wrapper .tree-chevron {
@@ -727,13 +683,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: #64748b;
+  color: rgba(30,42,94,0.50);
   transition: transform 0.2s ease;
 }
 
-#design2Wrapper .tree-chevron.expanded {
-  transform: rotate(90deg);
-}
+#design2Wrapper .tree-chevron.expanded { transform: rotate(90deg); }
 
 #design2Wrapper .tree-cat-pill {
   font-size: 0.72rem;
@@ -742,28 +696,26 @@
   border-radius: 9999px;
 }
 
-#design2Wrapper .pill-ap { background: #ffe4e6; color: #be123c; }
-#design2Wrapper .pill-um { background: #fef3c7; color: #b45309; }
-#design2Wrapper .pill-vm { background: #e0f2fe; color: #0369a1; }
-#design2Wrapper .pill-sl { background: #dcfce7; color: #15803d; }
+#design2Wrapper .pill-ap { background: rgba(243,167,219,0.55); color: #A8155A; border: 1px solid rgba(226,54,138,0.25); }
+#design2Wrapper .pill-um { background: rgba(185,241,222,0.55); color: #0E8A8A; border: 1px solid rgba(54,217,232,0.30); }
+#design2Wrapper .pill-vm { background: rgba(217,237,255,0.65); color: #1A4FC4; border: 1px solid rgba(52,120,246,0.25); }
+#design2Wrapper .pill-sl { background: rgba(185,241,222,0.55); color: #047857; border: 1px solid rgba(5,150,105,0.25); }
 
-/* Tier 2: Group Row */
+/* ── Tier 2: Group rows ─ */
 #design2Wrapper .tree-row-group {
-  background: #ffffff;
-  border-bottom: 1px solid #f1f5f9;
+  background: rgba(255,255,255,0.42);
+  border-bottom: 1px solid rgba(52,120,246,0.08);
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.15s ease;
+  transition: background 0.15s ease;
 }
 
-#design2Wrapper .tree-row-group:hover {
-  background: #faf5ff;
-}
+#design2Wrapper .tree-row-group:hover { background: rgba(220,208,255,0.28); }
 
 #design2Wrapper .tree-group-cell {
-  padding: 0.7rem 1rem 0.7rem 2.5rem; /* Indented */
+  padding: 0.7rem 1rem 0.7rem 2.5rem;
   font-weight: 600;
-  color: #334155;
+  color: rgba(30,42,94,0.80);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -774,20 +726,19 @@
   font-weight: 700;
   padding: 0.1rem 0.45rem;
   border-radius: 6px;
-  background: #F1EEFF;
-  color: #7654D6;
+  background: rgba(220,208,255,0.55);
+  color: var(--g-violet);
+  border: 1px solid rgba(130,84,246,0.20);
 }
 
-/* Tier 3: Record Row */
+/* ── Tier 3: Record rows ─ */
 #design2Wrapper .tree-row-record {
-  background: #ffffff;
-  border-bottom: 1px solid #f1f5f9;
-  transition: background-color 0.12s ease;
+  background: rgba(255,255,255,0.38);
+  border-bottom: 1px solid rgba(52,120,246,0.07);
+  transition: background 0.12s ease;
 }
 
-#design2Wrapper .tree-row-record:hover {
-  background: #f8fafc;
-}
+#design2Wrapper .tree-row-record:hover { background: rgba(217,237,255,0.52); }
 
 #design2Wrapper .tree-row-record td {
   padding: 0.75rem 1rem;
@@ -795,30 +746,37 @@
 }
 
 #design2Wrapper .record-indent-cell {
-  padding-left: 4.25rem !important; /* Deep Indentation */
+  padding-left: 4.25rem !important;
   font-weight: 600;
 }
 
 #design2Wrapper .gemini-mat-link {
   font-weight: 700;
-  color: #3155C9;
+  color: var(--g-blue);
   text-decoration: none;
+}
+
+#design2Wrapper .gemini-mat-link:hover {
+  color: var(--g-violet);
+  text-decoration: underline;
 }
 
 #design2Wrapper .gemini-type-pill {
   font-size: 0.7rem;
   font-weight: 700;
   padding: 0.15rem 0.45rem;
-  border-radius: 4px;
-  background: #f1f5f9;
-  color: #475569;
+  border-radius: 6px;
+  background: rgba(217,237,255,0.65);
+  color: #1A4FC4;
+  border: 1px solid rgba(52,120,246,0.20);
 }
 
+/* Fix / Fixed buttons */
 #design2Wrapper .gemini-btn-fix {
   height: 30px;
   padding: 0 0.85rem;
-  border-radius: 6px;
-  background: linear-gradient(135deg, #3155C9 0%, #477BFA 100%);
+  border-radius: 7px;
+  background: linear-gradient(135deg, var(--g-blue) 0%, var(--g-violet) 100%);
   color: #ffffff;
   border: none;
   font-size: 0.78rem;
@@ -829,23 +787,24 @@
   gap: 0.35rem;
   transition: all 0.15s ease;
   font-family: inherit;
-  box-shadow: 0 2px 6px rgba(49, 85, 201, 0.25);
+  box-shadow: 0 2px 8px rgba(52,120,246,0.28);
 }
 
 #design2Wrapper .gemini-btn-fix:hover {
-  background: linear-gradient(135deg, #2443a6 0%, #3155C9 100%);
+  background: linear-gradient(135deg, #2060D8 0%, #6B3FDE 100%);
   transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(52,120,246,0.38);
 }
 
 #design2Wrapper .gemini-fixed-badge {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  padding: 0.2rem 0.6rem;
-  border-radius: 6px;
-  background: #dcfce7;
-  color: #15803d;
+  padding: 0.2rem 0.65rem;
+  border-radius: 7px;
+  background: rgba(185,241,222,0.65);
+  color: #047857;
   font-size: 0.76rem;
   font-weight: 700;
-  border: 1px solid #bbf7d0;
+  border: 1px solid rgba(5,150,105,0.30);
 }
