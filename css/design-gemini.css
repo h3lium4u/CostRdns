@@ -1,17 +1,78 @@
 /* ==========================================================================
    Design 2: Gemini Design - Scoped Stylesheet
-   Theme C: Blue-Purple Gradient
-   Palette: Deep Navy (#172554), Royal Blue (#3155C9), Electric Blue (#477BFA),
-            Cyan (#35BDEB), Violet (#7654D6), Lavender (#F1EEFF), Slate (#F7F8FC)
-   UX Structure: Segmented KPI Ribbon + Unified Hierarchical Tree-Table
+   Theme: Chromatic Bento + Swiss Editorial Background
+   Palette (Background only):
+     Soft Lavender:   #F0EDFF
+     Pale Periwinkle: #E7ECFF
+     Light Aqua:      #E4F7F5
+     Soft Peach:      #FFF0E8
+     Pale Pink:       #FCEAF2
+     Light Yellow:    #FFF8DF
+     Neutral White:   #FFFFFF
+   UX Structure: Segmented KPI Ribbon + Unified Hierarchical Tree-Table (100% Preserved)
    ========================================================================== */
 
 #design2Wrapper {
-  background-color: #F7F8FC;
-  min-height: calc(100vh - 45px);
+  --bento-lavender:   #F0EDFF;
+  --bento-periwinkle: #E7ECFF;
+  --bento-aqua:       #E4F7F5;
+  --bento-peach:      #FFF0E8;
+  --bento-pink:       #FCEAF2;
+  --bento-yellow:     #FFF8DF;
+  --bento-white:      #FFFFFF;
+  --bento-grid-line:  rgba(49, 85, 201, 0.045);
+
+  /* Chromatic Bento + Swiss Editorial Multi-Zone Background */
+  background-color: #FBFBFE;
+  background-image:
+    /* Swiss Editorial Modular Architectural Grid Lines */
+    linear-gradient(to right, var(--bento-grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--bento-grid-line) 1px, transparent 1px),
+
+    /* Chromatic Bento Zone 1: Top-Left Pale Periwinkle & Soft Lavender */
+    radial-gradient(ellipse 55% 42% at 5% 10%, rgba(231, 236, 255, 0.95) 0%, rgba(240, 237, 255, 0.82) 45%, transparent 100%),
+
+    /* Chromatic Bento Zone 2: Top-Right Soft Peach & Pale Pink */
+    radial-gradient(ellipse 52% 40% at 95% 8%, rgba(255, 240, 232, 0.95) 0%, rgba(252, 234, 242, 0.85) 50%, transparent 100%),
+
+    /* Chromatic Bento Zone 3: Mid-Left Light Aqua */
+    radial-gradient(ellipse 48% 46% at 2% 56%, rgba(228, 247, 245, 0.95) 0%, rgba(231, 236, 255, 0.65) 60%, transparent 100%),
+
+    /* Chromatic Bento Zone 4: Mid-Right Light Yellow */
+    radial-gradient(ellipse 46% 44% at 98% 60%, rgba(255, 248, 223, 0.95) 0%, rgba(255, 240, 232, 0.70) 55%, transparent 100%),
+
+    /* Chromatic Bento Zone 5: Lower-Center Soft Lavender & Light Aqua transition */
+    radial-gradient(ellipse 65% 36% at 50% 92%, rgba(240, 237, 255, 0.85) 0%, rgba(228, 247, 245, 0.75) 45%, transparent 100%),
+
+    /* Swiss Diagonal Spatial Field */
+    linear-gradient(135deg, #F0EDFF 0%, #FFFFFF 30%, #FFFFFF 70%, #FFF8DF 100%);
+
+  background-size:
+    140px 140px,
+    140px 140px,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%;
+
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0,
+    0 0;
+
+  background-attachment: fixed;
+  min-height: calc(100vh - 48px);
   color: #172554;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   padding-bottom: 5rem;
+  position: relative;
 }
 
 /* 1. Gemini Fixed Top Filter Bar */
