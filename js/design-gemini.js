@@ -329,7 +329,7 @@ const GeminiDesign = (function () {
 
       // Tier 1: Category Row
       const catRow = document.createElement('tr');
-      catRow.className = 'tree-row-category';
+      catRow.className = 'tree-row-category ' + catDef.pillClass.replace('pill-', 'cat-') + ' cat-' + catDef.key;
       catRow.innerHTML = `
         <td colspan="7">
           <div class="tree-category-cell">
