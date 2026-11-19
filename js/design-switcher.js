@@ -33,25 +33,27 @@ const DesignSwitcher = (function () {
   }
 
   function switchDesign(designId) {
-    let plant = "", cv = "", mat = "", applied = false;
+    let plant = "", cv = "", mat = "", period = "2026-11", applied = false;
 
     if (currentDesign === '1') {
       const p = document.getElementById('plantInput');
       const c = document.getElementById('cvInput');
       const m = document.getElementById('materialInput');
+      const per = document.getElementById('periodInput');
       const postApply = document.getElementById('postApplyContent');
       plant = p ? p.value : "";
       cv = c ? c.value : "";
       mat = m ? m.value : "";
+      period = per ? per.value : "2026-11";
       applied = postApply && !postApply.classList.contains('hidden');
     } else if (currentDesign === '3' && typeof ClaudeDesign !== 'undefined') {
       const st = ClaudeDesign.getState();
-      plant = st.selectedPlant; cv = st.selectedCostVariant; mat = st.selectedMaterial; applied = st.applied;
+      plant = st.selectedPlant; cv = st.selectedCostVariant; mat = st.selectedMaterial; period = st.selectedPeriod || "2026-11"; applied = st.applied;
     }
 
     currentDesign = designId;
     localStorage.setItem(STORAGE_KEY, designId);
-    applyDesign(designId, true, { plant, cv, mat, applied });
+    applyDesign(designId, true, { plant, cv, mat, period, applied });
   }
 
   function applyDesign(designId, syncFilters, filterData) {
@@ -71,7 +73,16 @@ const DesignSwitcher = (function () {
 
     // Sync filters to target design
     if (designId === '3' && typeof ClaudeDesign !== 'undefined') {
-      if (syncFilters && filterData) ClaudeDesign.syncFilterState(filterData.plant, filterData.cv, filterData.mat, filterData.applied);
+      if (syncFilters && filterData) ClaudeDesign.syncFilterState(filterData.plant, filterData.cv, filterData.mat, filterData.applied, filterData.period);
+    } else if (designId === '1' && syncFilters && filterData) {
+      const p = document.getElementById('plantInput');
+      const c = document.getElementById('cvInput');
+      const m = document.getElementById('materialInput');
+      const per = document.getElementById('periodInput');
+      if (p) p.value = filterData.plant;
+      if (c) c.value = filterData.cv;
+      if (m) m.value = filterData.mat;
+      if (per && filterData.period) per.value = filterData.period;
     }
   }
 

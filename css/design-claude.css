@@ -237,7 +237,27 @@
 
 #design3Wrapper .claude-field-plant .claude-input { width: 160px; }
 #design3Wrapper .claude-field-cv .claude-input { width: 175px; }
-#design3Wrapper .claude-field-material .claude-input { width: 200px; padding-right: 0.85rem; }
+#design3Wrapper .claude-field-material .claude-input { width: 185px; padding-right: 0.85rem; }
+#design3Wrapper .claude-field-period .claude-input { width: 165px; padding-right: 2.2rem; cursor: pointer; }
+
+#design3Wrapper .claude-calendar-icon {
+  position: absolute;
+  right: 11px;
+  pointer-events: none;
+  color: #073B8C;
+  display: flex;
+  align-items: center;
+}
+
+#design3Wrapper .claude-month-input::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
 
 #design3Wrapper .claude-dropdown {
   position: absolute;
@@ -498,15 +518,46 @@
   overflow: hidden;
 }
 
-/* Category Console Tabs Bar */
+/* Category Console Action & Search Bar */
 #design3Wrapper .claude-tabs-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1px solid rgba(18, 102, 214, 0.12);
-  padding: 0 1.5rem;
+  padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.70);
   backdrop-filter: blur(12px);
+  gap: 1rem;
+}
+
+#design3Wrapper .claude-batch-action-wrap {
+  display: flex;
+  align-items: center;
+}
+
+#design3Wrapper .claude-btn-fix-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+  transition: all 0.18s ease;
+}
+
+#design3Wrapper .claude-btn-fix-all:hover {
+  box-shadow: 0 6px 18px rgba(16, 185, 129, 0.5);
+  transform: translateY(-1px);
+}
+
+#design3Wrapper .claude-btn-fix-all.hidden {
+  display: none !important;
 }
 
 #design3Wrapper .claude-tabs-list {
@@ -736,6 +787,18 @@
   color: var(--c-text-primary);
 }
 
+#design3Wrapper .claude-record-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #1266d6;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+#design3Wrapper .claude-record-table tbody tr.row-selected {
+  background-color: #EAF4FF !important;
+}
+
 #design3Wrapper .claude-mat-name {
   font-weight: 700;
   color: var(--c-royal-blue);
@@ -841,6 +904,25 @@ body:has(#design3Wrapper:not(.hidden)) .chatbot-header .btn-icon:hover,
 #design3Wrapper:not(.hidden) ~ .chatbot-popup .chatbot-header .btn-icon:hover {
   opacity: 1;
   background: rgba(255, 255, 255, 0.2);
+}
+
+body:has(#design3Wrapper:not(.hidden)) .btn-chat-recents,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .btn-chat-recents {
+  background: rgba(255, 255, 255, 0.22);
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+}
+
+body:has(#design3Wrapper:not(.hidden)) .btn-chat-recents:hover,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .btn-chat-recents:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: #FFFFFF;
+}
+
+body:has(#design3Wrapper:not(.hidden)) .btn-chat-maximize,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup .btn-chat-maximize {
+  color: #FFFFFF !important;
 }
 
 body:has(#design3Wrapper:not(.hidden)) .btn-chat-fix,

@@ -12,6 +12,7 @@ const ClaudeDesign = (function () {
     selectedPlant: "",
     selectedCostVariant: "",
     selectedMaterial: "",
+    selectedPeriod: "2026-11", // Period filter: Month & Year only
     activeTab: "all", // 'all', 'activityPrice', 'uomMismatch', 'vendorMissing', 'sourceListMissing'
     searchQuery: "",
     records: [],
@@ -33,7 +34,9 @@ const ClaudeDesign = (function () {
     state.counts = MaterialData.calculateCounts(state.records);
 
     setupDropdowns();
+    setupPeriodInput();
     setupFilters();
+    setupClaudeBatchFix();
     setupSummaryCardListeners();
     setupTabListeners();
     setupSearch();
@@ -45,10 +48,12 @@ const ClaudeDesign = (function () {
         const target = state.records.find(r => r.id === fixedId);
         if (target) {
           target.isFixed = true;
+          target.selected = false;
           state.counts = MaterialData.calculateCounts(state.records);
           renderSummaryCards();
           renderTabs();
           renderAccordions();
+          updateClaudeBatchFixState();
         }
       }
     });
@@ -148,6 +153,25 @@ const ClaudeDesign = (function () {
     }
   }
 
+  function setupPeriodInput() {
+    const input = document.getElementById('claudePeriodInput');
+    const calIcon = document.getElementById('claudePeriodCalendarIcon');
+    if (!input) return;
+    input.value = state.selectedPeriod;
+    input.addEventListener('change', (e) => {
+      state.selectedPeriod = e.target.value;
+    });
+    if (calIcon) {
+      calIcon.addEventListener('click', () => {
+        if (typeof input.showPicker === 'function') {
+          input.showPicker();
+        } else {
+          input.focus();
+        }
+      });
+    }
+  }
+
   function setupFilters() {
     const applyBtn = document.getElementById('claudeApplyBtn');
     const rfBtn = document.getElementById('claudeRfBtn');
@@ -158,10 +182,12 @@ const ClaudeDesign = (function () {
         const pVal = document.getElementById('claudePlantInput').value.trim();
         const cvVal = document.getElementById('claudeCvInput').value.trim();
         const mVal = matInput ? matInput.value.trim() : '';
+        const perVal = document.getElementById('claudePeriodInput')?.value.trim() || '2026-11';
 
         state.selectedPlant = pVal;
         state.selectedCostVariant = cvVal;
         state.selectedMaterial = mVal;
+        state.selectedPeriod = perVal;
         state.applied = true;
 
         renderView();
@@ -175,6 +201,7 @@ const ClaudeDesign = (function () {
         state.selectedPlant = "";
         state.selectedCostVariant = "";
         state.selectedMaterial = "";
+        state.selectedPeriod = "2026-11";
         state.applied = false;
         state.searchQuery = "";
         state.activeTab = "all";
@@ -182,9 +209,11 @@ const ClaudeDesign = (function () {
         const pInp = document.getElementById('claudePlantInput');
         const cInp = document.getElementById('claudeCvInput');
         const mInp = document.getElementById('claudeMaterialInput');
+        const perInp = document.getElementById('claudePeriodInput');
         if (pInp) pInp.value = '';
         if (cInp) cInp.value = '';
         if (mInp) mInp.value = '';
+        if (perInp) perInp.value = '2026-11';
 
         renderView();
       });
@@ -355,6 +384,9 @@ const ClaudeDesign = (function () {
             <table class="claude-record-table">
               <thead>
                 <tr>
+                  <th style="width: 36px; text-align: center;">
+                    <input type="checkbox" class="claude-record-checkbox claude-select-all" data-gkey="${gKey}" title="Select All in Group">
+                  </th>
                   <th>Material</th>
                   <th>Description</th>
                   <th>Error Type</th>
@@ -366,7 +398,10 @@ const ClaudeDesign = (function () {
               </thead>
               <tbody>
                 ${filteredRecords.map(rec => `
-                  <tr data-id="${rec.id}">
+                  <tr data-id="${rec.id}" class="${rec.selected ? 'row-selected' : ''}">
+                    <td style="text-align: center;">
+                      <input type="checkbox" class="claude-record-checkbox row-chk" data-id="${rec.id}" ${rec.selected ? 'checked' : ''} ${rec.isFixed ? 'disabled' : ''}>
+                    </td>
                     <td class="claude-mat-name">${escapeHtml(rec.material)}</td>
                     <td>${escapeHtml(rec.description)}</td>
                     <td>${escapeHtml(rec.errorType)}</td>
@@ -393,6 +428,36 @@ const ClaudeDesign = (function () {
           renderAccordions();
         });
 
+        // Wire row checkboxes
+        const rowChks = accordionEl.querySelectorAll('.row-chk');
+        rowChks.forEach(chk => {
+          chk.addEventListener('change', () => {
+            const id = chk.getAttribute('data-id');
+            const rec = state.records.find(r => r.id === id);
+            if (rec) {
+              rec.selected = chk.checked;
+              const tr = chk.closest('tr');
+              if (tr) tr.classList.toggle('row-selected', chk.checked);
+              updateClaudeBatchFixState();
+            }
+          });
+        });
+
+        // Wire group select all checkbox
+        const groupSelectAll = accordionEl.querySelector('.claude-select-all');
+        if (groupSelectAll) {
+          groupSelectAll.addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            filteredRecords.forEach(rec => {
+              if (!rec.isFixed) {
+                rec.selected = isChecked;
+              }
+            });
+            renderAccordions();
+            updateClaudeBatchFixState();
+          });
+        }
+
         // Wire fix buttons
         const fixBtns = accordionEl.querySelectorAll('.claude-btn-fix');
         fixBtns.forEach(btn => {
@@ -401,6 +466,8 @@ const ClaudeDesign = (function () {
             const id = btn.getAttribute('data-id');
             const targetRec = state.records.find(r => r.id === id);
             if (targetRec) {
+              targetRec.selected = true;
+              updateClaudeBatchFixState();
               triggerFix(targetRec);
             }
           });
@@ -410,12 +477,41 @@ const ClaudeDesign = (function () {
       });
     });
 
+    updateClaudeBatchFixState();
+
     if (!renderedAny) {
       container.innerHTML = `
         <div style="padding: 3rem 1rem; text-align: center; color: #64748B;">
           No matching records found for "<strong>${escapeHtml(state.searchQuery)}</strong>"
         </div>
       `;
+    }
+  }
+
+  function setupClaudeBatchFix() {
+    const fixAllBtn = document.getElementById('claudeFixAllBtn');
+    if (fixAllBtn) {
+      fixAllBtn.addEventListener('click', () => {
+        const selectedUnfixed = state.records.filter(r => r.selected && !r.isFixed);
+        if (selectedUnfixed.length >= 1) {
+          if (typeof MaterialChatbot !== 'undefined' && MaterialChatbot.initiateBatchFix) {
+            MaterialChatbot.initiateBatchFix(selectedUnfixed);
+          }
+        }
+      });
+    }
+  }
+
+  function updateClaudeBatchFixState() {
+    const fixAllBtn = document.getElementById('claudeFixAllBtn');
+    const countSpan = document.getElementById('claudeFixAllCount');
+    if (!fixAllBtn) return;
+    const selectedUnfixed = state.records.filter(r => r.selected && !r.isFixed);
+    if (selectedUnfixed.length >= 2) {
+      if (countSpan) countSpan.textContent = selectedUnfixed.length;
+      fixAllBtn.classList.remove('hidden');
+    } else {
+      fixAllBtn.classList.add('hidden');
     }
   }
 
@@ -438,18 +534,21 @@ const ClaudeDesign = (function () {
   return {
     init: init,
     getState: function () { return state; },
-    syncFilterState: function (plant, cv, mat, isApplied) {
+    syncFilterState: function (plant, cv, mat, isApplied, period) {
       state.selectedPlant = plant || "";
       state.selectedCostVariant = cv || "";
       state.selectedMaterial = mat || "";
+      state.selectedPeriod = period || "2026-11";
       state.applied = !!isApplied;
 
       const pInp = document.getElementById('claudePlantInput');
       const cInp = document.getElementById('claudeCvInput');
       const mInp = document.getElementById('claudeMaterialInput');
+      const perInp = document.getElementById('claudePeriodInput');
       if (pInp) pInp.value = state.selectedPlant;
       if (cInp) cInp.value = state.selectedCostVariant;
       if (mInp) mInp.value = state.selectedMaterial;
+      if (perInp) perInp.value = state.selectedPeriod;
 
       renderView();
     }

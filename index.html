@@ -59,20 +59,12 @@
     <header class="filter-bar-fixed">
       <div class="filter-bar-content">
         
-        <!-- Left Branding & Recents Drawer Trigger -->
+        <!-- Left Branding -->
         <div class="header-left-wrap">
           <div id="brandTitleGroup" class="brand-group">
             <h1 id="brandTitle" class="brand-title">Material Error Dashboard</h1>
             <span class="fiori-badge">SAP Fiori</span>
           </div>
-
-          <button id="recentsToggleBtn" class="btn-recents-pill" title="Toggle Recent History">
-            <svg class="recents-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span>Recents</span>
-          </button>
         </div>
 
         <!-- Filters & Action Buttons -->
@@ -105,6 +97,22 @@
           <div class="filter-field filter-field-material">
             <label for="materialInput" class="field-label">Material</label>
             <input type="text" id="materialInput" class="filter-input" placeholder="Enter Material Number...">
+          </div>
+
+          <!-- D. Period Filter (Month & Year Only, Single Calendar Icon) -->
+          <div class="filter-field filter-field-period">
+            <label for="periodInput" class="field-label">Period</label>
+            <div class="input-with-calendar">
+              <input type="month" id="periodInput" class="filter-input month-input" value="2026-11">
+              <span class="calendar-icon" id="periodCalendarIcon" title="Choose Month and Year">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </span>
+            </div>
           </div>
 
           <!-- Vertical Divider -->
@@ -266,6 +274,12 @@
             <div class="details-header-left">
               <div id="detailsCategoryBadge" class="category-icon-badge badge-red"></div>
               <h3 id="detailsCategoryTitle" class="details-title">Activity Price – Error Details (9)</h3>
+              <button id="design1FixAllBtn" class="btn-fix-all hidden" title="Fix all selected errors at once">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Fix All (<span id="design1FixAllCount">0</span>)</span>
+              </button>
             </div>
 
             <div class="details-search-wrapper">
@@ -299,14 +313,6 @@
         <div class="claude-brand-wrap">
           <span class="claude-brand-title">Material Error Dashboard</span>
           <span class="claude-badge">Design 3</span>
-
-          <button id="claudeRecentsToggleBtn" class="claude-btn-recents" title="Toggle Recent History">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            <span>Recents</span>
-          </button>
         </div>
 
         <div class="claude-filters-row">
@@ -338,6 +344,22 @@
           <div class="claude-field claude-field-material">
             <label for="claudeMaterialInput" class="claude-label">Material</label>
             <input type="text" id="claudeMaterialInput" class="claude-input" placeholder="Enter Material Number...">
+          </div>
+
+          <!-- Period Filter (Month & Year Only, Single Calendar Icon) -->
+          <div class="claude-field claude-field-period">
+            <label for="claudePeriodInput" class="claude-label">Period</label>
+            <div class="claude-input-wrap claude-period-wrap">
+              <input type="month" id="claudePeriodInput" class="claude-input claude-month-input" value="2026-11">
+              <span class="claude-calendar-icon" id="claudePeriodCalendarIcon" title="Choose Month and Year">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+              </span>
+            </div>
           </div>
 
           <!-- Actions -->
@@ -451,28 +473,14 @@
         <!-- Tabbed Accordion Console -->
         <div class="claude-console">
           
-          <!-- Category Tabs Bar -->
+          <!-- Console Action & Search Bar (Category tabs removed per user request, search preserved) -->
           <div class="claude-tabs-bar">
-            <div class="claude-tabs-list" role="tablist">
-              <button class="claude-tab-btn active" data-tab="all" role="tab">
-                <span>All Errors</span>
-                <span class="claude-tab-count">23</span>
-              </button>
-              <button class="claude-tab-btn" data-tab="activityPrice" role="tab">
-                <span>Activity Price</span>
-                <span class="claude-tab-count">9</span>
-              </button>
-              <button class="claude-tab-btn" data-tab="uomMismatch" role="tab">
-                <span>UOM Mismatch</span>
-                <span class="claude-tab-count">6</span>
-              </button>
-              <button class="claude-tab-btn" data-tab="vendorMissing" role="tab">
-                <span>Vendor Missing</span>
-                <span class="claude-tab-count">5</span>
-              </button>
-              <button class="claude-tab-btn" data-tab="sourceListMissing" role="tab">
-                <span>Source List Missing</span>
-                <span class="claude-tab-count">3</span>
+            <div class="claude-batch-action-wrap">
+              <button id="claudeFixAllBtn" class="claude-btn-fix-all hidden" title="Fix all selected errors at once">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+                <span>Fix All (<span id="claudeFixAllCount">0</span>)</span>
               </button>
             </div>
 
@@ -547,9 +555,30 @@
             <span class="pulse-dot"></span> Online Copilot
           </span>
         </div>
+        <button id="chatbotRecentsBtn" class="btn-chat-recents" title="View Recent Fixed Errors & Queries">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>Recents</span>
+        </button>
       </div>
       <div class="chatbot-header-btns">
-        <button id="chatbotMinimizeBtn" class="btn-icon" title="Minimize">—</button>
+        <button id="chatbotMaximizeBtn" class="btn-icon btn-chat-maximize" title="Maximize Window">
+          <svg class="icon-maximize" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 3 21 3 21 9"></polyline>
+            <polyline points="9 21 3 21 3 15"></polyline>
+            <line x1="21" y1="3" x2="14" y2="10"></line>
+            <line x1="3" y1="21" x2="10" y2="14"></line>
+          </svg>
+          <svg class="icon-restore hidden" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 14 10 14 10 20"></polyline>
+            <polyline points="20 10 14 10 14 4"></polyline>
+            <line x1="14" y1="10" x2="21" y2="3"></line>
+            <line x1="10" y1="14" x2="3" y2="21"></line>
+          </svg>
+        </button>
+        <button id="chatbotMinimizeBtn" class="btn-icon" title="Minimize Window">—</button>
         <button id="chatbotCloseBtn" class="btn-icon" title="Close">✕</button>
       </div>
     </div>

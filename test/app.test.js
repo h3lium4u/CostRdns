@@ -105,6 +105,7 @@ test('Design 3 (Claude): Controller exports and state management', () => {
   };
   global.document = {
     getElementById: () => null,
+    querySelector: () => null,
     querySelectorAll: () => [],
     addEventListener: () => {}
   };
@@ -123,12 +124,28 @@ test('Design 3 (Claude): Controller exports and state management', () => {
   assert.equal(st.counts.total, 23);
 
   // Test syncing filter state
-  ClaudeDesign.syncFilterState('IN12', 'ZPC1', 'RAW-1011', true);
+  ClaudeDesign.syncFilterState('IN12', 'ZPC1', 'RAW-1011', true, '2026-12');
   const updatedSt = ClaudeDesign.getState();
   assert.equal(updatedSt.selectedPlant, 'IN12');
   assert.equal(updatedSt.selectedCostVariant, 'ZPC1');
   assert.equal(updatedSt.selectedMaterial, 'RAW-1011');
+  assert.equal(updatedSt.selectedPeriod, '2026-12');
   assert.equal(updatedSt.applied, true);
+});
+
+test('Chatbot: Batch fix multi-select functionality', () => {
+  const MaterialChatbot = require('../js/chatbot.js');
+  assert.equal(typeof MaterialChatbot.initiateBatchFix, 'function', 'initiateBatchFix must be exported');
+  assert.equal(typeof MaterialChatbot.toggleMaximize, 'function', 'toggleMaximize must be exported');
+
+  const records = MaterialData.getInitialRecords().slice(0, 3);
+  MaterialChatbot.initiateBatchFix(records);
+
+  const recents = MaterialChatbot.getRecents();
+  const batchItem = recents.find(r => r.type === 'batchFix');
+  assert.ok(batchItem, 'Batch fix item must be added to recents');
+  assert.equal(batchItem.title, 'Fix All (3 errors)');
+  assert.equal(batchItem.records.length, 3);
 });
 
 test('Design Switcher: Switching and state tracking', () => {

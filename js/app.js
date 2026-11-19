@@ -13,6 +13,7 @@
     selectedPlant: "", // Clean initial state (per user request: no default values)
     selectedCostVariant: "", // Clean initial state
     selectedMaterial: "", // Clean initial state
+    selectedPeriod: "2026-11", // Period filter: Month & Year only
     selectedCategory: null, // null = Image 2 (unselected category), or 'total', 'activityPrice', etc.
     searchQuery: "",
     records: [],
@@ -36,10 +37,11 @@
     state.records = MaterialData.getInitialRecords();
     state.counts = MaterialData.calculateCounts(state.records);
 
-    // 2. Initialize filter dropdowns
+    // 2. Initialize filter dropdowns & inputs
     setupPlantDropdown();
     setupCostVariantDropdown();
     setupMaterialInput();
+    setupPeriodInput();
 
     // 3. Setup Header Buttons
     document.getElementById('applyBtn').addEventListener('click', onApplyFilters);
@@ -54,10 +56,13 @@
       searchInput.addEventListener('input', onSearchInput);
     }
 
-    // 6. Initialize Chatbot
+    // 6. Setup Batch Fix All Button
+    setupDesign1BatchFix();
+
+    // 7. Initialize Chatbot
     MaterialChatbot.init(onRecordFixedSuccess);
 
-    // 7. Render initial state (Image 1: empty illustration)
+    // 8. Render initial state (Image 1: empty illustration)
     renderApp();
   }
 
@@ -176,6 +181,25 @@
     });
   }
 
+  function setupPeriodInput() {
+    const input = document.getElementById('periodInput');
+    const calIcon = document.getElementById('periodCalendarIcon');
+    if (!input) return;
+    input.value = state.selectedPeriod;
+    input.addEventListener('change', (e) => {
+      state.selectedPeriod = e.target.value;
+    });
+    if (calIcon) {
+      calIcon.addEventListener('click', () => {
+        if (typeof input.showPicker === 'function') {
+          input.showPicker();
+        } else {
+          input.focus();
+        }
+      });
+    }
+  }
+
   /* ----------------------------------------------------
      FILTER BAR ACTIONS: APPLY & REFRESH
      ---------------------------------------------------- */
@@ -184,10 +208,12 @@
     const plantVal = document.getElementById('plantInput').value.trim();
     const cvVal = document.getElementById('cvInput').value.trim();
     const matVal = document.getElementById('materialInput').value.trim();
+    const periodVal = document.getElementById('periodInput')?.value.trim() || '2026-11';
 
     state.selectedPlant = plantVal;
     state.selectedCostVariant = cvVal;
     state.selectedMaterial = matVal;
+    state.selectedPeriod = periodVal;
 
     state.applied = true;
 
@@ -215,9 +241,12 @@
     state.selectedPlant = "";
     state.selectedCostVariant = "";
     state.selectedMaterial = "";
+    state.selectedPeriod = "2026-11";
     const plantInp = document.getElementById('plantInput');
     const cvInp = document.getElementById('cvInput');
     const matInp = document.getElementById('materialInput');
+    const periodInp = document.getElementById('periodInput');
+    if (periodInp) periodInp.value = "2026-11";
     if (plantInp) plantInp.value = "";
     if (cvInp) cvInp.value = "";
     if (matInp) matInp.value = "";
@@ -511,6 +540,7 @@
             } else {
               row.classList.remove('row-selected');
             }
+            updateDesign1BatchFixState();
           });
 
           // Material Link click
@@ -527,6 +557,7 @@
               item.selected = true;
               chk.checked = true;
               row.classList.add('row-selected');
+              updateDesign1BatchFixState();
 
               // Launch Chatbot with dynamic prompt
               MaterialChatbot.initiateFix(item);
@@ -541,6 +572,33 @@
 
       container.appendChild(groupWrapper);
     });
+
+    updateDesign1BatchFixState();
+  }
+
+  function setupDesign1BatchFix() {
+    const fixAllBtn = document.getElementById('design1FixAllBtn');
+    if (fixAllBtn) {
+      fixAllBtn.addEventListener('click', () => {
+        const selectedUnfixed = state.records.filter(r => r.selected && !r.isFixed);
+        if (selectedUnfixed.length >= 1) {
+          MaterialChatbot.initiateBatchFix(selectedUnfixed);
+        }
+      });
+    }
+  }
+
+  function updateDesign1BatchFixState() {
+    const fixAllBtn = document.getElementById('design1FixAllBtn');
+    const countSpan = document.getElementById('design1FixAllCount');
+    if (!fixAllBtn) return;
+    const selectedUnfixed = state.records.filter(r => r.selected && !r.isFixed);
+    if (selectedUnfixed.length >= 2) {
+      if (countSpan) countSpan.textContent = selectedUnfixed.length;
+      fixAllBtn.classList.remove('hidden');
+    } else {
+      fixAllBtn.classList.add('hidden');
+    }
   }
 
   /* ----------------------------------------------------
@@ -561,6 +619,7 @@
     // Re-render table and cards
     updateCardCounts();
     renderErrorDetailsTable();
+    updateDesign1BatchFixState();
 
     showToast(`✓ Resolved ${record.errorType} for ${record.material}`);
   }

@@ -11,6 +11,7 @@ const MaterialChatbot = (function () {
 
   let isOpen = false;
   let activePendingRecord = null;
+  let activePendingBatch = null;
   let onFixCompletedCallback = null;
   let activeRecentId = "rec-ux-design";
 
@@ -174,6 +175,8 @@ const MaterialChatbot = (function () {
     const toggleBtn = document.getElementById('chatbotToggleBtn');
     const closeBtn = document.getElementById('chatbotCloseBtn');
     const minimizeBtn = document.getElementById('chatbotMinimizeBtn');
+    const maximizeBtn = document.getElementById('chatbotMaximizeBtn');
+    const recentsBtn = document.getElementById('chatbotRecentsBtn');
     const fixActionBtn = document.getElementById('chatbotFixActionBtn');
     const cancelActionBtn = document.getElementById('chatbotCancelActionBtn');
     const sendBtn = document.getElementById('chatSendBtn');
@@ -181,7 +184,24 @@ const MaterialChatbot = (function () {
 
     if (toggleBtn) toggleBtn.addEventListener('click', toggle);
     if (closeBtn) closeBtn.addEventListener('click', close);
-    if (minimizeBtn) minimizeBtn.addEventListener('click', close);
+    if (minimizeBtn) {
+      minimizeBtn.addEventListener('click', () => {
+        const popup = document.getElementById('chatbotPopup');
+        if (popup && popup.classList.contains('maximized')) {
+          popup.classList.remove('maximized');
+          updateMaximizeBtnState();
+        } else {
+          close();
+        }
+      });
+    }
+    if (maximizeBtn) maximizeBtn.addEventListener('click', toggleMaximize);
+    if (recentsBtn) {
+      recentsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleRecentsDrawer();
+      });
+    }
     if (fixActionBtn) fixActionBtn.addEventListener('click', confirmFix);
     if (cancelActionBtn) cancelActionBtn.addEventListener('click', cancelFix);
 
@@ -209,6 +229,35 @@ const MaterialChatbot = (function () {
     renderRecentsList();
   }
 
+  function toggleMaximize() {
+    const popup = document.getElementById('chatbotPopup');
+    if (!popup) return;
+    if (popup.classList.contains('hidden')) {
+      open();
+    }
+    popup.classList.toggle('maximized');
+    updateMaximizeBtnState();
+  }
+
+  function updateMaximizeBtnState() {
+    const popup = document.getElementById('chatbotPopup');
+    const maxBtn = document.getElementById('chatbotMaximizeBtn');
+    if (!popup || !maxBtn) return;
+    const isMax = popup.classList.contains('maximized');
+    maxBtn.setAttribute('title', isMax ? 'Minimize / Restore Window' : 'Maximize Window');
+  }
+
+  function toggleRecentsDrawer() {
+    const drawer = document.getElementById('recentsDrawer');
+    if (!drawer) return;
+    const isHidden = drawer.classList.contains('hidden');
+    if (isHidden) {
+      drawer.classList.remove('hidden');
+    } else {
+      drawer.classList.add('hidden');
+    }
+  }
+
   function setupQuickChips() {
     const chips = document.querySelectorAll('.chat-chip');
     chips.forEach(chip => {
@@ -222,10 +271,9 @@ const MaterialChatbot = (function () {
   function setupRecentsDrawer() {
     const drawer = document.getElementById('recentsDrawer');
     const toggleBtns = [
+      document.getElementById('chatbotRecentsBtn'),
       document.getElementById('recentsToggleBtn'),
-      document.getElementById('geminiRecentsToggleBtn'),
-      document.getElementById('claudeRecentsToggleBtn'),
-      document.getElementById('d4RecentsBtn')
+      document.getElementById('claudeRecentsToggleBtn')
     ].filter(Boolean);
     const closeBtn = document.getElementById('closeRecentsDrawerBtn');
 
@@ -326,6 +374,8 @@ const MaterialChatbot = (function () {
 
     if (targetItem.type === "fix" && targetItem.record) {
       displayRecordInChat(targetItem.record, targetItem.record.isFixed);
+    } else if (targetItem.type === "batchFix" && targetItem.records) {
+      displayBatchInChat(targetItem.records, targetItem.records.every(r => r.isFixed));
     } else {
       displayChatMessage(targetItem.query || targetItem.title, targetItem.reply, targetItem.time);
     }
@@ -527,15 +577,18 @@ const MaterialChatbot = (function () {
 
   /* ----------------------------------------------------
      ON-DEMAND FIX PROMPT (ONLY SHOWN ON FIX CLICK)
+     Supports editable resolution prompt & multi-item batch fixes
      ---------------------------------------------------- */
 
   /**
    * Initiates an automated fix for a specific error record
-   * Triggered ONLY when clicking ✦ Fix on an error row.
-   * Renders the structured prompt WITHOUT EMOJIS, and shows [Fix] and [Cancel] buttons.
+   * Triggered when clicking ✦ Fix on an error row.
+   * Renders the structured prompt with an editable resolution prompt textarea,
+   * and shows [Fix] and [Cancel] buttons.
    */
   function initiateFix(record) {
     activePendingRecord = record;
+    activePendingBatch = null;
     open();
 
     // Add or update in Recents (Plain title only, NO badges!)
@@ -565,9 +618,13 @@ const MaterialChatbot = (function () {
   function displayRecordInChat(record, isAlreadyFixed = false) {
     const messagesContainer = document.getElementById('chatbotMessages');
     const actionsContainer = document.getElementById('chatbotActions');
+    const fixBtn = document.getElementById('chatbotFixActionBtn');
+    const fixActionBtnText = fixBtn && fixBtn.querySelector ? fixBtn.querySelector('span') : null;
     const timestamp = record.time || formatCurrentTime();
 
-    // Clean structured prompt WITHOUT ANY EMOJIS (per user requirement)
+    const defaultPrompt = `Execute automated fix for ${record.material} (${record.errorType}) in plant ${record.plant}: ${record.recommendation}`;
+
+    // Clean structured prompt with EDITABLE prompt field
     let html = `
       <div class="chatbot-bubble">
         <div class="chatbot-prompt-title">
@@ -599,6 +656,14 @@ const MaterialChatbot = (function () {
             <span class="meta-value">${escapeHtml(record.recommendation)}</span>
           </div>
         </div>
+
+        <div class="chatbot-prompt-editor-card">
+          <div class="prompt-editor-header">
+            <span class="prompt-editor-label">Fix Resolution Prompt (Editable):</span>
+            <span class="prompt-editor-hint">Edit parameters or SAP command before confirming</span>
+          </div>
+          <textarea id="chatbotEditablePrompt" class="chatbot-editable-prompt" rows="3" ${isAlreadyFixed ? 'disabled' : ''}>${escapeHtml(defaultPrompt)}</textarea>
+        </div>
       </div>
       <div class="chatbot-time">${timestamp}</div>
     `;
@@ -619,7 +684,102 @@ const MaterialChatbot = (function () {
       if (actionsContainer) actionsContainer.classList.add('hidden');
     } else {
       activePendingRecord = record;
-      // Show Fix & Cancel action buttons ONLY at this time!
+      activePendingBatch = null;
+      if (fixActionBtnText) fixActionBtnText.textContent = "Fix";
+      if (actionsContainer) actionsContainer.classList.remove('hidden');
+    }
+
+    if (messagesContainer) {
+      messagesContainer.innerHTML = html;
+      scrollToBottom();
+    }
+  }
+
+  /**
+   * Initiates batch resolution for multiple selected records at once
+   */
+  function initiateBatchFix(records) {
+    if (!records || records.length === 0) return;
+    if (records.length === 1) {
+      initiateFix(records[0]);
+      return;
+    }
+    activePendingBatch = records;
+    activePendingRecord = null;
+    open();
+
+    const title = `Fix All (${records.length} errors)`;
+    const existingIndex = recents.findIndex(r => r.title === title);
+    const recentId = `rec-batch-${Date.now()}`;
+    const timestamp = formatCurrentTime();
+
+    const recentObj = {
+      id: recentId,
+      title: title,
+      type: "batchFix",
+      records: records,
+      time: timestamp
+    };
+
+    if (existingIndex >= 0) {
+      recents.splice(existingIndex, 1);
+    }
+    recents.unshift(recentObj);
+    activeRecentId = recentId;
+    renderRecentsList();
+
+    displayBatchInChat(records, false);
+  }
+
+  function displayBatchInChat(records, isAlreadyFixed = false) {
+    const messagesContainer = document.getElementById('chatbotMessages');
+    const actionsContainer = document.getElementById('chatbotActions');
+    const fixBtn = document.getElementById('chatbotFixActionBtn');
+    const fixActionBtnText = fixBtn && fixBtn.querySelector ? fixBtn.querySelector('span') : null;
+    const timestamp = formatCurrentTime();
+
+    const defaultPrompt = `Execute automated batch resolution for ${records.length} material errors:\n` +
+      records.map((r, i) => `${i + 1}. [${r.material}] ${r.errorType} (${r.plant}): ${r.recommendation}`).join('\n');
+
+    let html = `
+      <div class="chatbot-bubble">
+        <div class="chatbot-prompt-title">
+          Batch Resolution for <strong>${records.length} Selected Material Errors</strong>
+        </div>
+        <div class="chatbot-meta-table">
+          ${records.map(r => `
+            <div class="meta-row">
+              <span class="meta-label"><strong>${escapeHtml(r.material)}</strong> (${escapeHtml(r.plant)}):</span>
+              <span class="meta-value">${escapeHtml(r.recommendation)}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="chatbot-prompt-editor-card">
+          <div class="prompt-editor-header">
+            <span class="prompt-editor-label">Batch SAP Fix Prompt (Editable):</span>
+            <span class="prompt-editor-hint">Edit or customize batch execution instructions</span>
+          </div>
+          <textarea id="chatbotEditablePrompt" class="chatbot-editable-prompt" rows="4" ${isAlreadyFixed ? 'disabled' : ''}>${escapeHtml(defaultPrompt)}</textarea>
+        </div>
+      </div>
+      <div class="chatbot-time">${timestamp}</div>
+    `;
+
+    if (isAlreadyFixed) {
+      html += `
+        <div class="chatbot-bubble bubble-success">
+          <div class="success-header">
+            <span class="success-check">✓</span> <strong>All ${records.length} selected errors are resolved</strong>
+          </div>
+        </div>
+        <div class="chatbot-time">${timestamp}</div>
+      `;
+      activePendingBatch = null;
+      if (actionsContainer) actionsContainer.classList.add('hidden');
+    } else {
+      activePendingBatch = records;
+      activePendingRecord = null;
+      if (fixActionBtnText) fixActionBtnText.textContent = `Fix All (${records.length})`;
       if (actionsContainer) actionsContainer.classList.remove('hidden');
     }
 
@@ -634,7 +794,18 @@ const MaterialChatbot = (function () {
     const actionsContainer = document.getElementById('chatbotActions');
     const timestamp = formatCurrentTime();
 
-    if (activePendingRecord) {
+    if (activePendingBatch && activePendingBatch.length > 0) {
+      const cancelHtml = `
+        <div class="chatbot-bubble bubble-cancel">
+          Batch fix operation cancelled for ${activePendingBatch.length} selected records. Error records remain unresolved.
+        </div>
+        <div class="chatbot-time">${timestamp}</div>
+      `;
+      if (messagesContainer) {
+        messagesContainer.innerHTML += cancelHtml;
+        scrollToBottom();
+      }
+    } else if (activePendingRecord) {
       const cancelHtml = `
         <div class="chatbot-bubble bubble-cancel">
           Fix operation cancelled for material <strong>${escapeHtml(activePendingRecord.material)}</strong>. The error record remains in unresolved status.
@@ -648,20 +819,77 @@ const MaterialChatbot = (function () {
     }
 
     activePendingRecord = null;
+    activePendingBatch = null;
     if (actionsContainer) {
       actionsContainer.classList.add('hidden');
     }
   }
 
   function confirmFix() {
-    if (!activePendingRecord) return;
+    if (!activePendingRecord && (!activePendingBatch || activePendingBatch.length === 0)) return;
 
-    const recordToFix = activePendingRecord;
     const actionsContainer = document.getElementById('chatbotActions');
     const messagesContainer = document.getElementById('chatbotMessages');
+    const promptInput = document.getElementById('chatbotEditablePrompt');
+    const executedPrompt = promptInput ? promptInput.value.trim() : '';
 
     // Hide actions while processing
     if (actionsContainer) actionsContainer.classList.add('hidden');
+
+    // Handle BATCH Fix
+    if (activePendingBatch && activePendingBatch.length > 0) {
+      const recordsToFix = [...activePendingBatch];
+
+      const processingEl = document.createElement('div');
+      processingEl.className = 'chatbot-processing';
+      processingEl.innerHTML = `
+        <div class="spinner"></div>
+        <span>Applying automated batch fix via SAP interface for <strong>${recordsToFix.length} records</strong>...</span>
+      `;
+      if (messagesContainer) {
+        messagesContainer.appendChild(processingEl);
+        scrollToBottom();
+      }
+
+      setTimeout(() => {
+        if (processingEl && processingEl.parentNode) {
+          processingEl.parentNode.removeChild(processingEl);
+        }
+
+        const timestamp = formatCurrentTime();
+        const successHtml = `
+          <div class="chatbot-bubble bubble-success">
+            <div class="success-header">
+              <span class="success-check">✓</span> <strong>Successfully Fixed All ${recordsToFix.length} Selected Errors!</strong>
+            </div>
+            <div class="success-body">
+              SAP master data records synchronized. Executed Prompt:<br>
+              <pre style="margin-top: 6px; font-size: 0.76rem; background: rgba(0,0,0,0.04); padding: 6px 8px; border-radius: 4px; white-space: pre-wrap; font-family: monospace;">${escapeHtml(executedPrompt)}</pre>
+            </div>
+          </div>
+          <div class="chatbot-time">${timestamp}</div>
+        `;
+
+        if (messagesContainer) {
+          messagesContainer.innerHTML += successHtml;
+          scrollToBottom();
+        }
+
+        recordsToFix.forEach(r => {
+          r.isFixed = true;
+          r.selected = false;
+          if (typeof onFixCompletedCallback === 'function') {
+            onFixCompletedCallback(r.id);
+          }
+        });
+
+        activePendingBatch = null;
+      }, 700);
+      return;
+    }
+
+    // Handle SINGLE Fix
+    const recordToFix = activePendingRecord;
 
     // Show simulated processing state
     const processingEl = document.createElement('div');
@@ -682,14 +910,14 @@ const MaterialChatbot = (function () {
       }
 
       const timestamp = formatCurrentTime();
-      // Clean success confirmation WITHOUT ANY EMOJIS
       const successHtml = `
         <div class="chatbot-bubble bubble-success">
           <div class="success-header">
             <span class="success-check">✓</span> <strong>Successfully Fixed ${escapeHtml(recordToFix.errorType)} for ${escapeHtml(recordToFix.material)}!</strong>
           </div>
           <div class="success-body">
-            SAP master data record synchronized in plant <strong>${escapeHtml(recordToFix.plant)}</strong>. Action executed: <em>${escapeHtml(recordToFix.recommendation)}</em>
+            SAP master data record synchronized in plant <strong>${escapeHtml(recordToFix.plant)}</strong>.<br>
+            <strong>Executed Prompt:</strong> <em>${escapeHtml(executedPrompt || recordToFix.recommendation)}</em>
           </div>
         </div>
         <div class="chatbot-time">${timestamp}</div>
@@ -702,6 +930,7 @@ const MaterialChatbot = (function () {
 
       // Mark record as fixed
       recordToFix.isFixed = true;
+      recordToFix.selected = false;
 
       // Update in Recents (plain title maintained)
       const targetItem = recents.find(r => r.record && r.record.material === recordToFix.material);
@@ -734,7 +963,9 @@ const MaterialChatbot = (function () {
     open: open,
     close: close,
     toggle: toggle,
+    toggleMaximize: toggleMaximize,
     initiateFix: initiateFix,
+    initiateBatchFix: initiateBatchFix,
     getRecents: function () { return recents; }
   };
 })();
