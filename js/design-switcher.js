@@ -1,6 +1,6 @@
 /**
  * Design Comparison Switcher
- * Manages switching between Design 1, 2, 3, and 4
+ * Manages switching between Design 1 and Design 3
  * Ensures 100% isolation with zero style or DOM conflicts
  */
 
@@ -12,7 +12,7 @@ const DesignSwitcher = (function () {
 
   function init() {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && ['1', '2', '3', '4'].includes(saved)) {
+    if (saved && ['1', '3'].includes(saved)) {
       currentDesign = saved;
     }
 
@@ -44,14 +44,8 @@ const DesignSwitcher = (function () {
       cv = c ? c.value : "";
       mat = m ? m.value : "";
       applied = postApply && !postApply.classList.contains('hidden');
-    } else if (currentDesign === '2' && typeof GeminiDesign !== 'undefined') {
-      const st = GeminiDesign.getState();
-      plant = st.selectedPlant; cv = st.selectedCostVariant; mat = st.selectedMaterial; applied = st.applied;
     } else if (currentDesign === '3' && typeof ClaudeDesign !== 'undefined') {
       const st = ClaudeDesign.getState();
-      plant = st.selectedPlant; cv = st.selectedCostVariant; mat = st.selectedMaterial; applied = st.applied;
-    } else if (currentDesign === '4' && typeof Design4 !== 'undefined') {
-      const st = Design4.getState();
       plant = st.selectedPlant; cv = st.selectedCostVariant; mat = st.selectedMaterial; applied = st.applied;
     }
 
@@ -70,18 +64,14 @@ const DesignSwitcher = (function () {
     });
 
     // Toggle wrapper visibility
-    ['1', '2', '3', '4'].forEach(id => {
+    ['1', '3'].forEach(id => {
       const w = document.getElementById(`design${id}Wrapper`);
       if (w) w.classList.toggle('hidden', designId !== id);
     });
 
     // Sync filters to target design
-    if (designId === '2' && typeof GeminiDesign !== 'undefined') {
-      if (syncFilters && filterData) GeminiDesign.syncFilterState(filterData.plant, filterData.cv, filterData.mat, filterData.applied);
-    } else if (designId === '3' && typeof ClaudeDesign !== 'undefined') {
+    if (designId === '3' && typeof ClaudeDesign !== 'undefined') {
       if (syncFilters && filterData) ClaudeDesign.syncFilterState(filterData.plant, filterData.cv, filterData.mat, filterData.applied);
-    } else if (designId === '4' && typeof Design4 !== 'undefined') {
-      if (syncFilters && filterData) Design4.syncFilterState(filterData.plant, filterData.cv, filterData.mat, filterData.applied);
     }
   }
 
@@ -93,9 +83,7 @@ const DesignSwitcher = (function () {
 })();
 
 document.addEventListener('DOMContentLoaded', () => {
-  if (typeof GeminiDesign !== 'undefined') GeminiDesign.init();
   if (typeof ClaudeDesign !== 'undefined') ClaudeDesign.init();
-  if (typeof Design4 !== 'undefined') Design4.init();
   DesignSwitcher.init();
 });
 

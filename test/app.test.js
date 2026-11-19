@@ -98,7 +98,7 @@ test('Chatbot & Recents: Clean Plain Titles without Status Badges', () => {
   assert.ok(titles.includes('Explain SAP Costing Errors'), 'Must include Explain SAP Costing Errors');
 });
 
-test('Design 2 (Gemini): Controller exports and state management', () => {
+test('Design 3 (Claude): Controller exports and state management', () => {
   // Mock minimal window and document for unit test
   global.window = {
     addEventListener: () => {}
@@ -109,29 +109,6 @@ test('Design 2 (Gemini): Controller exports and state management', () => {
     addEventListener: () => {}
   };
 
-  const GeminiDesign = require('../js/design-gemini.js');
-  assert.ok(GeminiDesign, 'GeminiDesign module should export');
-  assert.equal(typeof GeminiDesign.init, 'function');
-  assert.equal(typeof GeminiDesign.getState, 'function');
-  assert.equal(typeof GeminiDesign.syncFilterState, 'function');
-
-  GeminiDesign.init();
-  const st = GeminiDesign.getState();
-  assert.equal(st.applied, false, 'Default applied should be false');
-  assert.equal(st.activeKpiFilter, 'all');
-  assert.equal(st.records.length, 23);
-  assert.equal(st.counts.total, 23);
-
-  // Test syncing filter state
-  GeminiDesign.syncFilterState('IN10', 'PPC1', 'HALB-3310', true);
-  const updatedSt = GeminiDesign.getState();
-  assert.equal(updatedSt.selectedPlant, 'IN10');
-  assert.equal(updatedSt.selectedCostVariant, 'PPC1');
-  assert.equal(updatedSt.selectedMaterial, 'HALB-3310');
-  assert.equal(updatedSt.applied, true);
-});
-
-test('Design 3 (Claude): Controller exports and state management', () => {
   const ClaudeDesign = require('../js/design-claude.js');
   assert.ok(ClaudeDesign, 'ClaudeDesign module should export');
   assert.equal(typeof ClaudeDesign.init, 'function');
@@ -170,40 +147,11 @@ test('Design Switcher: Switching and state tracking', () => {
   DesignSwitcher.init();
   assert.equal(DesignSwitcher.getCurrentDesign(), '1', 'Initial default should be Design 1');
 
-  DesignSwitcher.switchDesign('2');
-  assert.equal(DesignSwitcher.getCurrentDesign(), '2', 'Switched to Design 2');
-  assert.equal(localStorage.getItem('material_dashboard_selected_design'), '2');
-
   DesignSwitcher.switchDesign('3');
   assert.equal(DesignSwitcher.getCurrentDesign(), '3', 'Switched to Design 3');
   assert.equal(localStorage.getItem('material_dashboard_selected_design'), '3');
 
-  DesignSwitcher.switchDesign('4');
-  assert.equal(DesignSwitcher.getCurrentDesign(), '4', 'Switched to Design 4');
-  assert.equal(localStorage.getItem('material_dashboard_selected_design'), '4');
-});
-
-test('Design 4 (Kinetic Editorial): Controller exports and state management', () => {
-  global.CustomEvent = function(name, opts) { return { type: name, detail: opts && opts.detail }; };
-  global.document.dispatchEvent = () => {};
-
-  const Design4 = require('../js/design-4.js');
-  assert.ok(Design4, 'Design4 module should export');
-  assert.equal(typeof Design4.init, 'function');
-  assert.equal(typeof Design4.getState, 'function');
-  assert.equal(typeof Design4.syncFilterState, 'function');
-
-  Design4.init();
-  const st = Design4.getState();
-  assert.equal(st.applied, false, 'Default applied should be false');
-  assert.equal(st.activeCategory, 'all');
-  assert.equal(st.selectedRecord, null);
-
-  // Test syncFilterState sets plant/cv/mat
-  Design4.syncFilterState('AU10', 'ZPC2', 'FERT-9900', false);
-  const updatedSt = Design4.getState();
-  assert.equal(updatedSt.selectedPlant, 'AU10');
-  assert.equal(updatedSt.selectedCostVariant, 'ZPC2');
-  assert.equal(updatedSt.selectedMaterial, 'FERT-9900');
-  assert.equal(updatedSt.applied, false);
+  DesignSwitcher.switchDesign('1');
+  assert.equal(DesignSwitcher.getCurrentDesign(), '1', 'Switched back to Design 1');
+  assert.equal(localStorage.getItem('material_dashboard_selected_design'), '1');
 });

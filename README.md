@@ -1,6 +1,6 @@
 # Material Error Dashboard — UI/UX Comparison Studio (SAP Fiori)
 
-A modern, responsive, enterprise-grade **Material Error Dashboard** featuring **four selectable UI/UX implementations** within a single web application, designed in compliance with SAP Fiori / SAP Horizon visual design standards.
+A modern, responsive, enterprise-grade **Material Error Dashboard** featuring **selectable UI/UX implementations** within a single web application, designed in compliance with SAP Fiori / SAP Horizon visual design standards.
 
 ---
 
@@ -9,9 +9,7 @@ A modern, responsive, enterprise-grade **Material Error Dashboard** featuring **
 | Design | Name | Visual Theme | Architecture & Concept |
 |---|---|---|---|
 | **01** | **Design 1: Current** | Classic SAP Fiori | Baseline implementation with horizontal category cards, progressive disclosure, and contextual row actions. |
-| **02** | **Design 2** | Blue-Purple Gradient | Segmented KPI Ribbon + Unified Hierarchical Tree-Table (Category → Group → Records) with smooth expanding tiers. |
-| **03** | **Design 3** | Subtle Gradient Enterprise | Tabbed Accordion Console with category tabs, independent group accordions, and refined enterprise typography. |
-| **04** | **Design 4** | SAP Horizon Triage Console | Severity-first triage console with SVG Donut Ring gauges, inline accordion row expansion, and SAP Royal Blue palette. |
+| **03** | **Design 3: Claude** | Blue Glassmorphism + Aurora Gradient | Tabbed Accordion Console with category tabs, frosted glass panels, independent group accordions, and refined enterprise typography. |
 
 ---
 
@@ -74,17 +72,13 @@ D:\Cost rdnss\
 ├── css/
 │   ├── style.css           # Design 1 styles (Untouched Baseline)
 │   ├── design-selector.css # Top comparison switcher navigation bar
-│   ├── design-gemini.css   # Design 2 styles (Blue-Purple Tree-Table)
-│   ├── design-claude.css   # Design 3 styles (Tabbed Accordion Console)
-│   └── design-4.css        # Design 4 styles (SAP Horizon Triage Console)
+│   └── design-claude.css   # Design 3 styles (Tabbed Accordion Console)
 ├── js/
 │   ├── data.js             # Shared deterministic master data model
 │   ├── chatbot.js          # Shared floating Material Assistant & Recents drawer
 │   ├── app.js              # Design 1 controller
-│   ├── design-gemini.js    # Design 2 controller
 │   ├── design-claude.js    # Design 3 controller
-│   ├── design-4.js         # Design 4 controller
 │   └── design-switcher.js  # Top navigation switcher controller
 └── test/
-    └── app.test.js         # 9 automated unit tests
+    └── app.test.js         # Automated unit tests
 ```

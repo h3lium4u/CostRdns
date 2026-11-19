@@ -123,17 +123,6 @@
   color: #ffffff;
 }
 
-/* Design 2 Active State (Gemini - Blue-Purple Gradient) */
-.design-tab-btn[data-design="2"].active {
-  background: linear-gradient(135deg, #3155C9 0%, #7654D6 100%);
-  color: #ffffff;
-  box-shadow: 0 2px 8px rgba(118, 84, 214, 0.4);
-}
-.design-tab-btn[data-design="2"].active .tab-badge {
-  background-color: rgba(255, 255, 255, 0.22);
-  color: #ffffff;
-}
-
 /* Design 3 Active State (Claude - Subtle Gradient Enterprise) */
 .design-tab-btn[data-design="3"].active {
   background: linear-gradient(135deg, #2563EB 0%, #60A5FA 100%);
@@ -143,18 +132,6 @@
 .design-tab-btn[data-design="3"].active .tab-badge {
   background-color: rgba(255, 255, 255, 0.22);
   color: #ffffff;
-}
-
-/* Design 4 Active State (Kinetic Editorial - Swiss Futurism) */
-.design-tab-btn[data-design="4"].active {
-  background: #E9FF45;
-  color: #171717;
-  font-weight: 800;
-  box-shadow: 0 2px 8px rgba(233, 255, 69, 0.45);
-}
-.design-tab-btn[data-design="4"].active .tab-badge {
-  background-color: #171717;
-  color: #E9FF45;
 }
 
 /* View Container Visibility */
