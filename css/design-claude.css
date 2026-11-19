@@ -906,6 +906,26 @@ body:has(#design3Wrapper:not(.hidden)) .chatbot-header .btn-icon:hover,
   background: rgba(255, 255, 255, 0.2);
 }
 
+body:has(#design3Wrapper:not(.hidden)) .chatbot-popup:not(.maximized) #chatbotRecentsBtn,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup:not(.maximized) #chatbotRecentsBtn {
+  display: none !important;
+}
+
+body:has(#design3Wrapper:not(.hidden)) .chatbot-popup.maximized #chatbotRecentsBtn,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup.maximized #chatbotRecentsBtn {
+  display: inline-flex !important;
+}
+
+body:has(#design3Wrapper:not(.hidden)) .chatbot-popup:not(.maximized) #chatbotMinimizeBtn,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup:not(.maximized) #chatbotMinimizeBtn {
+  display: none !important;
+}
+
+body:has(#design3Wrapper:not(.hidden)) .chatbot-popup.maximized #chatbotMinimizeBtn,
+#design3Wrapper:not(.hidden) ~ .chatbot-popup.maximized #chatbotMinimizeBtn {
+  display: inline-flex !important;
+}
+
 body:has(#design3Wrapper:not(.hidden)) .btn-chat-recents,
 #design3Wrapper:not(.hidden) ~ .chatbot-popup .btn-chat-recents {
   background: rgba(255, 255, 255, 0.22);

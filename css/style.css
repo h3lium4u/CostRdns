@@ -1052,12 +1052,13 @@ body {
 
 .chatbot-popup {
   position: fixed;
-  bottom: 92px;
+  bottom: 88px;
   right: 24px;
   width: 420px;
   max-width: calc(100vw - 32px);
-  height: 680px;
-  max-height: calc(100vh - 110px);
+  /* Constrain height so top NEVER extends into top filter bar (top >= 145px) */
+  height: 520px;
+  max-height: calc(100vh - 145px - 88px);
   background: var(--white);
   border-radius: 16px;
   box-shadow: var(--shadow-chatbot);
@@ -1078,11 +1079,11 @@ body {
   right: auto !important;
   bottom: auto !important;
   transform: translate(-50%, -50%) !important;
-  width: 92vw !important;
-  max-width: 1240px !important;
-  height: 88vh !important;
-  max-height: 920px !important;
-  z-index: 2050 !important;
+  width: 90vw !important;
+  max-width: 1200px !important;
+  height: 86vh !important;
+  max-height: 880px !important;
+  z-index: 2500 !important;
   border-radius: 18px !important;
   box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35), 0 0 0 100vw rgba(0, 0, 0, 0.45) !important;
   animation: chatbotModalZoom 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -1090,6 +1091,24 @@ body {
 
 .chatbot-popup.maximized::after {
   display: none !important;
+}
+
+/* Recents button visible ONLY when chatbot is maximized per user requirement */
+.chatbot-popup:not(.maximized) #chatbotRecentsBtn {
+  display: none !important;
+}
+
+.chatbot-popup.maximized #chatbotRecentsBtn {
+  display: inline-flex !important;
+}
+
+/* Minimize button in header hidden when already minimized (docked) */
+.chatbot-popup:not(.maximized) #chatbotMinimizeBtn {
+  display: none !important;
+}
+
+.chatbot-popup.maximized #chatbotMinimizeBtn {
+  display: inline-flex !important;
 }
 
 @keyframes chatbotModalZoom {
@@ -1129,7 +1148,7 @@ body {
 }
 
 .chatbot-header {
-  padding: 0.85rem 1.15rem;
+  padding: 0.75rem 1rem;
   background-color: var(--white);
   border-bottom: 1px solid var(--border-subtle);
   border-radius: 16px 16px 0 0;
@@ -1137,12 +1156,15 @@ body {
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
+  gap: 0.75rem;
 }
 
 .chatbot-header-left {
   display: flex;
   align-items: center;
   gap: 0.65rem;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .chatbot-avatar {
@@ -1155,11 +1177,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .chatbot-title-group {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .chatbot-title {
@@ -1167,6 +1191,7 @@ body {
   font-weight: 700;
   color: var(--slate-900);
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .chatbot-status-indicator {
@@ -1176,6 +1201,7 @@ body {
   font-size: 0.68rem;
   font-weight: 600;
   color: var(--slate-500);
+  white-space: nowrap;
 }
 
 .pulse-dot {
