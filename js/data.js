@@ -543,6 +543,402 @@ const MaterialData = (function () {
             bgColor: "#f5f0ff"
           };
       }
+    },
+
+    /**
+     * SAP CS15 - Material Where-Used List & SA3 Root Cause Analysis Engine
+     * Traces bottom-up BOM dependencies:
+     * Component (ROH) -> Parent Assemblies (HALB) -> Finished Products (FERT)
+     * Answers: "If this component has a problem, which other products might be affected?"
+     */
+    getWhereUsedData: function (materialInput) {
+      const records = this.getInitialRecords();
+      let matCode = typeof materialInput === 'string' ? materialInput : (materialInput && materialInput.material ? materialInput.material : 'RMI-2187');
+      const rec = records.find(r => r.material.toLowerCase() === matCode.toLowerCase()) || (typeof materialInput === 'object' ? materialInput : null) || {
+        material: matCode,
+        description: "Standard Production Component",
+        plant: "IN10",
+        costVariant: "PPC1",
+        matType: matCode.startsWith('HALB') ? 'HALB' : (matCode.startsWith('FERT') ? 'FERT' : 'ROH'),
+        errorType: "Activity Price",
+        recommendation: "Maintain missing costing master data in SAP.",
+        isFixed: false
+      };
+
+      // Deterministic Where-Used database for common materials
+      const bomDatabase = {
+        "RMI-2187": {
+          parents: [
+            {
+              material: "HALB-2204",
+              description: "Hydraulic conduit fitting",
+              matType: "HALB",
+              plant: rec.plant || "IN10",
+              qty: "2.5 KG",
+              bomItem: "0010",
+              status: "At Risk",
+              finishedGoods: [
+                {
+                  material: "FERT-1001",
+                  description: "Industrial Flow Meter Assembly",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: "Standard Cost Run CK40N Blocked",
+                  costVariance: "$74,200"
+                },
+                {
+                  material: "FERT-1020",
+                  description: "High-pressure valve assembly",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "2 EA",
+                  impact: "Cost Rollup Incomplete",
+                  costVariance: "$52,800"
+                }
+              ]
+            },
+            {
+              material: "HALB-3310",
+              description: "Sub-assembly bracket",
+              matType: "HALB",
+              plant: rec.plant || "IN10",
+              qty: "1.8 KG",
+              bomItem: "0020",
+              status: "At Risk",
+              finishedGoods: [
+                {
+                  material: "FERT-2099",
+                  description: "Industrial heat pump unit",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: "Valuation Variance Warning",
+                  costVariance: "$121,500"
+                }
+              ]
+            }
+          ],
+          totalExposure: "$248,500.00",
+          priorityScore: "9.4 / 10",
+          priorityLevel: "Critical",
+          exposureLevel: "High Risk"
+        },
+        "RMI-2142": {
+          parents: [
+            {
+              material: "HALB-3310",
+              description: "Sub-assembly bracket",
+              matType: "HALB",
+              plant: rec.plant || "IN10",
+              qty: "5.0 KG",
+              bomItem: "0015",
+              status: rec.isFixed ? "Resolved" : "At Risk",
+              finishedGoods: [
+                {
+                  material: "FERT-1020",
+                  description: "High-pressure valve assembly",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: rec.isFixed ? "Cost Rollup Available" : "Cost Calculation Halted",
+                  costVariance: "$64,000"
+                },
+                {
+                  material: "FERT-2099",
+                  description: "Industrial heat pump unit",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "2 EA",
+                  impact: rec.isFixed ? "Cost Rollup Available" : "Standard Cost Incomplete",
+                  costVariance: "$89,500"
+                }
+              ]
+            },
+            {
+              material: "HALB-4421",
+              description: "Cast aluminum casing",
+              matType: "HALB",
+              plant: rec.plant || "IN10",
+              qty: "3.2 KG",
+              bomItem: "0030",
+              status: rec.isFixed ? "Resolved" : "At Risk",
+              finishedGoods: [
+                {
+                  material: "FERT-3040",
+                  description: "Centrifugal pump skid 75kW",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: rec.isFixed ? "Cost Rollup Available" : "Price Variance Warning",
+                  costVariance: "$112,000"
+                }
+              ]
+            }
+          ],
+          totalExposure: "$265,500.00",
+          priorityScore: "8.9 / 10",
+          priorityLevel: "High",
+          exposureLevel: "High Risk"
+        },
+        "HALB-3310": {
+          parents: [
+            {
+              material: "HALB-3310",
+              description: "Sub-assembly bracket (Direct Assembly)",
+              matType: "HALB",
+              plant: rec.plant || "IN10",
+              qty: "1 EA",
+              bomItem: "0010",
+              status: "At Risk",
+              finishedGoods: [
+                {
+                  material: "FERT-1020",
+                  description: "High-pressure valve assembly",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: "Direct BOM Component Cost Blocked",
+                  costVariance: "$64,000"
+                },
+                {
+                  material: "FERT-2099",
+                  description: "Industrial heat pump unit",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "2 EA",
+                  impact: "Standard Cost Estimate Incomplete",
+                  costVariance: "$121,500"
+                }
+              ]
+            }
+          ],
+          totalExposure: "$185,500.00",
+          priorityScore: "8.7 / 10",
+          priorityLevel: "High",
+          exposureLevel: "High Risk"
+        },
+        "RMI-1055": {
+          parents: [
+            {
+              material: "HALB-2204",
+              description: "Hydraulic conduit fitting",
+              matType: "HALB",
+              plant: rec.plant || "IN10",
+              qty: "4.0 MTR",
+              bomItem: "0025",
+              status: "At Risk",
+              finishedGoods: [
+                {
+                  material: "FERT-1001",
+                  description: "Industrial Flow Meter Assembly",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: "UOM Conversion Mismatch Blocks Valuation",
+                  costVariance: "$74,200"
+                },
+                {
+                  material: "FERT-1020",
+                  description: "High-pressure valve assembly",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "2 EA",
+                  impact: "BOM Valuation Error",
+                  costVariance: "$52,800"
+                }
+              ]
+            }
+          ],
+          totalExposure: "$127,000.00",
+          priorityScore: "8.1 / 10",
+          priorityLevel: "High",
+          exposureLevel: "Moderate Risk"
+        },
+        "RMI-1280": {
+          parents: [
+            {
+              material: "HALB-5102",
+              description: "Stamped chassis plate",
+              matType: "HALB",
+              plant: rec.plant || "IN10",
+              qty: "15.0 M",
+              bomItem: "0040",
+              status: "At Risk",
+              finishedGoods: [
+                {
+                  material: "FERT-2099",
+                  description: "Industrial heat pump unit",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: "Electrical Harness BOM Costing Error",
+                  costVariance: "$89,200"
+                }
+              ]
+            }
+          ],
+          totalExposure: "$89,200.00",
+          priorityScore: "7.6 / 10",
+          priorityLevel: "Medium",
+          exposureLevel: "Moderate Risk"
+        },
+        "HALB-2204": {
+          parents: [
+            {
+              material: "HALB-2204",
+              description: "Hydraulic conduit fitting (Direct Assembly)",
+              matType: "HALB",
+              plant: rec.plant || "IN10",
+              qty: "1 EA",
+              bomItem: "0010",
+              status: "At Risk",
+              finishedGoods: [
+                {
+                  material: "FERT-1001",
+                  description: "Industrial Flow Meter Assembly",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: "Standard Cost Run CK40N Blocked",
+                  costVariance: "$74,200"
+                },
+                {
+                  material: "FERT-1020",
+                  description: "High-pressure valve assembly",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "2 EA",
+                  impact: "Direct BOM Component Cost Blocked",
+                  costVariance: "$52,800"
+                }
+              ]
+            }
+          ],
+          totalExposure: "$127,000.00",
+          priorityScore: "8.3 / 10",
+          priorityLevel: "High",
+          exposureLevel: "High Risk"
+        }
+      };
+
+      // Retrieve mapped data or synthesize deterministic multi-level BOM
+      let traceData = bomDatabase[rec.material];
+      const isFert = rec.matType === 'FERT';
+
+      if (isFert) {
+        return {
+          component: rec,
+          sapTransaction: "CS15 – Material Where-Used List",
+          sapAgent: "SA3 (Root Cause Analysis Agent)",
+          isTopLevel: true,
+          parents: [],
+          finishedGoods: [
+            {
+              material: rec.material,
+              description: rec.description,
+              matType: "FERT",
+              plant: rec.plant || "IN10",
+              qty: "1 EA",
+              impact: "Target Finished Product (Top of BOM)",
+              costVariance: "$95,000"
+            }
+          ],
+          totalParents: 0,
+          totalFinishedGoods: 1,
+          totalAffected: 1,
+          estimatedCostExposure: "$95,000.00",
+          priorityScore: "8.5 / 10",
+          priorityLevel: "High",
+          exposureLevel: "Top-Level Product",
+          sa3Analysis: `Material <strong>${rec.material}</strong> is a Finished Product (FERT) at the top of the Bill of Materials hierarchy. It does not appear as a component inside higher-level BOMs.<br><br>💡 To inspect components required to build this finished product, use <strong>BOM Explosion (CS03 / CS11)</strong> instead of Where-Used analysis.`,
+          exampleStory: {
+            component: "Tyre (ROH001)",
+            parent: "Wheel Assembly (HALB001)",
+            finished: "Bicycle (FG001)"
+          }
+        };
+      }
+
+      if (!traceData) {
+        // Deterministic fallback for other materials
+        const isHalb = rec.matType === 'HALB';
+        const parentCode = isHalb ? rec.material : "HALB-" + (rec.material.replace(/\D/g, '') || "2204");
+        traceData = {
+          parents: [
+            {
+              material: parentCode,
+              description: isHalb ? rec.description : "Modular Sub-Assembly " + parentCode,
+              matType: "HALB",
+              plant: rec.plant || "IN10",
+              qty: "2.0 EA",
+              bomItem: "0010",
+              status: rec.isFixed ? "Resolved" : "At Risk",
+              finishedGoods: [
+                {
+                  material: "FERT-1020",
+                  description: "High-pressure valve assembly",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: rec.isFixed ? "Cost Rollup Available" : "Cost Calculation Halted",
+                  costVariance: "$64,000"
+                },
+                {
+                  material: "FERT-2099",
+                  description: "Industrial heat pump unit",
+                  matType: "FERT",
+                  plant: rec.plant || "IN10",
+                  qty: "1 EA",
+                  impact: rec.isFixed ? "Cost Rollup Available" : "Standard Cost Incomplete",
+                  costVariance: "$98,500"
+                }
+              ]
+            }
+          ],
+          totalExposure: "$162,500.00",
+          priorityScore: "8.4 / 10",
+          priorityLevel: "High",
+          exposureLevel: "High Risk"
+        };
+      }
+
+      const allFinished = [];
+      traceData.parents.forEach(p => {
+        if (p.finishedGoods) {
+          p.finishedGoods.forEach(fg => {
+            if (!allFinished.some(x => x.material === fg.material)) {
+              allFinished.push(fg);
+            }
+          });
+        }
+      });
+
+      const totalParents = traceData.parents.length;
+      const totalFinished = allFinished.length;
+      const totalAffected = totalParents + totalFinished;
+
+      return {
+        component: rec,
+        sapTransaction: "CS15 – Material Where-Used List",
+        sapAgent: "SA3 (Root Cause Analysis Agent)",
+        isTopLevel: false,
+        parents: traceData.parents,
+        finishedGoods: allFinished,
+        totalParents: totalParents,
+        totalFinishedGoods: totalFinished,
+        totalAffected: totalAffected,
+        estimatedCostExposure: traceData.totalExposure,
+        priorityScore: traceData.priorityScore,
+        priorityLevel: traceData.priorityLevel,
+        exposureLevel: traceData.exposureLevel,
+        sa3Analysis: `Component <strong>${rec.material}</strong> (${rec.description}) is actively used in <strong>${totalParents} parent assembly BOM(s)</strong> and cascades downstream into <strong>${totalFinished} finished product(s) (FERT)</strong>.<br><br>⚠️ <strong>Root Cause Impact:</strong> The current <em>${rec.errorType}</em> error prevents cost rollup across all dependent assemblies. In monthly transaction CK40N, ${totalFinished} finished products will fail costing runs until this component is resolved.`,
+        exampleStory: {
+          component: "Tyre (ROH001)",
+          parent: "Wheel Assembly (HALB001)",
+          finished: "Bicycle (FG001)"
+        }
+      };
     }
   };
 })();

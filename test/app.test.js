@@ -172,3 +172,48 @@ test('Design Switcher: Switching and state tracking', () => {
   assert.equal(DesignSwitcher.getCurrentDesign(), '1', 'Switched back to Design 1');
   assert.equal(localStorage.getItem('material_dashboard_selected_design'), '1');
 });
+
+test('SAP CS15: Where-Used Analysis Data Engine & BOM Hierarchy', () => {
+  assert.equal(typeof MaterialData.getWhereUsedData, 'function', 'getWhereUsedData must be exported on MaterialData');
+
+  // Test RMI-2187 (ROH Raw Material)
+  const wu = MaterialData.getWhereUsedData('RMI-2187');
+  assert.ok(wu, 'Where-used data must be returned');
+  assert.equal(wu.sapTransaction, 'CS15 – Material Where-Used List');
+  assert.equal(wu.sapAgent, 'SA3 (Root Cause Analysis Agent)');
+  assert.equal(wu.isTopLevel, false);
+  assert.equal(wu.totalParents, 2, 'RMI-2187 must trace to 2 parent assemblies');
+  assert.equal(wu.totalFinishedGoods, 3, 'RMI-2187 must cascade into 3 finished products');
+  assert.equal(wu.totalAffected, 5, 'Total affected materials must be 5');
+  assert.equal(wu.estimatedCostExposure, '$248,500.00');
+  assert.equal(wu.priorityScore, '9.4 / 10');
+  assert.equal(wu.priorityLevel, 'Critical');
+  assert.ok(wu.sa3Analysis.includes('RMI-2187'), 'SA3 analysis must reference target material');
+
+  // Verify bicycle educational example is provided
+  assert.ok(wu.exampleStory, 'Must include bicycle flow example');
+  assert.equal(wu.exampleStory.component, 'Tyre (ROH001)');
+  assert.equal(wu.exampleStory.parent, 'Wheel Assembly (HALB001)');
+  assert.equal(wu.exampleStory.finished, 'Bicycle (FG001)');
+
+  // Test FERT Top-Level Product
+  const fertWu = MaterialData.getWhereUsedData('FERT-1020');
+  assert.equal(fertWu.isTopLevel, true);
+  assert.ok(fertWu.sa3Analysis.includes('BOM Explosion (CS03 / CS11)'));
+});
+
+test('Chatbot: Where-Used Analysis Execution and Internal Sidebar', () => {
+  const MaterialChatbot = require('../js/chatbot.js');
+  assert.equal(typeof MaterialChatbot.runWhereUsedAnalysis, 'function', 'runWhereUsedAnalysis must be exported');
+  assert.equal(typeof MaterialChatbot.toggleInternalSidebar, 'function', 'toggleInternalSidebar must be exported');
+
+  // Execute Where-Used analysis for RMI-2187
+  MaterialChatbot.runWhereUsedAnalysis('RMI-2187');
+
+  const recents = MaterialChatbot.getRecents();
+  const wuRecent = recents.find(r => r.type === 'whereUsed');
+  assert.ok(wuRecent, 'Where-used analysis must be added to recents');
+  assert.equal(wuRecent.title, 'Where-Used: RMI-2187');
+  assert.equal(wuRecent.record.material, 'RMI-2187');
+  assert.ok(wuRecent.data && wuRecent.data.parents.length === 2);
+});

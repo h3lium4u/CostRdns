@@ -555,7 +555,7 @@
             <span class="pulse-dot"></span> Online Copilot
           </span>
         </div>
-        <button id="chatbotRecentsBtn" class="btn-chat-recents" title="View Recent Fixed Errors & Queries">
+        <button id="chatbotRecentsBtn" class="btn-chat-recents" title="View Recent Chats & Analyses Sidebar">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
@@ -583,50 +583,93 @@
       </div>
     </div>
 
-    <!-- Chat Messages Container -->
-    <div id="chatbotBody" class="chatbot-body">
-      <div id="chatbotMessages">
-        <div class="chatbot-bubble">
-          <strong>Hello! I am your Material Assistant AI Copilot.</strong><br>
-          I can help analyze and resolve material costing errors across SAP ERP.<br><br>
-          You can chat with me freely below, or click <strong>'✦ Fix'</strong> on any error record to initiate an automated resolution.
+    <!-- Chatbot Content Container: Internal Sidebar + Main Chat Pane -->
+    <div class="chatbot-inner-container">
+      <!-- Internal Recent Chats & Analyses Sidebar (Toggled by Recents Button) -->
+      <aside id="chatbotInternalSidebar" class="chatbot-internal-sidebar collapsed">
+        <div class="chatbot-sidebar-header">
+          <div class="chatbot-sidebar-title-bar">
+            <div class="chatbot-sidebar-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Recent Chats & Analyses</span>
+            </div>
+            <button id="chatbotSidebarCloseBtn" class="btn-sidebar-close" title="Close Recent Sidebar">✕</button>
+          </div>
+          <div class="chatbot-sidebar-search-box">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="chatbotSidebarSearch" placeholder="Search recent chats & fixes..." autocomplete="off">
+          </div>
         </div>
-        <div class="chat-chips-row">
-          <button class="chat-chip" data-query="Explain Costing Errors">Explain Costing Errors</button>
-          <button class="chat-chip" data-query="How to fix Activity Price?">How to fix Activity Price?</button>
-          <button class="chat-chip" data-query="KP26 Tariff Rates">KP26 Tariff Rates</button>
-          <button class="chat-chip" data-query="Plant IN10 Overview">Plant IN10 Overview</button>
+
+        <div id="chatbotInternalRecentsList" class="chatbot-internal-recents-list">
+          <!-- Populated dynamically by MaterialChatbot -->
         </div>
-        <div id="chatbotTimestamp" class="chatbot-time">10:24 AM</div>
+      </aside>
+
+      <!-- Main Chat Pane -->
+      <div class="chatbot-main-pane">
+        <!-- Chat Messages Container -->
+        <div id="chatbotBody" class="chatbot-body">
+          <div id="chatbotMessages">
+            <div class="chatbot-bubble">
+              <strong>Hello! I am your Material Assistant AI Copilot.</strong><br>
+              I can help analyze and resolve material costing errors across SAP ERP.<br><br>
+              You can chat with me freely below, or click <strong>'✦ Fix'</strong> or <strong>'Where-Used'</strong> on any error record to initiate automated resolution or BOM downstream impact analysis.
+            </div>
+            <div class="chat-chips-row">
+              <button class="chat-chip" data-query="Explain Costing Errors">Explain Costing Errors</button>
+              <button class="chat-chip" data-query="Where-Used Analysis (CS15)">Where-Used Analysis (CS15)</button>
+              <button class="chat-chip" data-query="How to fix Activity Price?">How to fix Activity Price?</button>
+              <button class="chat-chip" data-query="KP26 Tariff Rates">KP26 Tariff Rates</button>
+              <button class="chat-chip" data-query="Plant IN10 Overview">Plant IN10 Overview</button>
+            </div>
+            <div id="chatbotTimestamp" class="chatbot-time">10:24 AM</div>
+          </div>
+        </div>
+
+        <!-- Chatbot Action Buttons (Visible during active pending fix / Where-Used) -->
+        <div id="chatbotActions" class="chatbot-actions hidden">
+          <button id="chatbotFixActionBtn" class="btn-chat-fix">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>Fix</span>
+          </button>
+          <button id="chatbotWhereUsedBtn" class="btn-chat-whereused" title="Run SAP CS15 Where-Used Analysis (Downstream Impact)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              <line x1="11" y1="8" x2="11" y2="14"></line>
+              <line x1="8" y1="11" x2="14" y2="11"></line>
+            </svg>
+            <span>Where-Used Analysis</span>
+          </button>
+          <button id="chatbotCancelActionBtn" class="btn-chat-cancel">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+            <span>Cancel</span>
+          </button>
+        </div>
+
+        <!-- Normal Interactive AI Chat Input Bar -->
+        <div id="chatbotInputBar" class="chatbot-input-bar">
+          <input type="text" id="chatUserInput" class="chat-user-input" placeholder="Ask AI Assistant or type SAP command (e.g., CS15, KP26)..." autocomplete="off">
+          <button id="chatSendBtn" class="btn-chat-send" title="Send message">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </div>
       </div>
-    </div>
-
-    <!-- Chatbot Action Buttons (Visible ONLY during an active pending fix) -->
-    <div id="chatbotActions" class="chatbot-actions hidden">
-      <button id="chatbotFixActionBtn" class="btn-chat-fix">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-        <span>Fix</span>
-      </button>
-      <button id="chatbotCancelActionBtn" class="btn-chat-cancel">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"></line>
-          <line x1="6" y1="6" x2="18" y2="18"></line>
-        </svg>
-        <span>Cancel</span>
-      </button>
-    </div>
-
-    <!-- Normal Interactive AI Chat Input Bar -->
-    <div id="chatbotInputBar" class="chatbot-input-bar">
-      <input type="text" id="chatUserInput" class="chat-user-input" placeholder="Ask AI Assistant or type SAP command..." autocomplete="off">
-      <button id="chatSendBtn" class="btn-chat-send" title="Send message">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
-      </button>
     </div>
   </div>
 

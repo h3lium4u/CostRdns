@@ -523,7 +523,8 @@
             <td><span class="cell-text">${escapeHtml(item.plant)}</span></td>
             <td><span class="cell-text">${escapeHtml(item.matType)}</span></td>
             <td><span class="recommendation-text">${escapeHtml(item.recommendation)}</span></td>
-            <td style="text-align: right;">
+            <td style="text-align: right; white-space: nowrap;">
+              <button class="btn-table-whereused" data-id="${item.id}" title="Run SAP CS15 Where-Used Analysis (Downstream Impact)">🔍 Where-Used</button>
               ${item.isFixed 
                 ? `<span class="fixed-pill"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 3.5" stroke="#15803d" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Fixed</span>` 
                 : `<button class="fix-btn" data-id="${item.id}">✦ Fix</button>`
@@ -548,6 +549,15 @@
           link.addEventListener('click', () => {
             showToast(`Material ${item.material}: ${item.description}`);
           });
+
+          // Where-Used Analysis Button click
+          const wuBtn = row.querySelector('.btn-table-whereused');
+          if (wuBtn) {
+            wuBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              MaterialChatbot.runWhereUsedAnalysis(item);
+            });
+          }
 
           // Fix Button click
           const fixBtn = row.querySelector('.fix-btn');

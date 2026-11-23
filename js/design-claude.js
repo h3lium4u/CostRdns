@@ -408,7 +408,8 @@ const ClaudeDesign = (function () {
                     <td><strong>${escapeHtml(rec.plant)}</strong></td>
                     <td><span class="claude-pill-tag">${escapeHtml(rec.matType)}</span></td>
                     <td>${escapeHtml(rec.recommendation)}</td>
-                    <td>
+                    <td style="white-space: nowrap;">
+                      <button class="claude-btn-whereused" data-id="${rec.id}" title="Run SAP CS15 Where-Used Analysis (Downstream Impact)">🔍 Where-Used</button>
                       ${rec.isFixed
                         ? `<span class="claude-fixed-tag">✓ Fixed</span>`
                         : `<button class="claude-btn-fix" data-id="${rec.id}">✦ Fix</button>`
@@ -457,6 +458,19 @@ const ClaudeDesign = (function () {
             updateClaudeBatchFixState();
           });
         }
+
+        // Wire where-used buttons
+        const wuBtns = accordionEl.querySelectorAll('.claude-btn-whereused');
+        wuBtns.forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const id = btn.getAttribute('data-id');
+            const targetRec = state.records.find(r => r.id === id);
+            if (targetRec && typeof MaterialChatbot !== 'undefined') {
+              MaterialChatbot.runWhereUsedAnalysis(targetRec);
+            }
+          });
+        });
 
         // Wire fix buttons
         const fixBtns = accordionEl.querySelectorAll('.claude-btn-fix');

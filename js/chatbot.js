@@ -177,7 +177,10 @@ const MaterialChatbot = (function () {
     const minimizeBtn = document.getElementById('chatbotMinimizeBtn');
     const maximizeBtn = document.getElementById('chatbotMaximizeBtn');
     const recentsBtn = document.getElementById('chatbotRecentsBtn');
+    const sidebarCloseBtn = document.getElementById('chatbotSidebarCloseBtn');
+    const sidebarSearch = document.getElementById('chatbotSidebarSearch');
     const fixActionBtn = document.getElementById('chatbotFixActionBtn');
+    const whereUsedBtn = document.getElementById('chatbotWhereUsedBtn');
     const cancelActionBtn = document.getElementById('chatbotCancelActionBtn');
     const sendBtn = document.getElementById('chatSendBtn');
     const userInput = document.getElementById('chatUserInput');
@@ -196,13 +199,40 @@ const MaterialChatbot = (function () {
       });
     }
     if (maximizeBtn) maximizeBtn.addEventListener('click', toggleMaximize);
+    
+    // Toggle internal recent chats sidebar inside chat window
     if (recentsBtn) {
       recentsBtn.addEventListener('click', (e) => {
         e.stopPropagation();
-        toggleRecentsDrawer();
+        toggleInternalSidebar();
       });
     }
+
+    if (sidebarCloseBtn) {
+      sidebarCloseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeInternalSidebar();
+      });
+    }
+
+    if (sidebarSearch) {
+      sidebarSearch.addEventListener('input', (e) => {
+        renderInternalRecentsList(e.target.value);
+      });
+    }
+
     if (fixActionBtn) fixActionBtn.addEventListener('click', confirmFix);
+    if (whereUsedBtn) {
+      whereUsedBtn.addEventListener('click', () => {
+        if (activePendingRecord) {
+          runWhereUsedAnalysis(activePendingRecord);
+        } else if (activePendingBatch && activePendingBatch.length > 0) {
+          runWhereUsedAnalysis(activePendingBatch[0]);
+        } else {
+          runWhereUsedAnalysis('RMI-2187');
+        }
+      });
+    }
     if (cancelActionBtn) cancelActionBtn.addEventListener('click', cancelFix);
 
     // Interactive Chat Input
@@ -227,6 +257,7 @@ const MaterialChatbot = (function () {
     // Setup Left-Side Recents Drawer
     setupRecentsDrawer();
     renderRecentsList();
+    renderInternalRecentsList();
   }
 
   function toggleMaximize() {
@@ -245,6 +276,99 @@ const MaterialChatbot = (function () {
     if (!popup || !maxBtn) return;
     const isMax = popup.classList.contains('maximized');
     maxBtn.setAttribute('title', isMax ? 'Minimize / Restore Window' : 'Maximize Window');
+  }
+
+  /* ----------------------------------------------------
+     INTERNAL RECENT CHATS SIDEBAR (Inside Chat Window)
+     ---------------------------------------------------- */
+
+  function toggleInternalSidebar() {
+    const sidebar = document.getElementById('chatbotInternalSidebar');
+    if (!sidebar) return;
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    if (isCollapsed) {
+      sidebar.classList.remove('collapsed');
+      const searchInput = document.getElementById('chatbotSidebarSearch');
+      if (searchInput) searchInput.focus();
+    } else {
+      sidebar.classList.add('collapsed');
+    }
+    renderInternalRecentsList();
+  }
+
+  function openInternalSidebar() {
+    const sidebar = document.getElementById('chatbotInternalSidebar');
+    if (sidebar) {
+      sidebar.classList.remove('collapsed');
+      renderInternalRecentsList();
+    }
+  }
+
+  function closeInternalSidebar() {
+    const sidebar = document.getElementById('chatbotInternalSidebar');
+    if (sidebar) {
+      sidebar.classList.add('collapsed');
+    }
+  }
+
+  function renderInternalRecentsList(filterText = '') {
+    const container = document.getElementById('chatbotInternalRecentsList');
+    if (!container) return;
+
+    const term = (filterText || '').trim().toLowerCase();
+    const filtered = recents.filter(item => {
+      if (!term) return true;
+      const titleMatch = (item.title || '').toLowerCase().includes(term);
+      const queryMatch = (item.query || '').toLowerCase().includes(term);
+      const matMatch = (item.record && item.record.material || '').toLowerCase().includes(term);
+      return titleMatch || queryMatch || matMatch;
+    });
+
+    container.innerHTML = '';
+    if (filtered.length === 0) {
+      container.innerHTML = `<div class="chatbot-sidebar-empty">No matching recent items found.</div>`;
+      return;
+    }
+
+    filtered.forEach(item => {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'chatbot-sidebar-item' + (item.id === activeRecentId ? ' active' : '');
+      itemEl.setAttribute('data-id', item.id);
+
+      let iconSvg = '';
+      let typeBadge = '';
+      if (item.type === 'whereUsed') {
+        iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>`;
+        typeBadge = `<span class="sidebar-item-pill pill-wu">CS15</span>`;
+      } else if (item.type === 'fix' || item.type === 'batchFix') {
+        iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        typeBadge = `<span class="sidebar-item-pill pill-fix">Fix</span>`;
+      } else {
+        iconSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>`;
+        typeBadge = `<span class="sidebar-item-pill pill-chat">AI</span>`;
+      }
+
+      itemEl.innerHTML = `
+        <div class="sidebar-item-icon">${iconSvg}</div>
+        <div class="sidebar-item-content">
+          <div class="sidebar-item-title-row">
+            <span class="sidebar-item-title" title="${escapeHtml(item.title)}">${escapeHtml(item.title)}</span>
+            ${typeBadge}
+          </div>
+          <div class="sidebar-item-time">${escapeHtml(item.time || 'Recent')}</div>
+        </div>
+      `;
+
+      itemEl.addEventListener('click', () => {
+        selectRecentItem(item.id);
+        const popup = document.getElementById('chatbotPopup');
+        if (popup && !popup.classList.contains('maximized')) {
+          closeInternalSidebar();
+        }
+      });
+
+      container.appendChild(itemEl);
+    });
   }
 
   function toggleRecentsDrawer() {
@@ -271,7 +395,6 @@ const MaterialChatbot = (function () {
   function setupRecentsDrawer() {
     const drawer = document.getElementById('recentsDrawer');
     const toggleBtns = [
-      document.getElementById('chatbotRecentsBtn'),
       document.getElementById('recentsToggleBtn'),
       document.getElementById('claudeRecentsToggleBtn')
     ].filter(Boolean);
@@ -366,13 +489,16 @@ const MaterialChatbot = (function () {
   function selectRecentItem(id) {
     activeRecentId = id;
     renderRecentsList();
+    renderInternalRecentsList();
 
     const targetItem = recents.find(r => r.id === id);
     if (!targetItem) return;
 
     open();
 
-    if (targetItem.type === "fix" && targetItem.record) {
+    if (targetItem.type === "whereUsed") {
+      renderWhereUsedCardInChat(targetItem.data || targetItem.record);
+    } else if (targetItem.type === "fix" && targetItem.record) {
       displayRecordInChat(targetItem.record, targetItem.record.isFixed);
     } else if (targetItem.type === "batchFix" && targetItem.records) {
       displayBatchInChat(targetItem.records, targetItem.records.every(r => r.isFixed));
@@ -478,6 +604,23 @@ const MaterialChatbot = (function () {
 
   function generateAiReply(query) {
     const q = query.toLowerCase();
+
+    if (q.includes('where-used') || q.includes('where used') || q.includes('cs15') || q.includes('downstream')) {
+      return `<strong>Where-Used Analysis (SAP Transaction CS15):</strong><br>
+      Where-Used Analysis is an SAP functionality that identifies where a particular material or component is used in other materials' Bills of Materials (BOMs).<br><br>
+      In simple terms, it answers: <em>"If this component has a problem, which other products might be affected?"</em><br><br>
+      <strong>Manufacturing Flow Example:</strong><br>
+      • <strong>Tyre (ROH001)</strong> is used in Wheel Assembly (HALB001)<br>
+      • <strong>Wheel Assembly (HALB001)</strong> is used in Finished Bicycle (FG001)<br>
+      • <strong>Bicycle (FG001)</strong> is the finished product.<br>
+      • If Tyre has a missing costing price, Where-Used identifies the downstream cascade and halts Bicycle costing.<br><br>
+      <strong>In Costing Readiness Checker (SA3 Root Cause Agent):</strong><br>
+      1. Identifies parent materials that use a problematic component.<br>
+      2. Identifies other products that depend on those parent materials.<br>
+      3. Calculates total materials affected and revenue exposure.<br>
+      4. Prioritizes errors based on downstream impact.<br><br>
+      💡 Click <strong>'Where-Used'</strong> on any table row or in the action bar to view the full interactive BOM trace!`;
+    }
 
     if (q.includes('kp26') || q.includes('activity price') || q.includes('rate')) {
       return `<strong>Activity Price Resolution (KP26):</strong><br>
@@ -657,6 +800,13 @@ const MaterialChatbot = (function () {
           </div>
         </div>
 
+        <div class="prompt-whereused-action-row">
+          <button id="promptWhereUsedBtn" class="btn-prompt-whereused" type="button">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Run CS15 Where-Used Analysis for ${escapeHtml(record.material)}</span>
+          </button>
+        </div>
+
         <div class="chatbot-prompt-editor-card">
           <div class="prompt-editor-header">
             <span class="prompt-editor-label">Fix Resolution Prompt (Editable):</span>
@@ -692,6 +842,316 @@ const MaterialChatbot = (function () {
     if (messagesContainer) {
       messagesContainer.innerHTML = html;
       scrollToBottom();
+
+      const promptWuBtn = document.getElementById('promptWhereUsedBtn');
+      if (promptWuBtn) {
+        promptWuBtn.addEventListener('click', () => {
+          runWhereUsedAnalysis(record);
+        });
+      }
+    }
+  }
+
+  /* ----------------------------------------------------
+     SAP CS15 - MATERIAL WHERE-USED ANALYSIS ENGINE
+     Answers: "If this component has a problem, which other products might be affected?"
+     ---------------------------------------------------- */
+
+  /**
+   * Initiates SAP CS15 Where-Used Analysis for a component material
+   * Identifies parent materials, finished products, total dependent materials,
+   * downstream revenue exposure, and SA3 Root Cause priority.
+   */
+  function runWhereUsedAnalysis(recordOrMaterial) {
+    if (typeof MaterialData === 'undefined' || typeof MaterialData.getWhereUsedData !== 'function') {
+      return;
+    }
+
+    let whereUsedData;
+    if (typeof recordOrMaterial === 'object' && recordOrMaterial.parents) {
+      whereUsedData = recordOrMaterial;
+    } else {
+      whereUsedData = MaterialData.getWhereUsedData(recordOrMaterial);
+    }
+
+    const comp = whereUsedData.component;
+    activePendingRecord = comp;
+    activePendingBatch = null;
+
+    open();
+
+    const title = `Where-Used: ${comp.material}`;
+    const recentId = `rec-wu-${comp.material.toLowerCase()}`;
+    const timestamp = formatCurrentTime();
+
+    const recentObj = {
+      id: recentId,
+      title: title,
+      type: "whereUsed",
+      record: comp,
+      data: whereUsedData,
+      time: timestamp
+    };
+
+    const existingIdx = recents.findIndex(r => r.id === recentId || r.title === title);
+    if (existingIdx >= 0) {
+      recents.splice(existingIdx, 1);
+    }
+    recents.unshift(recentObj);
+    activeRecentId = recentId;
+
+    renderRecentsList();
+    renderInternalRecentsList();
+
+    renderWhereUsedCardInChat(whereUsedData);
+  }
+
+  function renderWhereUsedCardInChat(whereUsedData) {
+    const messagesContainer = document.getElementById('chatbotMessages');
+    const actionsContainer = document.getElementById('chatbotActions');
+    const fixBtn = document.getElementById('chatbotFixActionBtn');
+    const fixActionBtnText = fixBtn && fixBtn.querySelector ? fixBtn.querySelector('span') : null;
+    const comp = whereUsedData.component;
+    const timestamp = formatCurrentTime();
+
+    activePendingRecord = comp;
+    activePendingBatch = null;
+
+    if (fixActionBtnText) fixActionBtnText.textContent = "Proceed with Fix";
+    if (actionsContainer) actionsContainer.classList.remove('hidden');
+
+    let treeHtml = '';
+    if (whereUsedData.isTopLevel) {
+      treeHtml = `
+        <div class="tree-node tree-level-0">
+          <div class="tree-node-badge lvl-fert">Finished Good (Top of BOM)</div>
+          <div class="tree-node-content">
+            <div class="tree-node-main">
+              <span class="node-icon">📦</span>
+              <strong class="node-code">${escapeHtml(comp.material)}</strong>
+              <span class="node-type mat-fert">${escapeHtml(comp.matType)}</span>
+              <span class="node-name">${escapeHtml(comp.description)}</span>
+            </div>
+            <div class="tree-node-sub">
+              Plant <strong>${escapeHtml(comp.plant || 'IN10')}</strong> • Status: <strong>Top-Level Product</strong>
+            </div>
+          </div>
+        </div>
+      `;
+    } else {
+      // Level 0: Root Component
+      treeHtml += `
+        <div class="tree-node tree-level-0">
+          <div class="tree-node-badge lvl-0">Level 0: Origin Component (CS15 Target)</div>
+          <div class="tree-node-content">
+            <div class="tree-node-main">
+              <span class="node-icon">⚠️</span>
+              <strong class="node-code">${escapeHtml(comp.material)}</strong>
+              <span class="node-type mat-${comp.matType.toLowerCase()}">${escapeHtml(comp.matType)}</span>
+              <span class="node-name">${escapeHtml(comp.description)}</span>
+            </div>
+            <div class="tree-node-sub">
+              Plant <strong>${escapeHtml(comp.plant || 'IN10')}</strong> • Error: <strong class="err-text">${escapeHtml(comp.errorType)}</strong> — ${escapeHtml(comp.recommendation)}
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Parents and Finished Goods
+      whereUsedData.parents.forEach((parent) => {
+        treeHtml += `
+          <div class="tree-connector-v"></div>
+          <div class="tree-node tree-level-1">
+            <div class="tree-node-badge lvl-1">↳ Level 1: Parent Assembly (HALB)</div>
+            <div class="tree-node-content">
+              <div class="tree-node-main">
+                <span class="node-icon">⚙️</span>
+                <strong class="node-code">${escapeHtml(parent.material)}</strong>
+                <span class="node-type mat-halb">${escapeHtml(parent.matType)}</span>
+                <span class="node-name">${escapeHtml(parent.description)}</span>
+              </div>
+              <div class="tree-node-sub">
+                BOM Item: <strong>${escapeHtml(parent.bomItem || '0010')}</strong> • Component Consumption: <strong>${escapeHtml(parent.qty || '1 EA')}</strong> • Status: <span class="badge-status-risk">${escapeHtml(parent.status || 'At Risk')}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        if (parent.finishedGoods && parent.finishedGoods.length > 0) {
+          parent.finishedGoods.forEach(fg => {
+            treeHtml += `
+              <div class="tree-connector-branch"></div>
+              <div class="tree-node tree-level-2">
+                <div class="tree-node-badge lvl-2">↳ Level 2: Downstream Finished Product (FERT)</div>
+                <div class="tree-node-content">
+                  <div class="tree-node-main">
+                    <span class="node-icon">📦</span>
+                    <strong class="node-code">${escapeHtml(fg.material)}</strong>
+                    <span class="node-type mat-fert">${escapeHtml(fg.matType)}</span>
+                    <span class="node-name">${escapeHtml(fg.description)}</span>
+                  </div>
+                  <div class="tree-node-sub">
+                    Downstream Consequence: <strong class="impact-text">${escapeHtml(fg.impact)}</strong> • Cost Variance Exposure: <strong class="val-cost">${escapeHtml(fg.costVariance || '$50,000')}</strong>
+                  </div>
+                </div>
+              </div>
+            `;
+          });
+        }
+      });
+    }
+
+    const html = `
+      <div class="chatbot-bubble bubble-whereused">
+        <!-- Header Banner -->
+        <div class="whereused-header-badge">
+          <div class="whereused-badge-left">
+            <span class="cs15-tag">SAP CS15</span>
+            <span class="cs15-title">Material Where-Used List</span>
+          </div>
+          <span class="sa3-agent-tag">SA3 Root Cause Analysis Agent</span>
+        </div>
+
+        <!-- Question & Target Material Banner -->
+        <div class="whereused-hero-box">
+          <div class="whereused-question-tag">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span>"If this component has a problem, which other products might be affected?"</span>
+          </div>
+          <div class="whereused-target-material">
+            <div class="material-meta-row">
+              <span class="mat-chip mat-${comp.matType.toLowerCase()}">${escapeHtml(comp.matType)}</span>
+              <strong class="mat-title">${escapeHtml(comp.material)}</strong>
+              <span class="mat-desc">${escapeHtml(comp.description)}</span>
+            </div>
+            <div class="mat-sub-meta">
+              Plant: <strong>${escapeHtml(comp.plant || 'IN10')}</strong> • Error: <span class="err-highlight">${escapeHtml(comp.errorType)}</span> • Resolution: <em>${escapeHtml(comp.recommendation)}</em>
+            </div>
+          </div>
+        </div>
+
+        <!-- Impact KPI Metrics -->
+        <div class="whereused-kpi-grid">
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Parent Assemblies</span>
+            <strong class="kpi-val">${whereUsedData.totalParents}</strong>
+            <span class="kpi-hint">Direct HALB BOMs</span>
+          </div>
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Finished Goods</span>
+            <strong class="kpi-val">${whereUsedData.totalFinishedGoods}</strong>
+            <span class="kpi-hint">Downstream FERT</span>
+          </div>
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Total Affected</span>
+            <strong class="kpi-val val-alert">${whereUsedData.totalAffected}</strong>
+            <span class="kpi-hint">Impacted Materials</span>
+          </div>
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Cost Exposure</span>
+            <strong class="kpi-val val-cost">${escapeHtml(whereUsedData.estimatedCostExposure)}</strong>
+            <span class="kpi-hint">Valuation at Risk</span>
+          </div>
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Downstream Priority</span>
+            <strong class="kpi-val val-priority">${escapeHtml(whereUsedData.priorityScore)}</strong>
+            <span class="kpi-hint">${escapeHtml(whereUsedData.priorityLevel)} Impact</span>
+          </div>
+        </div>
+
+        <!-- Multi-Level Visual Hierarchy Tree -->
+        <div class="whereused-tree-card">
+          <div class="tree-header">
+            <span class="tree-title">Multi-Level Where-Used Hierarchy (Bottom-Up BOM Trace)</span>
+            <span class="tree-badge">CS15 Active Explosion</span>
+          </div>
+          <div class="tree-body">
+            ${treeHtml}
+          </div>
+        </div>
+
+        <!-- SA3 Agent Root Cause Insights -->
+        <div class="whereused-sa3-callout">
+          <div class="sa3-header">
+            <span class="sa3-icon">🤖</span>
+            <strong>SA3 Root Cause Analysis Agent Findings</strong>
+          </div>
+          <p class="sa3-text">${whereUsedData.sa3Analysis}</p>
+        </div>
+
+        <!-- Educational Reference: Bicycle Flow & Difference Table -->
+        <div class="whereused-edu-box">
+          <div class="edu-title">
+            <strong>💡 SAP Knowledge: BOM Explosion vs Where-Used Analysis</strong>
+          </div>
+          <div class="bicycle-flow">
+            <div class="flow-step">
+              <span class="step-num">1</span>
+              <span class="step-title">Tyre (ROH001)</span>
+              <span class="step-type">Component</span>
+            </div>
+            <span class="flow-arrow">→ is used in →</span>
+            <div class="flow-step">
+              <span class="step-num">2</span>
+              <span class="step-title">Wheel Assembly (HALB001)</span>
+              <span class="step-type">Sub-Assembly</span>
+            </div>
+            <span class="flow-arrow">→ is used in →</span>
+            <div class="flow-step">
+              <span class="step-num">3</span>
+              <span class="step-title">Bicycle (FG001)</span>
+              <span class="step-type">Finished Product</span>
+            </div>
+          </div>
+
+          <table class="whereused-diff-table">
+            <thead>
+              <tr>
+                <th>Functionality</th>
+                <th>Direction</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>BOM explosion</strong></td>
+                <td><span class="dir-tag dir-down">Top-down</span></td>
+                <td>What components are required to manufacture this finished product?</td>
+              </tr>
+              <tr>
+                <td><strong>Where-used analysis</strong></td>
+                <td><span class="dir-tag dir-up">Bottom-up</span></td>
+                <td>Where is this component used? Which parent materials depend on it?</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Footer Action -->
+        <div class="whereused-footer-action">
+          <button id="whereUsedCardFixBtn" class="btn-whereused-proceed">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Proceed to Fix ${escapeHtml(comp.material)} (${escapeHtml(comp.errorType)})</span>
+          </button>
+        </div>
+      </div>
+      <div class="chatbot-time">${timestamp}</div>
+    `;
+
+    if (messagesContainer) {
+      messagesContainer.innerHTML = html;
+      scrollToBottom();
+
+      const cardFixBtn = document.getElementById('whereUsedCardFixBtn');
+      if (cardFixBtn) {
+        cardFixBtn.addEventListener('click', () => {
+          initiateFix(comp);
+        });
+      }
     }
   }
 
@@ -966,6 +1426,11 @@ const MaterialChatbot = (function () {
     toggleMaximize: toggleMaximize,
     initiateFix: initiateFix,
     initiateBatchFix: initiateBatchFix,
+    runWhereUsedAnalysis: runWhereUsedAnalysis,
+    toggleInternalSidebar: toggleInternalSidebar,
+    openInternalSidebar: openInternalSidebar,
+    closeInternalSidebar: closeInternalSidebar,
+    renderInternalRecentsList: renderInternalRecentsList,
     getRecents: function () { return recents; }
   };
 })();
