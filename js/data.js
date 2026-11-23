@@ -939,6 +939,115 @@ const MaterialData = (function () {
           finished: "Bicycle (FG001)"
         }
       };
+    },
+
+    /**
+     * SAP CS15 - Multi-Material / Batch Where-Used Analysis Engine
+     * Aggregates bottom-up BOM dependencies for 2+ selected problematic materials.
+     * Identifies converging parent assemblies, blocked finished products,
+     * and compounded downstream cost exposure.
+     */
+    getBatchWhereUsedData: function (recordsOrMaterials) {
+      if (!Array.isArray(recordsOrMaterials) || recordsOrMaterials.length === 0) {
+        return null;
+      }
+
+      const items = recordsOrMaterials.map(item => this.getWhereUsedData(item));
+      const components = items.map(it => it.component);
+
+      // Aggregate Unique Parents
+      const parentMap = new Map();
+      items.forEach(it => {
+        if (it.parents) {
+          it.parents.forEach(p => {
+            if (!parentMap.has(p.material)) {
+              parentMap.set(p.material, {
+                ...p,
+                usedByComponents: [it.component.material]
+              });
+            } else {
+              const existing = parentMap.get(p.material);
+              if (!existing.usedByComponents.includes(it.component.material)) {
+                existing.usedByComponents.push(it.component.material);
+              }
+            }
+          });
+        }
+      });
+      const uniqueParents = Array.from(parentMap.values());
+
+      // Aggregate Unique Finished Goods & detect BOM Convergence
+      const fgMap = new Map();
+      let totalExposureNum = 0;
+
+      items.forEach(it => {
+        if (it.finishedGoods) {
+          it.finishedGoods.forEach(fg => {
+            const rawCost = parseFloat((fg.costVariance || "$0").replace(/[^0-9.]/g, '')) || 0;
+            if (!fgMap.has(fg.material)) {
+              totalExposureNum += rawCost;
+              fgMap.set(fg.material, {
+                ...fg,
+                dependentComponents: [it.component.material],
+                totalCostNum: rawCost
+              });
+            } else {
+              const existing = fgMap.get(fg.material);
+              if (!existing.dependentComponents.includes(it.component.material)) {
+                existing.dependentComponents.push(it.component.material);
+                // Compounding exposure for multi-component failure
+                existing.totalCostNum += Math.round(rawCost * 0.5);
+                totalExposureNum += Math.round(rawCost * 0.5);
+              }
+            }
+          });
+        }
+      });
+
+      const uniqueFinishedGoods = Array.from(fgMap.values());
+      const convergingFinishedGoods = uniqueFinishedGoods.filter(fg => fg.dependentComponents.length > 1);
+
+      const totalParents = uniqueParents.length;
+      const totalFinished = uniqueFinishedGoods.length;
+      const totalAffected = totalParents + totalFinished;
+
+      // Priority calculation
+      let maxScore = 0;
+      items.forEach(it => {
+        const sc = parseFloat(it.priorityScore) || 8.0;
+        if (sc > maxScore) maxScore = sc;
+      });
+      const batchPriorityScore = (Math.min(9.9, maxScore + 0.3 * (items.length - 1))).toFixed(1) + " / 10";
+
+      const formattedExposure = "$" + totalExposureNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Construct SA3 Multi-Component Correlation Insight
+      const compNames = components.map(c => `<strong>${c.material}</strong>`).join(', ');
+      let convergenceText = "";
+      if (convergingFinishedGoods.length > 0) {
+        const convNames = convergingFinishedGoods.map(f => `<strong>${f.material}</strong> (${f.description})`).join(', ');
+        convergenceText = `<br><br>⚡ <strong>Critical BOM Convergence Detected:</strong> Finished product(s) ${convNames} depend simultaneously on multiple problematic components (${convergingFinishedGoods.map(f => f.dependentComponents.join(' + ')).join('; ')}). In transaction CK40N, this causes compound costing failures across parallel assembly routes.`;
+      }
+
+      const sa3Analysis = `Batch analysis for ${items.length} components (${compNames}): Problematic components ripple across <strong>${totalParents} parent assembly BOM(s)</strong> and halt valuation for <strong>${totalFinished} finished product(s) (FERT)</strong>.${convergenceText}<br><br>🛡️ <strong>Recommended Action:</strong> Resolve all ${items.length} selected components simultaneously using <em>Fix All</em> to unblock cost rollups before monthly CK40N closing.`;
+
+      return {
+        materialsCount: items.length,
+        components: components,
+        items: items,
+        uniqueParents: uniqueParents,
+        uniqueFinishedGoods: uniqueFinishedGoods,
+        convergingFinishedGoods: convergingFinishedGoods,
+        totalParents: totalParents,
+        totalFinishedGoods: totalFinished,
+        totalAffected: totalAffected,
+        totalExposure: formattedExposure,
+        priorityScore: batchPriorityScore,
+        priorityLevel: "Critical",
+        sa3Analysis: sa3Analysis,
+        sapTransaction: "CS15 – Batch Material Where-Used List",
+        sapAgent: "SA3 (Multi-Component Root Cause Analysis Agent)"
+      };
     }
   };
 })();

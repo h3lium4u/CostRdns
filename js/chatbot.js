@@ -221,12 +221,27 @@ const MaterialChatbot = (function () {
       });
     }
 
+    const minimizeActionBtn = document.getElementById('chatbotMinimizeActionBtn');
+    if (minimizeActionBtn) {
+      minimizeActionBtn.addEventListener('click', () => {
+        const popup = document.getElementById('chatbotPopup');
+        if (popup && popup.classList.contains('maximized')) {
+          popup.classList.remove('maximized');
+          updateMaximizeBtnState();
+        } else {
+          close();
+        }
+      });
+    }
+
     if (fixActionBtn) fixActionBtn.addEventListener('click', confirmFix);
     if (whereUsedBtn) {
       whereUsedBtn.addEventListener('click', () => {
-        if (activePendingRecord) {
+        if (activePendingBatch && activePendingBatch.length > 1) {
+          runBatchWhereUsedAnalysis(activePendingBatch);
+        } else if (activePendingRecord) {
           runWhereUsedAnalysis(activePendingRecord);
-        } else if (activePendingBatch && activePendingBatch.length > 0) {
+        } else if (activePendingBatch && activePendingBatch.length === 1) {
           runWhereUsedAnalysis(activePendingBatch[0]);
         } else {
           runWhereUsedAnalysis('RMI-2187');
@@ -496,7 +511,9 @@ const MaterialChatbot = (function () {
 
     open();
 
-    if (targetItem.type === "whereUsed") {
+    if (targetItem.type === "whereUsedBatch") {
+      renderBatchWhereUsedCardInChat(targetItem.data || MaterialData.getBatchWhereUsedData(targetItem.records));
+    } else if (targetItem.type === "whereUsed") {
       renderWhereUsedCardInChat(targetItem.data || targetItem.record);
     } else if (targetItem.type === "fix" && targetItem.record) {
       displayRecordInChat(targetItem.record, targetItem.record.isFixed);
@@ -1214,6 +1231,13 @@ const MaterialChatbot = (function () {
             </div>
           `).join('')}
         </div>
+        <div class="prompt-whereused-action-row">
+          <button id="promptBatchWhereUsedBtn" class="btn-prompt-whereused" type="button">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <span>Run CS15 Where-Used Analysis for All ${records.length} Selected Materials</span>
+          </button>
+        </div>
+
         <div class="chatbot-prompt-editor-card">
           <div class="prompt-editor-header">
             <span class="prompt-editor-label">Batch SAP Fix Prompt (Editable):</span>
@@ -1240,12 +1264,351 @@ const MaterialChatbot = (function () {
       activePendingBatch = records;
       activePendingRecord = null;
       if (fixActionBtnText) fixActionBtnText.textContent = `Fix All (${records.length})`;
+      const wuBtn = document.getElementById('chatbotWhereUsedBtn');
+      const wuBtnText = wuBtn && wuBtn.querySelector ? wuBtn.querySelector('span') : null;
+      if (wuBtnText) wuBtnText.textContent = `Where-Used All (${records.length})`;
       if (actionsContainer) actionsContainer.classList.remove('hidden');
     }
 
     if (messagesContainer) {
       messagesContainer.innerHTML = html;
       scrollToBottom();
+
+      const promptBatchWuBtn = document.getElementById('promptBatchWhereUsedBtn');
+      if (promptBatchWuBtn) {
+        promptBatchWuBtn.addEventListener('click', () => {
+          runBatchWhereUsedAnalysis(records);
+        });
+      }
+    }
+  }
+
+  /* ----------------------------------------------------
+     BATCH / MULTI-MATERIAL SAP CS15 WHERE-USED ANALYSIS
+     ---------------------------------------------------- */
+
+  /**
+   * Initiates multi-component / batch SAP CS15 Where-Used Analysis
+   * for 2 or more selected materials.
+   */
+  function runBatchWhereUsedAnalysis(records) {
+    if (!records || records.length === 0) return;
+    if (records.length === 1) {
+      runWhereUsedAnalysis(records[0]);
+      return;
+    }
+
+    if (typeof MaterialData === 'undefined' || typeof MaterialData.getBatchWhereUsedData !== 'function') {
+      return;
+    }
+
+    const batchData = MaterialData.getBatchWhereUsedData(records);
+    activePendingBatch = records;
+    activePendingRecord = null;
+
+    open();
+
+    const title = `Where-Used: ${records.length} Materials`;
+    const recentId = `rec-wu-batch-${Date.now()}`;
+    const timestamp = formatCurrentTime();
+
+    const recentObj = {
+      id: recentId,
+      title: title,
+      type: "whereUsedBatch",
+      records: records,
+      data: batchData,
+      time: timestamp
+    };
+
+    const existingIdx = recents.findIndex(r => r.id === recentId || r.title === title);
+    if (existingIdx >= 0) {
+      recents.splice(existingIdx, 1);
+    }
+    recents.unshift(recentObj);
+    activeRecentId = recentId;
+
+    renderRecentsList();
+    renderInternalRecentsList();
+
+    renderBatchWhereUsedCardInChat(batchData);
+  }
+
+  function renderBatchWhereUsedCardInChat(batchData) {
+    const messagesContainer = document.getElementById('chatbotMessages');
+    const actionsContainer = document.getElementById('chatbotActions');
+    const fixBtn = document.getElementById('chatbotFixActionBtn');
+    const fixActionBtnText = fixBtn && fixBtn.querySelector ? fixBtn.querySelector('span') : null;
+    const wuBtn = document.getElementById('chatbotWhereUsedBtn');
+    const wuBtnText = wuBtn && wuBtn.querySelector ? wuBtn.querySelector('span') : null;
+    const timestamp = formatCurrentTime();
+
+    activePendingBatch = batchData.components;
+    activePendingRecord = null;
+
+    if (fixActionBtnText) fixActionBtnText.textContent = `Fix All (${batchData.materialsCount})`;
+    if (wuBtnText) wuBtnText.textContent = `Where-Used All (${batchData.materialsCount})`;
+    if (actionsContainer) actionsContainer.classList.remove('hidden');
+
+    // Build convergence alert if any finished goods are shared
+    let convergenceAlertHtml = '';
+    if (batchData.convergingFinishedGoods && batchData.convergingFinishedGoods.length > 0) {
+      const convList = batchData.convergingFinishedGoods.map(fg => `
+        <div class="conv-item">
+          <strong>${escapeHtml(fg.material)}</strong> (${escapeHtml(fg.description)}) 
+          <span class="conv-badge">Requires: ${escapeHtml(fg.dependentComponents.join(' + '))}</span>
+        </div>
+      `).join('');
+
+      convergenceAlertHtml = `
+        <div class="whereused-convergence-alert">
+          <div class="conv-alert-header">
+            <span class="conv-alert-icon">⚡</span>
+            <strong>Critical Multi-Component BOM Convergence Detected</strong>
+          </div>
+          <p class="conv-alert-desc">
+            The following finished product(s) depend simultaneously on multiple of your selected problematic components:
+          </p>
+          <div class="conv-items-list">
+            ${convList}
+          </div>
+          <div class="conv-alert-footer">
+            In monthly standard costing run <strong>CK40N</strong>, these finished goods will experience compounded costing errors across parallel assembly paths.
+          </div>
+        </div>
+      `;
+    }
+
+    // Build per-component breakdown trees
+    let componentsBreakdownHtml = '';
+    batchData.items.forEach((item, idx) => {
+      const comp = item.component;
+      let compTreeHtml = '';
+
+      if (item.isTopLevel) {
+        compTreeHtml = `
+          <div class="tree-node tree-level-0">
+            <div class="tree-node-badge lvl-fert">Finished Good (Top of BOM)</div>
+            <div class="tree-node-content">
+              <div class="tree-node-main">
+                <span class="node-icon">📦</span>
+                <strong class="node-code">${escapeHtml(comp.material)}</strong>
+                <span class="node-type mat-fert">${escapeHtml(comp.matType)}</span>
+                <span class="node-name">${escapeHtml(comp.description)}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        compTreeHtml += `
+          <div class="tree-node tree-level-0">
+            <div class="tree-node-badge lvl-0">Origin Component ${idx + 1}</div>
+            <div class="tree-node-content">
+              <div class="tree-node-main">
+                <span class="node-icon">⚠️</span>
+                <strong class="node-code">${escapeHtml(comp.material)}</strong>
+                <span class="node-type mat-${comp.matType.toLowerCase()}">${escapeHtml(comp.matType)}</span>
+                <span class="node-name">${escapeHtml(comp.description)}</span>
+              </div>
+              <div class="tree-node-sub">
+                Plant <strong>${escapeHtml(comp.plant || 'IN10')}</strong> • Error: <strong class="err-text">${escapeHtml(comp.errorType)}</strong> — ${escapeHtml(comp.recommendation)}
+              </div>
+            </div>
+          </div>
+        `;
+
+        item.parents.forEach(parent => {
+          compTreeHtml += `
+            <div class="tree-connector-v"></div>
+            <div class="tree-node tree-level-1">
+              <div class="tree-node-badge lvl-1">↳ Level 1: Parent Assembly (HALB)</div>
+              <div class="tree-node-content">
+                <div class="tree-node-main">
+                  <span class="node-icon">⚙️</span>
+                  <strong class="node-code">${escapeHtml(parent.material)}</strong>
+                  <span class="node-type mat-halb">${escapeHtml(parent.matType)}</span>
+                  <span class="node-name">${escapeHtml(parent.description)}</span>
+                </div>
+                <div class="tree-node-sub">
+                  BOM Item: <strong>${escapeHtml(parent.bomItem || '0010')}</strong> • Consumption: <strong>${escapeHtml(parent.qty || '1 EA')}</strong>
+                </div>
+              </div>
+            </div>
+          `;
+
+          if (parent.finishedGoods && parent.finishedGoods.length > 0) {
+            parent.finishedGoods.forEach(fg => {
+              compTreeHtml += `
+                <div class="tree-connector-branch"></div>
+                <div class="tree-node tree-level-2">
+                  <div class="tree-node-badge lvl-2">↳ Level 2: Downstream Finished Product (FERT)</div>
+                  <div class="tree-node-content">
+                    <div class="tree-node-main">
+                      <span class="node-icon">📦</span>
+                      <strong class="node-code">${escapeHtml(fg.material)}</strong>
+                      <span class="node-type mat-fert">${escapeHtml(fg.matType)}</span>
+                      <span class="node-name">${escapeHtml(fg.description)}</span>
+                    </div>
+                    <div class="tree-node-sub">
+                      Downstream Impact: <strong class="impact-text">${escapeHtml(fg.impact)}</strong> • Cost Exposure: <strong class="val-cost">${escapeHtml(fg.costVariance || '$50,000')}</strong>
+                    </div>
+                  </div>
+                </div>
+              `;
+            });
+          }
+        });
+      }
+
+      componentsBreakdownHtml += `
+        <div class="batch-comp-tree-section">
+          <div class="batch-comp-tree-header">
+            <span class="batch-comp-num">${idx + 1}</span>
+            <strong class="batch-comp-name">${escapeHtml(comp.material)} (${escapeHtml(comp.description)})</strong>
+            <span class="mat-chip mat-${comp.matType.toLowerCase()}">${escapeHtml(comp.matType)}</span>
+            <span class="batch-comp-impact-tag">${item.totalParents} Parents → ${item.totalFinishedGoods} Finished Goods</span>
+          </div>
+          <div class="tree-body">
+            ${compTreeHtml}
+          </div>
+        </div>
+      `;
+    });
+
+    const html = `
+      <div class="chatbot-bubble bubble-whereused bubble-whereused-batch">
+        <!-- Header Banner -->
+        <div class="whereused-header-badge">
+          <div class="whereused-badge-left">
+            <span class="cs15-tag">SAP CS15 BATCH</span>
+            <span class="cs15-title">Multi-Material Where-Used Analysis</span>
+          </div>
+          <span class="sa3-agent-tag">SA3 Multi-Component Root Cause Agent</span>
+        </div>
+
+        <!-- Question & Selected Components Banner -->
+        <div class="whereused-hero-box">
+          <div class="whereused-question-tag">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <span>"If these ${batchData.materialsCount} selected components have problems, which other products and assemblies might be affected?"</span>
+          </div>
+          <div class="batch-selected-chips-grid">
+            ${batchData.components.map(c => `
+              <div class="batch-chip-card">
+                <div class="chip-card-top">
+                  <span class="mat-chip mat-${c.matType.toLowerCase()}">${escapeHtml(c.matType)}</span>
+                  <strong class="chip-code">${escapeHtml(c.material)}</strong>
+                </div>
+                <div class="chip-desc">${escapeHtml(c.description)}</div>
+                <div class="chip-err-badge">${escapeHtml(c.errorType)}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Combined Impact KPI Metrics -->
+        <div class="whereused-kpi-grid">
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Selected Components</span>
+            <strong class="kpi-val">${batchData.materialsCount}</strong>
+            <span class="kpi-hint">Errors Evaluated</span>
+          </div>
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Parent Assemblies</span>
+            <strong class="kpi-val">${batchData.totalParents}</strong>
+            <span class="kpi-hint">Unique HALB BOMs</span>
+          </div>
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Finished Goods Blocked</span>
+            <strong class="kpi-val val-alert">${batchData.totalFinishedGoods}</strong>
+            <span class="kpi-hint">Downstream FERT</span>
+          </div>
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Cumulative Exposure</span>
+            <strong class="kpi-val val-cost">${escapeHtml(batchData.totalExposure)}</strong>
+            <span class="kpi-hint">Compounded Risk</span>
+          </div>
+          <div class="whereused-kpi-card">
+            <span class="kpi-label">Correlated Priority</span>
+            <strong class="kpi-val val-priority">${escapeHtml(batchData.priorityScore)}</strong>
+            <span class="kpi-hint">${escapeHtml(batchData.priorityLevel)} Batch Impact</span>
+          </div>
+        </div>
+
+        <!-- Convergence Alert -->
+        ${convergenceAlertHtml}
+
+        <!-- Multi-Component Hierarchy Breakdown -->
+        <div class="whereused-tree-card">
+          <div class="tree-header">
+            <span class="tree-title">Multi-Material Where-Used Hierarchy Breakdown (${batchData.materialsCount} Components)</span>
+            <span class="tree-badge">CS15 Batch Explosion</span>
+          </div>
+          <div class="batch-trees-container">
+            ${componentsBreakdownHtml}
+          </div>
+        </div>
+
+        <!-- SA3 Correlated Insight -->
+        <div class="whereused-sa3-callout">
+          <div class="sa3-header">
+            <span class="sa3-icon">🤖</span>
+            <strong>SA3 Multi-Component Root Cause Analysis Agent Findings</strong>
+          </div>
+          <p class="sa3-text">${batchData.sa3Analysis}</p>
+        </div>
+
+        <!-- Educational Reference: Bicycle Flow & Difference Table -->
+        <div class="whereused-edu-box">
+          <div class="edu-title">
+            <strong>💡 SAP Knowledge: Multi-Component Downstream Impact</strong>
+          </div>
+          <div class="bicycle-flow">
+            <div class="flow-step">
+              <span class="step-num">1</span>
+              <span class="step-title">Components (${batchData.components.map(c => c.material).join(', ')})</span>
+              <span class="step-type">ROH / HALB</span>
+            </div>
+            <span class="flow-arrow">→ cascade into →</span>
+            <div class="flow-step">
+              <span class="step-num">2</span>
+              <span class="step-title">${batchData.totalParents} Parent Assemblies</span>
+              <span class="step-type">HALB</span>
+            </div>
+            <span class="flow-arrow">→ block valuation for →</span>
+            <div class="flow-step">
+              <span class="step-num">3</span>
+              <span class="step-title">${batchData.totalFinishedGoods} Finished Products</span>
+              <span class="step-type">FERT</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Action -->
+        <div class="whereused-footer-action">
+          <button id="batchWhereUsedProceedFixBtn" class="btn-whereused-proceed">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            <span>Proceed to Fix All ${batchData.materialsCount} Selected Errors</span>
+          </button>
+        </div>
+      </div>
+      <div class="chatbot-time">${timestamp}</div>
+    `;
+
+    if (messagesContainer) {
+      messagesContainer.innerHTML = html;
+      scrollToBottom();
+
+      const proceedBtn = document.getElementById('batchWhereUsedProceedFixBtn');
+      if (proceedBtn) {
+        proceedBtn.addEventListener('click', () => {
+          initiateBatchFix(batchData.components);
+        });
+      }
     }
   }
 
@@ -1427,6 +1790,7 @@ const MaterialChatbot = (function () {
     initiateFix: initiateFix,
     initiateBatchFix: initiateBatchFix,
     runWhereUsedAnalysis: runWhereUsedAnalysis,
+    runBatchWhereUsedAnalysis: runBatchWhereUsedAnalysis,
     toggleInternalSidebar: toggleInternalSidebar,
     openInternalSidebar: openInternalSidebar,
     closeInternalSidebar: closeInternalSidebar,

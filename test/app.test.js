@@ -217,3 +217,26 @@ test('Chatbot: Where-Used Analysis Execution and Internal Sidebar', () => {
   assert.equal(wuRecent.record.material, 'RMI-2187');
   assert.ok(wuRecent.data && wuRecent.data.parents.length === 2);
 });
+
+test('SAP CS15: Batch Multi-Material Where-Used Analysis', () => {
+  const MaterialChatbot = require('../js/chatbot.js');
+  assert.equal(typeof MaterialData.getBatchWhereUsedData, 'function', 'getBatchWhereUsedData must be exported on MaterialData');
+  assert.equal(typeof MaterialChatbot.runBatchWhereUsedAnalysis, 'function', 'runBatchWhereUsedAnalysis must be exported on MaterialChatbot');
+
+  const records = MaterialData.getInitialRecords().filter(r => r.material === 'RMI-2187' || r.material === 'HALB-3310');
+  assert.equal(records.length, 2);
+
+  const batchData = MaterialData.getBatchWhereUsedData(records);
+  assert.ok(batchData, 'Batch where-used data must be returned');
+  assert.equal(batchData.materialsCount, 2);
+  assert.ok(batchData.uniqueParents.length >= 2, 'Should aggregate unique parents');
+  assert.ok(batchData.uniqueFinishedGoods.length >= 3, 'Should aggregate unique finished goods');
+  assert.ok(batchData.convergingFinishedGoods.length >= 1, 'Should identify BOM convergence');
+
+  // Execute batch Where-Used analysis in chatbot
+  MaterialChatbot.runBatchWhereUsedAnalysis(records);
+  const recents = MaterialChatbot.getRecents();
+  const batchWu = recents.find(r => r.type === 'whereUsedBatch');
+  assert.ok(batchWu, 'Batch Where-Used must be added to recents');
+  assert.equal(batchWu.title, 'Where-Used: 2 Materials');
+});

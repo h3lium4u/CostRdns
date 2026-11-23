@@ -560,6 +560,32 @@
   display: none !important;
 }
 
+#design3Wrapper .claude-btn-whereused-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #4338ca 0%, #6366f1 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 14px rgba(67, 56, 202, 0.35);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  margin-left: 0.5rem;
+}
+
+#design3Wrapper .claude-btn-whereused-all:hover {
+  box-shadow: 0 6px 18px rgba(67, 56, 202, 0.5);
+  transform: translateY(-1px);
+}
+
+#design3Wrapper .claude-btn-whereused-all.hidden {
+  display: none !important;
+}
+
 #design3Wrapper .claude-tabs-list {
   display: flex;
   gap: 0.5rem;

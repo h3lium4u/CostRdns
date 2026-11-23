@@ -596,18 +596,40 @@
         }
       });
     }
+
+    const wuAllBtn = document.getElementById('design1WhereUsedAllBtn');
+    if (wuAllBtn) {
+      wuAllBtn.addEventListener('click', () => {
+        const selectedRecords = state.records.filter(r => r.selected);
+        if (selectedRecords.length >= 2) {
+          MaterialChatbot.runBatchWhereUsedAnalysis(selectedRecords);
+        }
+      });
+    }
   }
 
   function updateDesign1BatchFixState() {
     const fixAllBtn = document.getElementById('design1FixAllBtn');
     const countSpan = document.getElementById('design1FixAllCount');
-    if (!fixAllBtn) return;
+    const wuAllBtn = document.getElementById('design1WhereUsedAllBtn');
+    const wuCountSpan = document.getElementById('design1WhereUsedAllCount');
+
+    const selectedRecords = state.records.filter(r => r.selected);
     const selectedUnfixed = state.records.filter(r => r.selected && !r.isFixed);
-    if (selectedUnfixed.length >= 2) {
-      if (countSpan) countSpan.textContent = selectedUnfixed.length;
-      fixAllBtn.classList.remove('hidden');
+
+    if (selectedRecords.length >= 2) {
+      if (wuCountSpan) wuCountSpan.textContent = selectedRecords.length;
+      if (wuAllBtn) wuAllBtn.classList.remove('hidden');
+
+      if (selectedUnfixed.length >= 2) {
+        if (countSpan) countSpan.textContent = selectedUnfixed.length;
+        if (fixAllBtn) fixAllBtn.classList.remove('hidden');
+      } else {
+        if (fixAllBtn) fixAllBtn.classList.add('hidden');
+      }
     } else {
-      fixAllBtn.classList.add('hidden');
+      if (fixAllBtn) fixAllBtn.classList.add('hidden');
+      if (wuAllBtn) wuAllBtn.classList.add('hidden');
     }
   }
 

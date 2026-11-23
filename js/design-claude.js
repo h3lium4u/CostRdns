@@ -514,18 +514,42 @@ const ClaudeDesign = (function () {
         }
       });
     }
+
+    const wuAllBtn = document.getElementById('claudeWhereUsedAllBtn');
+    if (wuAllBtn) {
+      wuAllBtn.addEventListener('click', () => {
+        const selectedRecords = state.records.filter(r => r.selected);
+        if (selectedRecords.length >= 2) {
+          if (typeof MaterialChatbot !== 'undefined' && MaterialChatbot.runBatchWhereUsedAnalysis) {
+            MaterialChatbot.runBatchWhereUsedAnalysis(selectedRecords);
+          }
+        }
+      });
+    }
   }
 
   function updateClaudeBatchFixState() {
     const fixAllBtn = document.getElementById('claudeFixAllBtn');
     const countSpan = document.getElementById('claudeFixAllCount');
-    if (!fixAllBtn) return;
+    const wuAllBtn = document.getElementById('claudeWhereUsedAllBtn');
+    const wuCountSpan = document.getElementById('claudeWhereUsedAllCount');
+
+    const selectedRecords = state.records.filter(r => r.selected);
     const selectedUnfixed = state.records.filter(r => r.selected && !r.isFixed);
-    if (selectedUnfixed.length >= 2) {
-      if (countSpan) countSpan.textContent = selectedUnfixed.length;
-      fixAllBtn.classList.remove('hidden');
+
+    if (selectedRecords.length >= 2) {
+      if (wuCountSpan) wuCountSpan.textContent = selectedRecords.length;
+      if (wuAllBtn) wuAllBtn.classList.remove('hidden');
+
+      if (selectedUnfixed.length >= 2) {
+        if (countSpan) countSpan.textContent = selectedUnfixed.length;
+        if (fixAllBtn) fixAllBtn.classList.remove('hidden');
+      } else {
+        if (fixAllBtn) fixAllBtn.classList.add('hidden');
+      }
     } else {
-      fixAllBtn.classList.add('hidden');
+      if (fixAllBtn) fixAllBtn.classList.add('hidden');
+      if (wuAllBtn) wuAllBtn.classList.add('hidden');
     }
   }
 
