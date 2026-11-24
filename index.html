@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Material Error Dashboard - UI/UX Comparison Studio</title>
+  <title>Material Error Dashboard - SAP Fiori</title>
   
   <!-- Modern Clean Enterprise Typography: Inter Font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,48 +12,15 @@
   
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
   
-  <!-- Base Style (Design 1) -->
+  <!-- Application Style -->
   <link rel="stylesheet" href="css/style.css">
-  
-  <!-- UI Comparison Switcher Style -->
-  <link rel="stylesheet" href="css/design-selector.css">
-  
-  <!-- Design 3 (Claude) Style -->
-  <link rel="stylesheet" href="css/design-claude.css">
 </head>
 <body>
 
   <!-- =====================================================================
-       TOP DESIGN SELECTOR BAR
-       Allows seamless switching between all 3 independent UI/UX implementations
+       MATERIAL ERROR DASHBOARD (SAP FIORI / SAP HORIZON)
        ===================================================================== -->
-  <nav id="designSelectorBar" class="design-selector-bar" aria-label="Design Comparison Switcher">
-    <div class="design-selector-container">
-      <div class="design-selector-left">
-        <div class="selector-brand">
-          <span class="selector-pulse-dot"></span>
-          <span>Material Error Dashboard</span>
-        </div>
-        <span class="selector-tag">UI/UX Studio</span>
-      </div>
-      <div class="design-tabs-group" role="tablist">
-        <button class="design-tab-btn active" data-design="1" role="tab" aria-selected="true" title="Design 1">
-          <span class="tab-badge">01</span>
-          <span>Design 1</span>
-        </button>
-        <button class="design-tab-btn" data-design="3" role="tab" aria-selected="false" title="Design 3 – Claude Design">
-          <span class="tab-badge">03</span>
-          <span>Design 3</span>
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- =====================================================================
-       DESIGN 1: CURRENT IMPLEMENTATION (UNTOUCHED BASELINE)
-       Wrapped inside #design1Wrapper without altering any internal IDs/classes
-       ===================================================================== -->
-  <div id="design1Wrapper" class="design-view">
+  <div id="appContainer">
 
     <!-- 1. FIXED TOP FILTER BAR -->
     <header class="filter-bar-fixed">
@@ -307,223 +274,7 @@
   </div>
 
   <!-- =====================================================================
-       DESIGN 3: CLAUDE DESIGN (INDEPENDENT IMPLEMENTATION)
-       Theme D: Subtle Gradient Enterprise
-       UX Structure: Tabbed Accordion Console
-       ===================================================================== -->
-  <div id="design3Wrapper" class="design-view hidden">
-
-    <!-- Claude Fixed Top Filter Bar -->
-    <header class="claude-filter-bar">
-      <div class="claude-filter-container">
-        
-        <div class="claude-brand-wrap">
-          <span class="claude-brand-title">Material Error Dashboard</span>
-          <span class="claude-badge">Design 3</span>
-        </div>
-
-        <div class="claude-filters-row">
-          <!-- Plant Filter -->
-          <div class="claude-field claude-field-plant">
-            <label for="claudePlantInput" class="claude-label">Plant</label>
-            <div class="claude-input-wrap">
-              <input type="text" id="claudePlantInput" class="claude-input" placeholder="Select Plant..." autocomplete="off">
-              <span class="claude-arrow">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </span>
-            </div>
-            <div id="claudePlantDropdown" class="claude-dropdown hidden"></div>
-          </div>
-
-          <!-- Cost Variant Filter -->
-          <div class="claude-field claude-field-cv">
-            <label for="claudeCvInput" class="claude-label">Cost Variant</label>
-            <div class="claude-input-wrap">
-              <input type="text" id="claudeCvInput" class="claude-input" placeholder="Select Cost Variant..." autocomplete="off">
-              <span class="claude-arrow">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
-              </span>
-            </div>
-            <div id="claudeCvDropdown" class="claude-dropdown hidden"></div>
-          </div>
-
-          <!-- Material Filter -->
-          <div class="claude-field claude-field-material">
-            <label for="claudeMaterialInput" class="claude-label">Material</label>
-            <input type="text" id="claudeMaterialInput" class="claude-input" placeholder="Enter Material Number...">
-          </div>
-
-          <!-- Period Filter (Month & Year Only, Single Calendar Icon) -->
-          <div class="claude-field claude-field-period">
-            <label for="claudePeriodInput" class="claude-label">Period</label>
-            <div class="claude-input-wrap claude-period-wrap">
-              <input type="month" id="claudePeriodInput" class="claude-input claude-month-input" value="2026-11">
-              <span class="claude-calendar-icon" id="claudePeriodCalendarIcon" title="Choose Month and Year">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="16" y1="2" x2="16" y2="6"></line>
-                  <line x1="8" y1="2" x2="8" y2="6"></line>
-                  <line x1="3" y1="10" x2="21" y2="10"></line>
-                </svg>
-              </span>
-            </div>
-          </div>
-
-          <!-- Actions -->
-          <button id="claudeApplyBtn" class="claude-btn-apply" title="Apply Filters">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-            </svg>
-            <span>Apply</span>
-          </button>
-
-          <button id="claudeRfBtn" class="claude-btn-rf" title="Refresh">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
-            </svg>
-          </button>
-        </div>
-
-      </div>
-    </header>
-
-    <!-- Claude Main View Container -->
-    <div class="claude-main">
-      
-      <!-- Initial State (Before Apply) -->
-      <div id="claudeEmptyState" class="claude-empty-state">
-        <div class="claude-empty-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-          </svg>
-        </div>
-        <h2 class="claude-empty-title">Ready for Material Analysis</h2>
-        <p class="claude-empty-subtitle">Select Plant and Cost Variant above, then click Apply to open the tabbed accordion console.</p>
-      </div>
-
-      <!-- Post-Apply Content Area -->
-      <div id="claudeContentArea" class="hidden">
-        
-        <!-- Five Summary Cards -->
-        <div class="claude-summary-cards">
-          <!-- Total Errors -->
-          <div class="claude-card active" data-tab="all">
-            <div class="claude-card-top">
-              <span class="claude-card-label">Total Errors</span>
-              <div class="claude-card-icon icon-total">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-                  <polyline points="2 17 12 22 22 17"></polyline>
-                  <polyline points="2 12 12 17 22 12"></polyline>
-                </svg>
-              </div>
-            </div>
-            <span id="claudeCountTotal" class="claude-card-count">23</span>
-          </div>
-
-          <!-- Activity Price -->
-          <div class="claude-card" data-tab="activityPrice">
-            <div class="claude-card-top">
-              <span class="claude-card-label">Activity Price</span>
-              <div class="claude-card-icon icon-ap">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
-                </svg>
-              </div>
-            </div>
-            <span id="claudeCountAp" class="claude-card-count">9</span>
-          </div>
-
-          <!-- UOM Mismatch -->
-          <div class="claude-card" data-tab="uomMismatch">
-            <div class="claude-card-top">
-              <span class="claude-card-label">UOM Mismatch</span>
-              <div class="claude-card-icon icon-um">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 3v18M6 8l6-5 6 5M3 13l3-5 3 5a3 3 0 0 1-6 0zm12 0l3-5 3 5a3 3 0 0 1-6 0z"></path>
-                </svg>
-              </div>
-            </div>
-            <span id="claudeCountUm" class="claude-card-count">6</span>
-          </div>
-
-          <!-- Vendor Missing -->
-          <div class="claude-card" data-tab="vendorMissing">
-            <div class="claude-card-top">
-              <span class="claude-card-label">Vendor Missing</span>
-              <div class="claude-card-icon icon-vm">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="9" cy="7" r="4"></circle>
-                </svg>
-              </div>
-            </div>
-            <span id="claudeCountVm" class="claude-card-count">5</span>
-          </div>
-
-          <!-- Source List Missing -->
-          <div class="claude-card" data-tab="sourceListMissing">
-            <div class="claude-card-top">
-              <span class="claude-card-label">Source List Missing</span>
-              <div class="claude-card-icon icon-sl">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="8" y1="6" x2="21" y2="6"></line>
-                  <line x1="8" y1="12" x2="21" y2="12"></line>
-                  <line x1="8" y1="18" x2="21" y2="18"></line>
-                </svg>
-              </div>
-            </div>
-            <span id="claudeCountSl" class="claude-card-count">3</span>
-          </div>
-        </div>
-
-        <!-- Tabbed Accordion Console -->
-        <div class="claude-console">
-          
-          <!-- Console Action & Search Bar (Category tabs removed per user request, search preserved) -->
-          <div class="claude-tabs-bar">
-            <div class="claude-batch-action-wrap">
-              <button id="claudeFixAllBtn" class="claude-btn-fix-all hidden" title="Fix all selected errors at once">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-                <span>Fix All (<span id="claudeFixAllCount">0</span>)</span>
-              </button>
-              <button id="claudeWhereUsedAllBtn" class="claude-btn-whereused-all hidden" title="Run SAP CS15 Where-Used Analysis for all selected materials">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <span>Where-Used All (<span id="claudeWhereUsedAllCount">0</span>)</span>
-              </button>
-            </div>
-
-            <!-- In-Console Quick Search -->
-            <div class="claude-tab-search">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <input type="text" id="claudeTabSearchInput" placeholder="Search within category...">
-            </div>
-          </div>
-
-          <!-- Accordions Body -->
-          <div id="claudeAccordionsBody" class="claude-accordions-body">
-            <!-- Dynamically populated group accordions containing individual record tables -->
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- =====================================================================
-       SHARED LEFT RECENTS DRAWER (Light Theme, Plain Titles)
-       Accessible and active across all 3 designs
+       LEFT RECENTS DRAWER (Light Theme, Plain Titles)
        ===================================================================== -->
   <aside id="recentsDrawer" class="recents-drawer hidden">
     <div class="recents-drawer-header">
@@ -697,8 +448,6 @@
   <script src="js/data.js"></script>
   <script src="js/chatbot.js"></script>
   <script src="js/app.js"></script>
-  <script src="js/design-claude.js"></script>
-  <script src="js/design-switcher.js"></script>
 
 </body>
 </html>

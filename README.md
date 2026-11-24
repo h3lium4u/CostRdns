@@ -1,15 +1,25 @@
-# Material Error Dashboard — UI/UX Comparison Studio (SAP Fiori)
+# Material Error Dashboard (SAP Fiori / SAP Horizon)
 
-A modern, responsive, enterprise-grade **Material Error Dashboard** featuring **selectable UI/UX implementations** within a single web application, designed in compliance with SAP Fiori / SAP Horizon visual design standards.
+A modern, responsive, enterprise-grade **Material Error Dashboard** with integrated **AI Copilot (Material Assistant)**, built in compliance with SAP Fiori / SAP Horizon visual design standards.
 
 ---
 
-## 🎨 Selectable UI/UX Designs
+## 🚀 Key Features
 
-| Design | Name | Visual Theme | Architecture & Concept |
-|---|---|---|---|
-| **01** | **Design 1: Current** | Classic SAP Fiori | Baseline implementation with horizontal category cards, progressive disclosure, and contextual row actions. |
-| **03** | **Design 3: Claude** | Blue Glassmorphism + Aurora Gradient | Tabbed Accordion Console with category tabs, frosted glass panels, independent group accordions, and refined enterprise typography. |
+- **Enterprise SAP Fiori Layout**: Clean, structured top filter bar, dynamic summary KPI cards, and progressive disclosure error tables.
+- **Period Filter**: Dedicated Month & Year picker (`YYYY-MM`) with a single clean calendar picker icon (no date/day range).
+- **SAP CS15 Where-Used Analysis**:
+  - Full BOM hierarchy tracking (`Component` → `Parent Assembly` → `Finished Product`).
+  - SA3 (Root Cause Analysis Agent) intelligence.
+  - Multi-material batch Where-Used analysis with BOM convergence detection and exposure calculations.
+- **Batch Multi-Select & Resolution**:
+  - Select individual rows or use "Select All" to batch execute actions.
+  - "Fix All" and "Where-Used All" batch action triggers.
+- **Integrated AI Assistant**:
+  - Docked popup and full-screen maximized mode.
+  - Smooth minimize without canceling pending fixes or resolution prompts.
+  - Integrated Recents sidebar drawer within the maximized copilot window.
+  - Editable resolution prompts with complete chat history scrollability.
 
 ---
 
@@ -64,21 +74,17 @@ npm test
 
 ```
 D:\Cost rdnss\
-├── index.html              # Multi-design comparative shell with top switcher
+├── index.html              # Material Error Dashboard application
 ├── vercel.json             # Vercel deployment configuration
 ├── package.json            # Node manifest with start, build, and test scripts
 ├── .gitignore              # Git ignore rules
 ├── local-server.js         # Zero-dependency local development server
 ├── css/
-│   ├── style.css           # Design 1 styles (Untouched Baseline)
-│   ├── design-selector.css # Top comparison switcher navigation bar
-│   └── design-claude.css   # Design 3 styles (Tabbed Accordion Console)
+│   └── style.css           # SAP Fiori enterprise design system stylesheet
 ├── js/
-│   ├── data.js             # Shared deterministic master data model
-│   ├── chatbot.js          # Shared floating Material Assistant & Recents drawer
-│   ├── app.js              # Design 1 controller
-│   ├── design-claude.js    # Design 3 controller
-│   └── design-switcher.js  # Top navigation switcher controller
+│   ├── data.js             # Master data model, BOM hierarchy & CS15 engine
+│   ├── chatbot.js          # Material Assistant AI Copilot & Recents drawer
+│   └── app.js              # Dashboard application controller
 └── test/
     └── app.test.js         # Automated unit tests
 ```

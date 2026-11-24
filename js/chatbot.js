@@ -410,8 +410,7 @@ const MaterialChatbot = (function () {
   function setupRecentsDrawer() {
     const drawer = document.getElementById('recentsDrawer');
     const toggleBtns = [
-      document.getElementById('recentsToggleBtn'),
-      document.getElementById('claudeRecentsToggleBtn')
+      document.getElementById('recentsToggleBtn')
     ].filter(Boolean);
     const closeBtn = document.getElementById('closeRecentsDrawerBtn');
 

@@ -1,6 +1,22 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 
+// Provide minimal browser environment for Node.js test runner
+global.window = {
+  addEventListener: () => {}
+};
+global.document = {
+  getElementById: () => null,
+  querySelector: () => null,
+  querySelectorAll: () => [],
+  addEventListener: () => {}
+};
+global.localStorage = {
+  _data: {},
+  getItem(k) { return this._data[k] || null; },
+  setItem(k, v) { this._data[k] = String(v); }
+};
+
 const MaterialData = require('../js/data.js');
 global.MaterialData = MaterialData;
 
@@ -98,41 +114,6 @@ test('Chatbot & Recents: Clean Plain Titles without Status Badges', () => {
   assert.ok(titles.includes('Explain SAP Costing Errors'), 'Must include Explain SAP Costing Errors');
 });
 
-test('Design 3 (Claude): Controller exports and state management', () => {
-  // Mock minimal window and document for unit test
-  global.window = {
-    addEventListener: () => {}
-  };
-  global.document = {
-    getElementById: () => null,
-    querySelector: () => null,
-    querySelectorAll: () => [],
-    addEventListener: () => {}
-  };
-
-  const ClaudeDesign = require('../js/design-claude.js');
-  assert.ok(ClaudeDesign, 'ClaudeDesign module should export');
-  assert.equal(typeof ClaudeDesign.init, 'function');
-  assert.equal(typeof ClaudeDesign.getState, 'function');
-  assert.equal(typeof ClaudeDesign.syncFilterState, 'function');
-
-  ClaudeDesign.init();
-  const st = ClaudeDesign.getState();
-  assert.equal(st.applied, false, 'Default applied should be false');
-  assert.equal(st.activeTab, 'all');
-  assert.equal(st.records.length, 23);
-  assert.equal(st.counts.total, 23);
-
-  // Test syncing filter state
-  ClaudeDesign.syncFilterState('IN12', 'ZPC1', 'RAW-1011', true, '2026-12');
-  const updatedSt = ClaudeDesign.getState();
-  assert.equal(updatedSt.selectedPlant, 'IN12');
-  assert.equal(updatedSt.selectedCostVariant, 'ZPC1');
-  assert.equal(updatedSt.selectedMaterial, 'RAW-1011');
-  assert.equal(updatedSt.selectedPeriod, '2026-12');
-  assert.equal(updatedSt.applied, true);
-});
-
 test('Chatbot: Batch fix multi-select functionality', () => {
   const MaterialChatbot = require('../js/chatbot.js');
   assert.equal(typeof MaterialChatbot.initiateBatchFix, 'function', 'initiateBatchFix must be exported');
@@ -146,31 +127,6 @@ test('Chatbot: Batch fix multi-select functionality', () => {
   assert.ok(batchItem, 'Batch fix item must be added to recents');
   assert.equal(batchItem.title, 'Fix All (3 errors)');
   assert.equal(batchItem.records.length, 3);
-});
-
-test('Design Switcher: Switching and state tracking', () => {
-  global.localStorage = {
-    _data: {},
-    getItem(k) { return this._data[k] || null; },
-    setItem(k, v) { this._data[k] = String(v); }
-  };
-
-  const DesignSwitcher = require('../js/design-switcher.js');
-  assert.ok(DesignSwitcher, 'DesignSwitcher module should export');
-  assert.equal(typeof DesignSwitcher.init, 'function');
-  assert.equal(typeof DesignSwitcher.switchDesign, 'function');
-  assert.equal(typeof DesignSwitcher.getCurrentDesign, 'function');
-
-  DesignSwitcher.init();
-  assert.equal(DesignSwitcher.getCurrentDesign(), '1', 'Initial default should be Design 1');
-
-  DesignSwitcher.switchDesign('3');
-  assert.equal(DesignSwitcher.getCurrentDesign(), '3', 'Switched to Design 3');
-  assert.equal(localStorage.getItem('material_dashboard_selected_design'), '3');
-
-  DesignSwitcher.switchDesign('1');
-  assert.equal(DesignSwitcher.getCurrentDesign(), '1', 'Switched back to Design 1');
-  assert.equal(localStorage.getItem('material_dashboard_selected_design'), '1');
 });
 
 test('SAP CS15: Where-Used Analysis Data Engine & BOM Hierarchy', () => {
