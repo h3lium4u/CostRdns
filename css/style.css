@@ -1054,10 +1054,10 @@ body {
   position: fixed;
   bottom: 88px;
   right: 24px;
-  width: 420px;
+  width: 580px;
   max-width: calc(100vw - 32px);
   /* Constrain height so top NEVER extends into top filter bar (top >= 145px) */
-  height: 520px;
+  height: 540px;
   max-height: calc(100vh - 145px - 88px);
   background: var(--white);
   border-radius: 16px;
@@ -1338,17 +1338,185 @@ body {
   display: none !important;
 }
 
-/* Editable Resolution Prompt Box */
-.chatbot-prompt-editor-card {
-  margin-top: 0.5rem;
-  padding: 0.75rem;
+/* Side-by-side Fix Layout (Error Details on Left, Prompt on Right) */
+.chat-fix-bubble {
+  max-width: 100% !important;
+  width: 100% !important;
+  background-color: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 12px !important;
+  padding: 1.15rem !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+.chat-fix-item-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.chat-fix-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.1rem;
+  align-items: stretch;
+}
+
+@media (max-width: 720px) {
+  .chat-fix-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.chat-fix-left-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.chat-fix-left-col .chatbot-meta-table {
+  margin-top: 0;
+  height: 100%;
+}
+
+.chat-fix-right-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-fix-right-col .chatbot-prompt-editor-card {
+  margin-top: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 8px;
+  padding: 0.85rem;
+  gap: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.chat-fix-right-col .chatbot-editable-prompt {
+  flex: 1;
+  min-height: 170px;
+  resize: vertical;
+  background-color: #f8fafc;
+  font-family: inherit;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  padding: 0.65rem 0.75rem;
+}
+
+/* Editable values inside Error Details Box */
+.meta-input-wrap {
+  flex: 1;
+  display: flex;
+  width: 100%;
+}
+
+.chat-field-input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  padding: 0.32rem 0.6rem;
+  font-family: inherit;
+  font-size: 0.83rem;
+  color: #0f172a;
+  background-color: #ffffff;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chat-field-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.chat-field-textarea {
+  min-height: 54px;
+  resize: vertical;
+  line-height: 1.4;
+}
+
+.meta-row {
+  display: flex;
+  align-items: center;
+  font-size: 0.83rem;
+  gap: 0.65rem;
+}
+
+.meta-row-action {
+  align-items: flex-start !important;
+}
+
+.meta-label {
+  font-weight: 600;
+  color: #475569;
+  min-width: 95px;
+  flex-shrink: 0;
+}
+
+/* Straight Horizontal Downstream Affected Strip */
+.chat-affected-strip {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.65rem 0.85rem;
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  gap: 0.4rem;
+  font-size: 0.81rem;
+}
+
+.affected-line {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+
+.affected-label {
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.affected-values {
+  color: #2563eb;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Batch Mode Stack */
+.batch-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 0.75rem;
+}
+
+.batch-item-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+  margin: 0.25rem 0;
+}
+
+.batch-bubble-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.batch-bubble-title {
+  font-size: 0.95rem;
+  color: #0f172a;
 }
 
 .prompt-editor-header {

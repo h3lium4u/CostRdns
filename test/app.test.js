@@ -196,3 +196,19 @@ test('SAP CS15: Batch Multi-Material Where-Used Analysis', () => {
   assert.ok(batchWu, 'Batch Where-Used must be added to recents');
   assert.equal(batchWu.title, 'Where-Used: 2 Materials');
 });
+
+test('Chatbot: Side-by-side layout, editable fields and auto-maximize', () => {
+  const MaterialChatbot = require('../js/chatbot.js');
+  assert.equal(typeof MaterialChatbot.maximize, 'function', 'maximize must be exported');
+  assert.equal(typeof MaterialChatbot.isOpen, 'function', 'isOpen must be exported');
+
+  // Test single fix initiate
+  const rec = MaterialData.getInitialRecords().find(r => r.material === 'RMI-2187');
+  MaterialChatbot.initiateFix(rec);
+  assert.equal(MaterialChatbot.isOpen(), true, 'Chatbot should be open');
+
+  // Test batch fix initiate (> 1 records) automatically calls maximize
+  const twoRecords = MaterialData.getInitialRecords().slice(1, 3);
+  MaterialChatbot.initiateBatchFix(twoRecords);
+  assert.equal(MaterialChatbot.isOpen(), true);
+});

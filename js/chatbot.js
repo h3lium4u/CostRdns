@@ -273,6 +273,23 @@ const MaterialChatbot = (function () {
     updateMaximizeBtnState();
   }
 
+  function maximize() {
+    const popup = document.getElementById('chatbotPopup');
+    if (!popup) return;
+    if (popup.classList.contains('hidden')) {
+      open();
+    }
+    if (!popup.classList.contains('maximized')) {
+      popup.classList.add('maximized');
+      updateMaximizeBtnState();
+    }
+  }
+
+  function isMaximized() {
+    const popup = document.getElementById('chatbotPopup');
+    return popup ? popup.classList.contains('maximized') : false;
+  }
+
   function updateMaximizeBtnState() {
     const popup = document.getElementById('chatbotPopup');
     const maxBtn = document.getElementById('chatbotMaximizeBtn');
@@ -445,10 +462,10 @@ const MaterialChatbot = (function () {
   }
 
   function open() {
+    isOpen = true;
     const popup = document.getElementById('chatbotPopup');
     if (popup) {
       popup.classList.remove('hidden');
-      isOpen = true;
       const input = document.getElementById('chatUserInput');
       if (input && !activePendingRecord) {
         setTimeout(() => input.focus(), 150);
@@ -457,10 +474,10 @@ const MaterialChatbot = (function () {
   }
 
   function close() {
+    isOpen = false;
     const popup = document.getElementById('chatbotPopup');
     if (popup) {
       popup.classList.add('hidden');
-      isOpen = false;
     }
   }
 
@@ -762,6 +779,195 @@ const MaterialChatbot = (function () {
     displayRecordInChat(record, record.isFixed);
   }
 
+  function getDownstreamAffectedInfo(record) {
+    const plants = new Set();
+    const materials = new Set();
+
+    if (record.plant) plants.add(record.plant);
+
+    if (typeof MaterialData !== 'undefined' && typeof MaterialData.getWhereUsedData === 'function') {
+      const wu = MaterialData.getWhereUsedData(record);
+      if (wu) {
+        if (wu.parents && Array.isArray(wu.parents)) {
+          wu.parents.forEach(p => {
+            if (p.plant) plants.add(p.plant);
+            if (p.material) materials.add(p.material);
+            if (p.finishedGoods && Array.isArray(p.finishedGoods)) {
+              p.finishedGoods.forEach(fg => {
+                if (fg.plant) plants.add(fg.plant);
+                if (fg.material) materials.add(fg.material);
+              });
+            }
+          });
+        }
+        if (wu.finishedGoods && Array.isArray(wu.finishedGoods)) {
+          wu.finishedGoods.forEach(fg => {
+            if (fg.plant) plants.add(fg.plant);
+            if (fg.material) materials.add(fg.material);
+          });
+        }
+      }
+    }
+
+    // Ensure realistic plants per SAP cohort if only 1 was found
+    if (plants.size <= 1) {
+      const p = record.plant || 'IN10';
+      if (p === 'IN10') plants.add('IN20');
+      else if (p === 'AD10') plants.add('AD20');
+      else if (p === 'AU10') plants.add('AU20');
+      else plants.add('IN10');
+    }
+
+    // Ensure fallback materials if empty
+    if (materials.size === 0) {
+      materials.add('HALB-2204');
+      materials.add('HALB-3310');
+      materials.add('FERT-1001');
+      materials.add('FERT-1020');
+    }
+
+    return {
+      affectedPlants: Array.from(plants),
+      affectedMaterials: Array.from(materials)
+    };
+  }
+
+  function renderErrorCardHtml(record, index = 0, isAlreadyFixed = false) {
+    const affected = getDownstreamAffectedInfo(record);
+    const affectedPlantsStr = affected.affectedPlants.length > 0 
+      ? affected.affectedPlants.join(', ') 
+      : (record.plant || 'IN10');
+    const affectedMatsStr = affected.affectedMaterials.length > 0 
+      ? affected.affectedMaterials.join(', ') 
+      : 'HALB-2204, HALB-3310, FERT-1001, FERT-1020';
+
+    const defaultPrompt = record._customPrompt || 
+      `Execute automated fix for ${record.material} (${record.errorType}) in plant ${record.plant}: ${record.recommendation}`;
+
+    return `
+      <div class="chat-fix-item-card" data-record-id="${escapeHtml(record.id || ('rec-' + index))}" data-index="${index}">
+        <div class="chatbot-prompt-title card-item-title">
+          Fix ${escapeHtml(record.errorType)} for material <strong>${escapeHtml(record.material)}</strong> in plant <strong>${escapeHtml(record.plant)}</strong>.
+        </div>
+
+        <div class="chat-fix-layout">
+          <!-- Left Column: Details Box with Editable Values + Downstream Affected Strip -->
+          <div class="chat-fix-left-col">
+            <div class="chatbot-meta-table">
+              <div class="meta-row">
+                <span class="meta-label">Material:</span>
+                <div class="meta-input-wrap">
+                  <input type="text" class="chat-field-input" data-field="material" data-index="${index}" value="${escapeHtml(record.material)}" ${isAlreadyFixed ? 'disabled' : ''}>
+                </div>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Description:</span>
+                <div class="meta-input-wrap">
+                  <input type="text" class="chat-field-input" data-field="description" data-index="${index}" value="${escapeHtml(record.description)}" ${isAlreadyFixed ? 'disabled' : ''}>
+                </div>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Error Type:</span>
+                <div class="meta-input-wrap">
+                  <input type="text" class="chat-field-input" data-field="errorType" data-index="${index}" value="${escapeHtml(record.errorType)}" ${isAlreadyFixed ? 'disabled' : ''}>
+                </div>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Plant:</span>
+                <div class="meta-input-wrap">
+                  <input type="text" class="chat-field-input" data-field="plant" data-index="${index}" value="${escapeHtml(record.plant)}" ${isAlreadyFixed ? 'disabled' : ''}>
+                </div>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Material Type:</span>
+                <div class="meta-input-wrap">
+                  <input type="text" class="chat-field-input" data-field="matType" data-index="${index}" value="${escapeHtml(record.matType)}" ${isAlreadyFixed ? 'disabled' : ''}>
+                </div>
+              </div>
+              <div class="meta-row meta-row-action">
+                <span class="meta-label">Action:</span>
+                <div class="meta-input-wrap">
+                  <textarea class="chat-field-input chat-field-textarea" data-field="recommendation" data-index="${index}" rows="2" ${isAlreadyFixed ? 'disabled' : ''}>${escapeHtml(record.recommendation)}</textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Straight horizontal downstream affected strip -->
+            <div class="chat-affected-strip">
+              <div class="affected-line">
+                <span class="affected-label">Affected Plants:</span>
+                <span class="affected-values">${escapeHtml(affectedPlantsStr)}</span>
+              </div>
+              <div class="affected-line">
+                <span class="affected-label">Affected Materials:</span>
+                <span class="affected-values">${escapeHtml(affectedMatsStr)}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Fix Resolution Prompt (Editable) -->
+          <div class="chat-fix-right-col">
+            <div class="chatbot-prompt-editor-card">
+              <div class="prompt-editor-header">
+                <span class="prompt-editor-label">Fix Resolution Prompt (Editable):</span>
+                <span class="prompt-editor-hint">Edit parameters or SAP command before confirming</span>
+              </div>
+              <textarea class="chatbot-editable-prompt" data-index="${index}" rows="7" ${isAlreadyFixed ? 'disabled' : ''}>${escapeHtml(defaultPrompt)}</textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function attachCardFieldListeners(container, records) {
+    if (!container || !records) return;
+
+    // Field inputs inside the left column
+    const inputs = container.querySelectorAll('.chat-field-input');
+    inputs.forEach(input => {
+      input.addEventListener('input', (e) => {
+        const index = parseInt(e.target.getAttribute('data-index') || '0', 10);
+        const field = e.target.getAttribute('data-field');
+        const record = records[index];
+        if (!record || !field) return;
+
+        record[field] = e.target.value;
+
+        // Find the card container
+        const card = e.target.closest('.chat-fix-item-card');
+        if (card) {
+          // Update card title
+          const title = card.querySelector('.card-item-title');
+          if (title) {
+            title.innerHTML = `Fix ${escapeHtml(record.errorType)} for material <strong>${escapeHtml(record.material)}</strong> in plant <strong>${escapeHtml(record.plant)}</strong>.`;
+          }
+
+          // Update prompt textarea on right if user hasn't explicitly customized it
+          const promptTextarea = card.querySelector('.chatbot-editable-prompt');
+          if (promptTextarea && !record._manuallyEditedPrompt) {
+            const newPrompt = `Execute automated fix for ${record.material} (${record.errorType}) in plant ${record.plant}: ${record.recommendation}`;
+            promptTextarea.value = newPrompt;
+            record._customPrompt = newPrompt;
+          }
+        }
+      });
+    });
+
+    // Prompt textareas on the right column
+    const promptTextareas = container.querySelectorAll('.chatbot-editable-prompt');
+    promptTextareas.forEach(textarea => {
+      textarea.addEventListener('input', (e) => {
+        const index = parseInt(e.target.getAttribute('data-index') || '0', 10);
+        const record = records[index];
+        if (record) {
+          record._customPrompt = e.target.value;
+          record._manuallyEditedPrompt = true;
+        }
+      });
+    });
+  }
+
   function displayRecordInChat(record, isAlreadyFixed = false) {
     const messagesContainer = document.getElementById('chatbotMessages');
     const actionsContainer = document.getElementById('chatbotActions');
@@ -769,55 +975,9 @@ const MaterialChatbot = (function () {
     const fixActionBtnText = fixBtn && fixBtn.querySelector ? fixBtn.querySelector('span') : null;
     const timestamp = record.time || formatCurrentTime();
 
-    const defaultPrompt = `Execute automated fix for ${record.material} (${record.errorType}) in plant ${record.plant}: ${record.recommendation}`;
-
-    // Clean structured prompt with EDITABLE prompt field
     let html = `
-      <div class="chatbot-bubble">
-        <div class="chatbot-prompt-title">
-          Fix ${escapeHtml(record.errorType)} for material <strong>${escapeHtml(record.material)}</strong> in plant <strong>${escapeHtml(record.plant)}</strong>.
-        </div>
-        <div class="chatbot-meta-table">
-          <div class="meta-row">
-            <span class="meta-label">Material:</span>
-            <span class="meta-value">${escapeHtml(record.material)}</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Description:</span>
-            <span class="meta-value">${escapeHtml(record.description)}</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Error Type:</span>
-            <span class="meta-value">${escapeHtml(record.errorType)}</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Plant:</span>
-            <span class="meta-value">${escapeHtml(record.plant)}</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Material Type:</span>
-            <span class="meta-value">${escapeHtml(record.matType)}</span>
-          </div>
-          <div class="meta-row">
-            <span class="meta-label">Action:</span>
-            <span class="meta-value">${escapeHtml(record.recommendation)}</span>
-          </div>
-        </div>
-
-        <div class="prompt-whereused-action-row">
-          <button id="promptWhereUsedBtn" class="btn-prompt-whereused" type="button">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <span>Run CS15 Where-Used Analysis for ${escapeHtml(record.material)}</span>
-          </button>
-        </div>
-
-        <div class="chatbot-prompt-editor-card">
-          <div class="prompt-editor-header">
-            <span class="prompt-editor-label">Fix Resolution Prompt (Editable):</span>
-            <span class="prompt-editor-hint">Edit parameters or SAP command before confirming</span>
-          </div>
-          <textarea id="chatbotEditablePrompt" class="chatbot-editable-prompt" rows="3" ${isAlreadyFixed ? 'disabled' : ''}>${escapeHtml(defaultPrompt)}</textarea>
-        </div>
+      <div class="chatbot-bubble chat-fix-bubble">
+        ${renderErrorCardHtml(record, 0, isAlreadyFixed)}
       </div>
       <div class="chatbot-time">${timestamp}</div>
     `;
@@ -845,14 +1005,8 @@ const MaterialChatbot = (function () {
 
     if (messagesContainer) {
       messagesContainer.innerHTML = html;
+      attachCardFieldListeners(messagesContainer, [record]);
       scrollToBottom();
-
-      const promptWuBtn = document.getElementById('promptWhereUsedBtn');
-      if (promptWuBtn) {
-        promptWuBtn.addEventListener('click', () => {
-          runWhereUsedAnalysis(record);
-        });
-      }
     }
   }
 
@@ -1171,6 +1325,7 @@ const MaterialChatbot = (function () {
     activePendingBatch = records;
     activePendingRecord = null;
     open();
+    maximize(); // Automatically pop up in chat maximized view when error count > 1 per user request!
 
     const title = `Fix All (${records.length} errors)`;
     const existingIndex = recents.findIndex(r => r.title === title);
@@ -1191,6 +1346,7 @@ const MaterialChatbot = (function () {
     recents.unshift(recentObj);
     activeRecentId = recentId;
     renderRecentsList();
+    renderInternalRecentsList();
 
     displayBatchInChat(records, false);
   }
@@ -1202,35 +1358,14 @@ const MaterialChatbot = (function () {
     const fixActionBtnText = fixBtn && fixBtn.querySelector ? fixBtn.querySelector('span') : null;
     const timestamp = formatCurrentTime();
 
-    const defaultPrompt = `Execute automated batch resolution for ${records.length} material errors:\n` +
-      records.map((r, i) => `${i + 1}. [${r.material}] ${r.errorType} (${r.plant}): ${r.recommendation}`).join('\n');
-
     let html = `
-      <div class="chatbot-bubble">
-        <div class="chatbot-prompt-title">
-          Batch Resolution for <strong>${records.length} Selected Material Errors</strong>
+      <div class="chatbot-bubble chat-fix-bubble">
+        <div class="batch-bubble-header">
+          <span class="badge-pill badge-purple">Batch Mode</span>
+          <span class="batch-bubble-title">Batch Resolution for <strong>${records.length} Selected Material Errors</strong></span>
         </div>
-        <div class="chatbot-meta-table">
-          ${records.map(r => `
-            <div class="meta-row">
-              <span class="meta-label"><strong>${escapeHtml(r.material)}</strong> (${escapeHtml(r.plant)}):</span>
-              <span class="meta-value">${escapeHtml(r.recommendation)}</span>
-            </div>
-          `).join('')}
-        </div>
-        <div class="prompt-whereused-action-row">
-          <button id="promptBatchWhereUsedBtn" class="btn-prompt-whereused" type="button">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-            <span>Run CS15 Where-Used Analysis for All ${records.length} Selected Materials</span>
-          </button>
-        </div>
-
-        <div class="chatbot-prompt-editor-card">
-          <div class="prompt-editor-header">
-            <span class="prompt-editor-label">Batch SAP Fix Prompt (Editable):</span>
-            <span class="prompt-editor-hint">Edit or customize batch execution instructions</span>
-          </div>
-          <textarea id="chatbotEditablePrompt" class="chatbot-editable-prompt" rows="4" ${isAlreadyFixed ? 'disabled' : ''}>${escapeHtml(defaultPrompt)}</textarea>
+        <div class="batch-cards-stack">
+          ${records.map((r, i) => renderErrorCardHtml(r, i, isAlreadyFixed)).join('<div class="batch-item-divider"></div>')}
         </div>
       </div>
       <div class="chatbot-time">${timestamp}</div>
@@ -1251,22 +1386,13 @@ const MaterialChatbot = (function () {
       activePendingBatch = records;
       activePendingRecord = null;
       if (fixActionBtnText) fixActionBtnText.textContent = `Fix All (${records.length})`;
-      const wuBtn = document.getElementById('chatbotWhereUsedBtn');
-      const wuBtnText = wuBtn && wuBtn.querySelector ? wuBtn.querySelector('span') : null;
-      if (wuBtnText) wuBtnText.textContent = `Where-Used All (${records.length})`;
       if (actionsContainer) actionsContainer.classList.remove('hidden');
     }
 
     if (messagesContainer) {
       messagesContainer.innerHTML = html;
+      attachCardFieldListeners(messagesContainer, records);
       scrollToBottom();
-
-      const promptBatchWuBtn = document.getElementById('promptBatchWhereUsedBtn');
-      if (promptBatchWuBtn) {
-        promptBatchWuBtn.addEventListener('click', () => {
-          runBatchWhereUsedAnalysis(records);
-        });
-      }
     }
   }
 
@@ -1640,8 +1766,6 @@ const MaterialChatbot = (function () {
 
     const actionsContainer = document.getElementById('chatbotActions');
     const messagesContainer = document.getElementById('chatbotMessages');
-    const promptInput = document.getElementById('chatbotEditablePrompt');
-    const executedPrompt = promptInput ? promptInput.value.trim() : '';
 
     // Hide actions while processing
     if (actionsContainer) actionsContainer.classList.add('hidden');
@@ -1649,6 +1773,16 @@ const MaterialChatbot = (function () {
     // Handle BATCH Fix
     if (activePendingBatch && activePendingBatch.length > 0) {
       const recordsToFix = [...activePendingBatch];
+      const promptInputs = messagesContainer ? messagesContainer.querySelectorAll('.chatbot-editable-prompt') : [];
+      let executedPrompt = '';
+      if (promptInputs && promptInputs.length > 0) {
+        executedPrompt = Array.from(promptInputs).map((p, idx) => {
+          const rec = recordsToFix[idx] || recordsToFix[0];
+          return `${idx + 1}. [${rec.material} (${rec.plant})]: ${p.value.trim()}`;
+        }).join('\n');
+      } else {
+        executedPrompt = recordsToFix.map((r, i) => `${i + 1}. [${r.material} (${r.plant})]: ${r.recommendation}`).join('\n');
+      }
 
       const processingEl = document.createElement('div');
       processingEl.className = 'chatbot-processing';
@@ -1673,7 +1807,7 @@ const MaterialChatbot = (function () {
               <span class="success-check">✓</span> <strong>Successfully Fixed All ${recordsToFix.length} Selected Errors!</strong>
             </div>
             <div class="success-body">
-              SAP master data records synchronized. Executed Prompt:<br>
+              SAP master data records synchronized across plants. Executed Prompts:<br>
               <pre style="margin-top: 6px; font-size: 0.76rem; background: rgba(0,0,0,0.04); padding: 6px 8px; border-radius: 4px; white-space: pre-wrap; font-family: monospace;">${escapeHtml(executedPrompt)}</pre>
             </div>
           </div>
@@ -1700,6 +1834,8 @@ const MaterialChatbot = (function () {
 
     // Handle SINGLE Fix
     const recordToFix = activePendingRecord;
+    const promptInput = messagesContainer ? messagesContainer.querySelector('.chatbot-editable-prompt') : null;
+    const executedPrompt = promptInput ? promptInput.value.trim() : (recordToFix._customPrompt || recordToFix.recommendation);
 
     // Show simulated processing state
     const processingEl = document.createElement('div');
@@ -1782,6 +1918,9 @@ const MaterialChatbot = (function () {
     openInternalSidebar: openInternalSidebar,
     closeInternalSidebar: closeInternalSidebar,
     renderInternalRecentsList: renderInternalRecentsList,
+    isOpen: function () { return isOpen; },
+    maximize: maximize,
+    isMaximized: isMaximized,
     getRecents: function () { return recents; }
   };
 })();

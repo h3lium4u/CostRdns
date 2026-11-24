@@ -542,6 +542,14 @@
               row.classList.remove('row-selected');
             }
             updateDesign1BatchFixState();
+
+            // If error count chosen is > 1, automatically pop up in chat maximized view
+            const selectedUnfixed = state.records.filter(r => r.selected && !r.isFixed);
+            if (selectedUnfixed.length > 1) {
+              MaterialChatbot.initiateBatchFix(selectedUnfixed);
+            } else if (selectedUnfixed.length === 1 && typeof MaterialChatbot.isOpen === 'function' && MaterialChatbot.isOpen()) {
+              MaterialChatbot.initiateFix(selectedUnfixed[0]);
+            }
           });
 
           // Material Link click
