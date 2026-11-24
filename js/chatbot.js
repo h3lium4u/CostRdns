@@ -174,7 +174,6 @@ const MaterialChatbot = (function () {
 
     const toggleBtn = document.getElementById('chatbotToggleBtn');
     const closeBtn = document.getElementById('chatbotCloseBtn');
-    const minimizeBtn = document.getElementById('chatbotMinimizeBtn');
     const maximizeBtn = document.getElementById('chatbotMaximizeBtn');
     const recentsBtn = document.getElementById('chatbotRecentsBtn');
     const sidebarCloseBtn = document.getElementById('chatbotSidebarCloseBtn');
@@ -187,17 +186,6 @@ const MaterialChatbot = (function () {
 
     if (toggleBtn) toggleBtn.addEventListener('click', toggle);
     if (closeBtn) closeBtn.addEventListener('click', close);
-    if (minimizeBtn) {
-      minimizeBtn.addEventListener('click', () => {
-        const popup = document.getElementById('chatbotPopup');
-        if (popup && popup.classList.contains('maximized')) {
-          popup.classList.remove('maximized');
-          updateMaximizeBtnState();
-        } else {
-          close();
-        }
-      });
-    }
     if (maximizeBtn) maximizeBtn.addEventListener('click', toggleMaximize);
     
     // Toggle internal recent chats sidebar inside chat window

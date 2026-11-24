@@ -1105,11 +1105,6 @@ body {
   display: inline-flex !important;
 }
 
-/* Minimize button in header visible in both docked and maximized states (never cancels) */
-.chatbot-popup #chatbotMinimizeBtn {
-  display: inline-flex !important;
-}
-
 @keyframes chatbotModalZoom {
   from {
     opacity: 0.7;
