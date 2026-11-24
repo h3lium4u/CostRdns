@@ -179,7 +179,6 @@ const MaterialChatbot = (function () {
     const sidebarCloseBtn = document.getElementById('chatbotSidebarCloseBtn');
     const sidebarSearch = document.getElementById('chatbotSidebarSearch');
     const fixActionBtn = document.getElementById('chatbotFixActionBtn');
-    const whereUsedBtn = document.getElementById('chatbotWhereUsedBtn');
     const cancelActionBtn = document.getElementById('chatbotCancelActionBtn');
     const sendBtn = document.getElementById('chatSendBtn');
     const userInput = document.getElementById('chatUserInput');
@@ -209,33 +208,7 @@ const MaterialChatbot = (function () {
       });
     }
 
-    const minimizeActionBtn = document.getElementById('chatbotMinimizeActionBtn');
-    if (minimizeActionBtn) {
-      minimizeActionBtn.addEventListener('click', () => {
-        const popup = document.getElementById('chatbotPopup');
-        if (popup && popup.classList.contains('maximized')) {
-          popup.classList.remove('maximized');
-          updateMaximizeBtnState();
-        } else {
-          close();
-        }
-      });
-    }
-
     if (fixActionBtn) fixActionBtn.addEventListener('click', confirmFix);
-    if (whereUsedBtn) {
-      whereUsedBtn.addEventListener('click', () => {
-        if (activePendingBatch && activePendingBatch.length > 1) {
-          runBatchWhereUsedAnalysis(activePendingBatch);
-        } else if (activePendingRecord) {
-          runWhereUsedAnalysis(activePendingRecord);
-        } else if (activePendingBatch && activePendingBatch.length === 1) {
-          runWhereUsedAnalysis(activePendingBatch[0]);
-        } else {
-          runWhereUsedAnalysis('RMI-2187');
-        }
-      });
-    }
     if (cancelActionBtn) cancelActionBtn.addEventListener('click', cancelFix);
 
     // Interactive Chat Input
@@ -1452,15 +1425,11 @@ const MaterialChatbot = (function () {
     const actionsContainer = document.getElementById('chatbotActions');
     const fixBtn = document.getElementById('chatbotFixActionBtn');
     const fixActionBtnText = fixBtn && fixBtn.querySelector ? fixBtn.querySelector('span') : null;
-    const wuBtn = document.getElementById('chatbotWhereUsedBtn');
-    const wuBtnText = wuBtn && wuBtn.querySelector ? wuBtn.querySelector('span') : null;
     const timestamp = formatCurrentTime();
-
     activePendingBatch = batchData.components;
     activePendingRecord = null;
 
     if (fixActionBtnText) fixActionBtnText.textContent = `Fix All (${batchData.materialsCount})`;
-    if (wuBtnText) wuBtnText.textContent = `Where-Used All (${batchData.materialsCount})`;
     if (actionsContainer) actionsContainer.classList.remove('hidden');
 
     // Build convergence alert if any finished goods are shared
