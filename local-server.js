@@ -52,12 +52,15 @@ function requestHandler(req, res) {
 
 function startServer(port) {
   const s = http.createServer(requestHandler);
-  s.listen(port, '127.0.0.1', () => {
-    console.log(`Material Error Dashboard server running at: http://127.0.0.1:${port}/`);
+  // Bind without host restriction so both IPv4 (127.0.0.1) and IPv6 (::1/localhost) work seamlessly
+  s.listen(port, () => {
+    console.log(`Material Error Dashboard server running at:`);
+    console.log(`  - Localhost: http://localhost:${port}/`);
+    console.log(`  - IPv4:      http://127.0.0.1:${port}/`);
   });
   s.on('error', (err) => {
     if (err.code === 'EADDRINUSE') {
-      console.log(`Port ${port} in use, trying next...`);
+      console.log(`Port ${port} in use, skipping...`);
     } else {
       console.error(err);
     }
